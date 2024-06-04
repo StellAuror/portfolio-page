@@ -1,0 +1,101 @@
+body {
+    font-family: Arial, sans-serif;
+    margin:0 auto;
+    margin-top: 100px;
+    background-color: #f2f5f7;
+    max-width: 1600px;
+}
+
+.main {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow-wrap: break-word;
+    column-gap: 2em;
+    row-gap: .5em;
+}
+
+.scrollable-div {
+    height: 80vh; /* set a fixed height for the div */
+    width: 99%;
+    margin-top: 15px;
+    margin-bottom: 15px;
+    overflow-y: scroll; /* enable vertical scrollbar */
+  }
+
+.nav {
+    width: 100%;
+    height: 30px;
+    text-align: right;
+    padding: 2%;
+    row-gap: .5em;
+    /* 
+    background-color: #ffffff;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    text-align: left;-webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    border-radius: 30px; */
+}
+
+
+
+.sidebar {
+    width: 20%;
+    background-color: #ffffff;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    padding: 2%;
+    text-align: left;-webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    border-radius: 30px;
+    height: 500px;
+}
+
+.content {
+    width: 70%;
+    background-color: #ffffff;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    -webkit-border-radius: 30px;
+    -moz-border-radius: 30px;
+    border-radius: 30px;
+    
+}
+.pfp {
+    position: relative;
+    left: 50%;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.13);
+    bottom: 25%; /* Move it up by 25% of the container's height */
+    width: 90%; /* 75% of the container's width */
+    height: 0; /* To make the aspect ratio 1:1, we'll use padding */
+    padding-bottom: 90%; /* Ensures the height matches the width */
+    transform: translateX(-50%); /* Center horizontally */
+    background-image: url("static/image2.png");
+    background-color: #e68900;
+    border-radius: 50%;
+    background-size: 100% auto;
+}
+
+
+.break {
+    flex-basis: 100%;
+    height: 0;
+  } 
+
+ .sidebar h2 {
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.sidebar h3 {
+    margin-bottom: 20px;
+    font-size: 22px;
+    color: #444;
+    font-weight: 100;
+}
+
+.sidebar p {
+    margin: 5px 0;
+    color: gray;
+}
+

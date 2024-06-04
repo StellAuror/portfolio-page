@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Michal Krawczuk</title>
+    <link rel="stylesheet" href="socialbttns.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="timeline.css">
+</head>
+
+<body>
+    <div class = "main">
+        <div class="nav">
+            <button onclick="hideShow()" class="button">About Me</button>
+            <button class="button">Projects</button>
+            <button class="button">Career</button>         
+        </div>
+        <div class="break"></div>
+        <div class="sidebar">
+            <div class="pfp"> </div>
+            <div class="sidebar-content" style="margin-top: -100px; ">
+                <h2>Michał Krawczuk</h2>
+                <h3> Data Analyst </h3>
+                <h4><i class="fa fa-phone" aria-hidden="true"></i> +48 793 852 131</h4>
+                <h4><i class="fa fa-envelope-open" aria-hidden="true"></i> michalkrawczuk@gmail.com </h4>
+                <h4><i class="fa fa-location-arrow" aria-hidden="true"></i> Poland, Wrocław</h4>
+                <div class="social-icons">
+                    <a href="#"  title="facebook"> <i class="fa fa-github-square" aria-hidden="true"></i></a>
+                    <a href="#" title="twitter"><i class="fa fa-linkedin-square" aria-hidden="true"></i></a>
+                  </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="scrollable-div" id="career">
+            <h1 style="padding-left: 15%; font-size: 38px;">Career Timeline</h1>
+            <p class="tm-desc">
+                <strong>Data Analyst with 2 years of professional experience</strong> seeking to expand skillset and contribute to innovative projects in data analysis, data visualization, big data, and machine learning. Proven ability to collect, clean, analyze, and interpret large datasets to drive business decisions. Eager to learn new technologies and methodologies to stay ahead of the curve in the ever-evolving field of data science.
+            </p>
+            <ul class="timeline">
+                <li class="timeline-event">
+                  <label class="timeline-event-icon"></label>
+                  <div class="timeline-event-copy">
+                    <p class="timeline-event-thumbnail">Aug 2020 - Jan 2022</p>
+                    <h3>
+                        Warehouse Employee – Logistics <br>
+                        Bielany Wrocławskie
+                    </h3>
+                    <h4>
+                        Employee at a logistics center
+                    </h4>
+                    <p><strong>Responsibilities</strong><br>Warehousing of goods, consolidation of processes, 
+                        processing and quality control of customer returns</p>
+                  </div>
+                </li>
+                <li class="timeline-event">
+                    <label class="timeline-event-icon"></label>
+                    <div class="timeline-event-copy">
+                      <p class="timeline-event-thumbnail">Jun 2022 – Present</p>
+                      <h3>
+                        Internship at Novartis <br>
+                        Warsaw  
+                      </h3>
+                      <h4>
+                            Data Analyst in an international team
+                      </h4>
+                      <p><strong>Responsibilities</strong><br>Reporting, creating analytical applications, co-creating 
+                        KPIs, process mapping, supporting the team in making 
+                        informed decisions.</p>
+                    </div>
+                  </li>
+                    </div>
+                  </li>
+              </div>
+        </div>
+    </div>
+    <script src="buttons.js"></script>
+</body>
+</html>
