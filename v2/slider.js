@@ -1,5 +1,6 @@
 let slider = document.querySelector('.slider .list');
 let items = document.querySelectorAll('.slider .list .item');
+let descriptions = document.querySelectorAll('.slider .list .item .description');
 let next = document.getElementById('next');
 let prev = document.getElementById('prev');
 let dots = document.querySelectorAll('.slider .dots li');
@@ -21,9 +22,15 @@ function reloadSlider(){
     last_active_dot.classList.remove('activated');
     dots[active].classList.add('activated');
 
-    clearInterval(refreshInterval);
+    descriptions.forEach((desc, index) => {
+        if(index === active) {
+            desc.style.display = 'block';
+        } else {
+            desc.style.display = 'none';
+        }
+    });
 
-    
+    clearInterval(refreshInterval);
 }
 
 dots.forEach((li, key) => {
@@ -35,3 +42,7 @@ dots.forEach((li, key) => {
 window.onresize = function(event) {
     reloadSlider();
 };
+
+window.onload = function() {
+    descriptions[active].style.display = 'block';
+}
