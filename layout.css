@@ -273,8 +273,6 @@ ul.horizontal-list li a img {
         margin-left: 0;
         box-shadow: none;
         margin-bottom: 100px;
-        overflow: hidden; /* Enable scrolling */
-        position: relative; /* Ensure positioning context */
     }
 
     .pfp {

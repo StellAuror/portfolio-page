@@ -110,4 +110,12 @@
         width: 90%;
         left: 1%;
     }
+
+    .slider .buttons{
+        top: 85%;
+    }
+    .slider .buttons button{
+        width: 70px;
+        height: 70px;
+    }
 }
