@@ -7,14 +7,13 @@ body {
     justify-content: center;
     align-content: center;
     align-items: center;
-    display:flex;
+    display: flex;
     background-repeat: no-repeat;
     background-size: cover;
     overflow: hidden; /* Zapobiega pojawianiu się scrollbara */
-    position: relative; /* Konieczne do pozycjonowania pseudo-elementu */
+    position: relative; 
     transition: all 0.3s ease-in-out;
 }
-
 
 .main {
     max-width: 1900px;
@@ -27,16 +26,16 @@ body {
     align-items: center;
     flex-wrap: wrap;
     overflow-wrap: break-word;
-    row-gap: .5em;
+    row-gap: 0.5em;
     margin: 10px;
 }
-
 
 .sidebar {
     width: 25%;
     height: 80vh;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-    text-align: left;-webkit-border-radius: 30px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    -webkit-border-radius: 30px;
     -moz-border-radius: 30px;
     border-radius: 30px;
     flex-direction: column;
@@ -59,7 +58,7 @@ body {
     height: 140%;
     object-position: bottom;
     display: block;
-    object-fit: cover; 
+    object-fit: cover;
 }
 
 .sidebar-bot {
@@ -106,9 +105,9 @@ body {
 
 ul.horizontal-list {
     list-style: none; /* Usunięcie domyślnego stylu listy */
-    padding: 0; 
-    display: flex; 
-    justify-content: flex-start; 
+    padding: 0;
+    display: flex;
+    justify-content: flex-start;
 }
 
 ul.horizontal-list li {
@@ -116,19 +115,19 @@ ul.horizontal-list li {
 }
 
 ul.horizontal-list li a {
-    display: inline-block; 
-    width: 50px; 
-    height: 50px; 
-    border-radius: 50%; 
-    background-color: #101010; 
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #101010;
     transition: background-color 0.3s; /* Płynna zmiana koloru przy hover */
     display: flex;
-    align-items: center; 
-    justify-content: center; 
+    align-items: center;
+    justify-content: center;
 }
 
 ul.horizontal-list li a:hover {
-    background-color: #c04f15; 
+    background-color: #c04f15;
 }
 
 ul.horizontal-list li a img {
@@ -150,25 +149,24 @@ ul.horizontal-list li a img {
     z-index: 3; /* Ustawienie najwyższego z-indexu dla koła */
 }
 
-
 .content {
     height: 65vh;
     width: 65%;
     z-index: 2;
     margin-left: -10px;
     background-color: #2020207e;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     -moz-border-radius: 10px;
     border-radius: 10px;
     overflow: auto; /* Enable scrolling */
     position: relative; /* Ensure positioning context */
-
 }
 
 .content h1 {
     color: white;
     font-size: 3.5rem;
 }
+
 .content p {
     font-family: "Lato", Arial;
     font-weight: 300;
@@ -196,10 +194,9 @@ ul.horizontal-list li a img {
     padding: 90px 0 0 150px;
 }
 
-
 #content-projects {
     width: 100%;
-    height: 100%; 
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -207,7 +204,6 @@ ul.horizontal-list li a img {
     padding: 0;
     margin: 0;
 }
-
 
 .nav {
     width: 6%;
@@ -220,14 +216,13 @@ ul.horizontal-list li a img {
     align-self: flex-start;
     margin-left: 25px;
     background-color: #2020207c;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     text-align: left;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 30px;
     z-index: 1;
 }
-
 
 /* Custom scrollbar styling for WebKit browsers */
 .content::-webkit-scrollbar {
@@ -251,4 +246,78 @@ ul.horizontal-list li a img {
 
 .content::-webkit-scrollbar-thumb:active {
     background-color: #545050; /* Light color of the thumb when clicked */
+}
+
+/* Media queries for mobile devices */
+@media only screen and (max-width: 900px) {
+    body {
+        overflow: auto; /* Enable scrolling for smaller devices */
+        height: auto;
+    }
+    .main {
+        flex-direction: column;
+        overflow: visible;
+        row-gap: 0px;
+        margin: 0px;
+    }
+    .sidebar {
+        height: 400px;
+        width: 100%;
+        border-radius: 0px;
+        height: auto;
+    }
+    .content {
+        border-radius: 0px;
+        width: 100%;
+        height: auto;
+        margin-left: 0;
+        box-shadow: none;
+        margin-bottom: 100px;
+        overflow: hidden; /* Enable scrolling */
+        position: relative; /* Ensure positioning context */
+    }
+
+    .pfp {
+        width: 250px;
+        height: 250px;
+        top: -150px; /* połowa wysokości koła, by znaleźć się na złączeniu */
+    }
+    .nav {
+        z-index: 100;
+        position: fixed;
+        background-color: #1b1b1b;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: auto;
+        flex-direction: row;
+        justify-content: space-around;
+        margin: 0;
+        border-radius: 10px;
+    }
+    .content h1 {
+        font-size: 2rem;
+    }
+    .content p {
+        font-size: 1.3rem;
+    }
+    #content-about, #content-career, #content-degree, #content-skills h1 {
+        padding: 20px;
+    }
+
+    .sidebar-top {
+        height: 25vh;
+    }
+    .sidebar-bot {
+        background-color: #1b1b1b; 
+        border-top-left-radius: 50% 6%;
+        border-top-right-radius: 50% 6%;
+        position: relative;
+        z-index: 2; 
+    }
+    
+    .sidebar-bot-content {
+        padding-bottom: 40px;
+    }
+    
 }

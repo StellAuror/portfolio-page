@@ -6,6 +6,8 @@ var divCareer = document.getElementById('content-career');
 var buttStartup = document.getElementById('button-nav-startup');
 let currentButton = null; 
 
+var buttStartup = document.getElementById('button-nav-startup');
+
 
 function hideAllTabs() {
     var tabs = [divAbout, divProjects, divDegree, divSkills, divCareer];
@@ -73,3 +75,14 @@ function changeColor(button) {
 
 changeColor(buttStartup)
 
+let currentButtonOTHER = null;
+
+function changeColorOTHER(buttonId) {
+    const button = document.getElementById(buttonId);
+    
+    if (currentButton) {
+        currentButton.style.backgroundColor = '';
+    }
+    button.style.backgroundColor = '#c04e15';
+    currentButton = button;
+}

@@ -3,6 +3,7 @@
 .button {
   font-family: "Montserrat";
   font-weight: 600;
+  margin-top: 10px;
   width: 140px;
   height: 45px;
   margin-right: 10px;
@@ -27,6 +28,44 @@
   opacity: 1;
   background-color: #c04f15;
   color: #fff;
+}
+
+.link-button {
+  font-family: "Montserrat";
+  font-weight: 600;
+  margin-top: 10px;
+  width: 140px;
+  height: 45px;
+  margin-right: 10px;
+  border: none;
+  outline: none;
+  color: #fff;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  background-color: #2e2c2c;
+}
+
+
+.link-button:active {
+  background-color: #a1410f;
+  transform: translateY(5px); /* Przesunięcie przycisku w dół podczas wciśnięcia */
+}
+
+
+.link-button:hover {
+  opacity: 1;
+  background-color: #c04f15;
+  color: #fff;
+}
+
+#button-nav-startup {
+  border-radius: 30px 30px 0 0;
+}
+
+#button-nav-projects {
+  border-radius: 0 0 30px 30px;
 }
 
 .button-nav {
@@ -75,4 +114,18 @@
 @keyframes fadeOut {
   from { opacity: 1; }
   to { opacity: 0; }
+}
+
+@media only screen and (max-width: 900px) {
+  .button {
+        display: none;
+  }
+
+  #button-nav-startup {
+    border-radius: 0;
+  }
+  
+  #button-nav-projects {
+    border-radius: 0;
+  }
 }

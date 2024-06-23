@@ -73,10 +73,10 @@
                     My aim is to continually improve and make a meaningful impact on the world. Feel free to explore my portfolio—I'm confident that together, we can create something great!
                 </p>
                 </br></br></br>
-                <button onclick="showTab('career')" class="button">CAREER</button>
-                <button onclick="showTab('degree')" class="button">STUDY</button>
-                <button onclick="showTab('skills')" class="button">SKILLS</button>
-                <button onclick="showTab('projects')" class="button">WORK</button> 
+                <button onclick="showTab('career'); changeColorOTHER('button-nav-career')" class="button">CAREER</button>
+                <button onclick="showTab('degree'); changeColorOTHER('button-nav-degree')" class="button">STUDY</button>
+                <button onclick="showTab('skills'); changeColorOTHER('button-nav-skills')" class="button">SKILLS</button>
+                <button onclick="showTab('projects'); changeColorOTHER('button-nav-projects')" class="button">WORK</button> 
             </div>
             <div class="content-content" id="content-career">
                 <h1>CAREER</h1>
@@ -153,7 +153,7 @@
                                 <h2>Project: InfoFlare</h2>
                                 <p>InfoFlare is a data-driven project dedicated to providing insights and visualizations centered on European topics. The focus is on sharing raw facts with minimal opinions. The project emphasizes transparency and clarity, making complex data accessible and understandable for a wide audience.</p>
                                 <div class="description-button">
-                                    <button class="button" onclick="window.open('https://github.com/StellAuror/infoflare', '_blank')">See GitHub</button>
+                                    <button class="link-button" onclick="window.open('https://github.com/StellAuror/infoflare', '_blank')">See GitHub</button>
                                 </div>
                             </div>
                         </div>
@@ -163,7 +163,7 @@
                                 <h2>Project: Time40</h2>
                                 <p>Time40 is an application that uses scraping to obtain data and then analyze it in a simple drill-through form. Are you thirsty? This app will help you to find the best tea (or coffee) to buy at fiveoclock.eu ;)</p>
                                 <div class="description-button">
-                                    <button class="button" onclick="window.open('https://github.com/StellAuror/time40', '_blank')">See GitHub</button>
+                                    <button class="link-button" onclick="window.open('https://github.com/StellAuror/time40', '_blank')">See GitHub</button>
                                 </div>
                             </div>
                         </div>
@@ -173,7 +173,7 @@
                                 <h2>Project: Lucent</h2>
                                 <p>The result of engineering work, the essence of which is the design of an analytical application allowing for the acquisition, transformation and presentation of data for supply chain employees.</p>
                                 <div class="description-button">
-                                    <button class="button" onclick="window.open('https://github.com/StellAuror/lucent', '_blank')" >See GitHub</button>
+                                    <button class="link-button" onclick="window.open('https://github.com/StellAuror/lucent', '_blank')" >See GitHub</button>
                                 </div>
                             </div>
                         </div>
@@ -183,7 +183,7 @@
                                 <h2>Project: RPubs</h2>
                                 <p>Welcome to my RPubs account, your gateway to a curated collection of my reports and interactive documents. Explore insights on demography, electrification, football teams, weather, and more. Delve into a world of knowledge and discovery—all from a single platform!</p>
                                 <div class="description-button">
-                                    <button class="button" onclick="window.open('https://rpubs.com/StellAuror', '_blank')" >See RPubs</button>
+                                    <button class="link-button" onclick="window.open('https://rpubs.com/StellAuror', '_blank')" >See RPubs</button>
                                 </div>
                             </div>
                         </div>
@@ -191,9 +191,9 @@
                             <img src="static/slide6.jpg">
                             <div class="description">
                                 <h2>Project: Airlines</h2>
-                                <p>This application allows for interactive visualization of information about airline passengers. By selecting different dimensions, users can compare various passenger characteristics to assess their satisfaction with flights and explore the impact of individual factors. Additionally, a dedicated predictive module enables users to define a “sample passenger” and predict their satisfaction. The algorithm also identifies similar passengers to one defined by user so that you can verify likelihood of such a passanger.</p>
+                                <p>Passanger's satisfaction dashboard. By selecting different dimensions, users can compare various passenger characteristics to assess their satisfaction with flights and explore the impact of individual factors. The algorithm also identifies similar passengers to one defined by user so that you can verify likelihood of such a passanger.</p>
                                 <div class="description-button">
-                                    <button class="button" onclick="window.open('https://github.com/StellAuror/airlane-passangers', 'See GitHub')" >Details</button>
+                                    <button class="link-button" onclick="window.open('https://github.com/StellAuror/airlane-passangers', 'See GitHub')" >Details</button>
                                 </div>
                             </div>
                         </div>
@@ -213,11 +213,11 @@
             </div>
         </div>
         <div class="nav">
-            <button onclick="showTab('about'); changeColor(this); " class="button-nav" id="button-nav-startup" style="border-radius: 30px 30px 0 0;">ABOUT</button>
-            <button onclick="showTab('career'); changeColor(this);" class="button-nav">CAREER</button>
-            <button onclick="showTab('degree'); changeColor(this);" class="button-nav">STUDY</button>
-            <button onclick="showTab('skills'); changeColor(this);" class="button-nav">SKILLS</button>
-            <button onclick="showTab('projects'); changeColor(this);" class="button-nav" style="border-radius: 0 0 30px 30px;">WORK</button>
+            <button onclick="showTab('about'); changeColor(this); " class="button-nav" id="button-nav-startup">ABOUT</button>
+            <button onclick="showTab('career'); changeColor(this);" class="button-nav"  id="button-nav-career">CAREER</button>
+            <button onclick="showTab('degree'); changeColor(this);" class="button-nav"  id="button-nav-degree">STUDY</button>
+            <button onclick="showTab('skills'); changeColor(this);" class="button-nav"  id="button-nav-skills">SKILLS</button>
+            <button onclick="showTab('projects'); changeColor(this);" class="button-nav"  id="button-nav-projects">WORK</button>
         </div>
     </div>
     <script src="button.js"></script>
