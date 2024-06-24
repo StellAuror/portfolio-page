@@ -86,3 +86,9 @@ function changeColorOTHER(buttonId) {
     button.style.backgroundColor = '#c04e15';
     currentButton = button;
 }
+
+$(document).ready(function() {
+    $('#themeSwitch').change(function() {
+        $('body').toggleClass('light-theme');
+    });
+});
