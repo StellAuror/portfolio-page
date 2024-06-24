@@ -204,3 +204,14 @@ input:checked + .switch-slider:before {
   #skills-image {
     content: url("static/skills.png");
   }
+
+  .light-theme #sidebar-top-img {
+    content: url("static/pfpblight.jpg");
+  }
+
+  .light-theme .pfp {
+    background-image: url("static/image3light.png");
+  }
+
+
+
