@@ -86,12 +86,12 @@ input:checked + .switch-slider:before {
 }
 
 .light-theme .content {
-    background-color: #f5f5f544;
+    background-color: #f5f5f58e;
 }
 
 
 .light-theme .nav {
-    background-color: #f5f5f554;
+    background-color: #f5f5f58e;
 }
 
 @media only screen and (max-width: 900px) {
@@ -179,7 +179,7 @@ input:checked + .switch-slider:before {
   }
   
   .light-theme .button-nav {
-    background-color: #f5f5f554;
+    background-color: #f5f5f58e;
   }
   
   .light-theme .link-button:hover,
@@ -213,5 +213,23 @@ input:checked + .switch-slider:before {
     background-image: url("static/image3light.png");
   }
 
+  .light-theme .content::-webkit-scrollbar {
+    background-color: #fff; /* Dark background color */
+}
 
+.light-theme .content::-webkit-scrollbar-track {
+    background: #fff; /* Darker color for the tracking area */
+}
+
+.light-theme .content::-webkit-scrollbar-thumb {
+    background-color: #ccc; /* Color of the scroll thumb */
+}
+
+.light-theme .content::-webkit-scrollbar-thumb:hover {
+    background-color: #ccc; /* Lighter color of the thumb on hover */
+}
+
+.light-theme .content::-webkit-scrollbar-thumb:active {
+    background-color: #ccc; /* Light color of the thumb when clicked */
+}
 
