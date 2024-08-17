@@ -105,3 +105,53 @@
       color: #c04e15;
   }
 }
+
+@media only screen and (max-width: 900px) {
+
+  .timeline {
+    font-size: 1rem;
+    letter-spacing: normal;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .timeline:before {
+    display: none;
+  }
+
+  .timeline-event {
+    margin-bottom: 1em;
+    width: 100%;
+    overflow-x: hidden;
+  }
+
+  .timeline-event-icon,
+  .timeline-event-thumbnail {
+    display: none;
+  }
+
+  .timeline-event-copy {
+    padding: 1em;
+    left: 0;
+    width: 100%; /* Szerokość zawsze na 100% */
+  }
+
+  .timeline-event-copy h3,
+  .timeline-event-copy h4 {
+    font-size: 1.1em;
+  }
+
+  .timeline-event-copy p:not(.timeline-event-thumbnail) {
+    padding-bottom: 0.8em;
+  }
+
+  /* Wyłączenie wszystkich efektów hover */
+  .timeline-event:hover .timeline-event-icon,
+  .timeline-event:hover .timeline-event-thumbnail,
+  .timeline-event:hover .timeline-event-copy h3 {
+    transform: none;
+    transition: none;
+    background-color: inherit;
+    animation: none;
+  }
+}
