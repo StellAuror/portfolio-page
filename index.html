@@ -8,12 +8,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="layout.css">
-    <link rel="stylesheet" href="button.css">
-    <link rel="stylesheet" href="slider.css">
-    <link rel="stylesheet" href="background.css">
-    <link rel="stylesheet" href="timeline.css">
-    <link rel="stylesheet" href="lighttheme.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/button.css">
+    <link rel="stylesheet" href="css/background.css">
+    <link rel="stylesheet" href="css/timeline.css">
+    <link rel="stylesheet" href="css/lighttheme.css">
+    <link rel="stylesheet" href="css/projects.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -55,7 +55,7 @@
                         <li><a href="https://github.com/StellAuror/" target="_blank"><img src="static/github.png" alt="github"></a></li>
                         <li><a href="https://x.com/mk_infoflare" target="_blank"><img src="static/x.png" alt="X"></a></li>
                         <li><a href="https://rpubs.com/StellAuror" target="_blank"><img src="static/R.png" alt="R"></a></li>
-                        <li><a href="static/Michal Krawczuk - CV [EN].pdf" target="_blank" style="color: white; text-decoration: none;">CV</a></li>
+                        <li><a href="static/CV Michal Krawczuk ENG v2025_03.pdf" target="_blank" style="color: white; text-decoration: none;">CV</a></li>
                     </ul>
                     <p>If I have seen further, it is because </br> I have stood on the shoulders of giants. </br> <i>Sir Isaac Newton</i></p>
                 </div>
@@ -73,9 +73,9 @@
                 </p>
                 </br></br></br>
                 <button onclick="showTab('career'); changeColorOTHER('button-nav-career')" class="button">CAREER</button>
-                <button onclick="showTab('degree'); changeColorOTHER('button-nav-degree')" class="button">STUDY</button>
+                <button onclick="showTab('degree'); changeColorOTHER('button-nav-degree')" class="button">EDUCATION</button>
                 <button onclick="showTab('skills'); changeColorOTHER('button-nav-skills')" class="button">SKILLS</button>
-                <button onclick="showTab('projects'); changeColorOTHER('button-nav-projects')" class="button">WORK</button> 
+                <button onclick="showTab('projects'); changeColorOTHER('button-nav-projects')" class="button">PROJECTS</button> 
             </div>
             <div class="content-content" id="content-career">
                 <h1>CAREER</h1>
@@ -83,13 +83,38 @@
                     <li class="timeline-event">
                         <label class="timeline-event-icon"></label>
                         <div class="timeline-event-copy">
-                          <p class="timeline-event-thumbnail">Jul 2022 – Dec 2024</p>
+                          <p class="timeline-event-thumbnail">Apr 2023 – Dec 2024</p>
                           <h3>
-                            Novartis External Contractor<br>
+                            Novartis Data Analyst<br>
                             Warsaw  
                           </h3>
                           <h4>Data Analyst</h4>
-                          <p>Collaborative member of an international team specializing in: reporting, developing analytical tools, co-designing KPIs, process optimization and delivering actionable insights for informed decision-making.</p>
+                          <p>
+                            • Collaborative member of an international operations
+                            team <br>
+                            • Specializing in reporting, analytical tool development,
+                            KPI design, and process optimization<br>
+                            • Supporting SAP system development<br>
+                            • Delivering actionable insights for informed
+                            decision-making<br>
+                        </div>
+                      </li>
+
+                    <li class="timeline-event">
+                        <label class="timeline-event-icon"></label>
+                        <div class="timeline-event-copy">
+                          <p class="timeline-event-thumbnail">Jul 2022 – Mar 2023</p>
+                          <h3>
+                            Novartis Intern<br>
+                            Warsaw  
+                          </h3>
+                          <h4>Data Analyst</h4>
+                          <p>
+                            • Intern in an international operations team <br>
+                            • Assisting supervisors with various tasks<br>
+                            • Preparing and automating reports<br>
+                            • Participating in Novartis internship projects<br>
+                          </p>
                         </div>
                       </li>
                     <li class="timeline-event">
@@ -140,85 +165,120 @@
                 </ul>
             </div>
             <div class="content-content" id="content-skills">
-                <a href="static/skills-light.png" target="_blank"><img id= "skills-image" src="static/skills.png"  style="width: 100%; height: 100%;"></a>
+                <a href="static/skills.svg" target="_blank"><img id= "skills-image" src="static/skills.svg"  style="width: 100%; height: 100%;"></a>
             </div>
             <div class="content-content" id="content-projects">
-                <div class="slider">
-                    <div class="list">
-                        <div class="item">
-                            <img src="static/slide1.jpg">
-                            <div class="description">
-                                <h2>InfoFlare</h2>
-                                <p>InfoFlare is a data-driven project dedicated to providing insights and visualizations centered on various topics. The project emphasizes transparency and clarity, making complex data accessible and understandable for a wide audience.</p>
-                                <div class="description-button">
-                                    <button class="link-button" onclick="window.open('https://github.com/StellAuror/infoflare', '_blank')">See GitHub</button>
-                                </div>
-                            </div>
+                <div class="project-grid">
+
+                    <!-- Hotel -->
+                    <div class="project-card">
+                        <div class="project-image">
+                            <img src="https://private-user-images.githubusercontent.com/100155329/418388185-b59bbfe4-0a3c-4339-92bf-ea10a902677e.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NDA5NTkxNzgsIm5iZiI6MTc0MDk1ODg3OCwicGF0aCI6Ii8xMDAxNTUzMjkvNDE4Mzg4MTg1LWI1OWJiZmU0LTBhM2MtNDMzOS05MmJmLWVhMTBhOTAyNjc3ZS5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwMzAyJTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDMwMlQyMzQxMThaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT03YmZhNzBhM2Q5YTEyMDVmMTUwMGNiYzUxZWE2NWQ3YzY5MWI5ODVhYzUyNjUyNWNjNTIxZGI2MjI1Y2EzNjMzJlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.7cfHZq4CxPiNoSEQKGUXVPfxyo7VB0ruPeYKFK0SIXg" alt="Hotel Location">
                         </div>
-                        <div class="item">
-                            <img src="static/slide3.jpg">
-                            <div class="description">
-                                <h2>Time40</h2>
-                                <p>Time40 is an application that uses scraping to obtain data and then analyze it in a simple drill-through form. Are you thirsty? This app will help you to find the best tea (or coffee) to buy at fiveoclock.eu ;)</p>
-                                <div class="description-button">
-                                    <button class="link-button" onclick="window.open('https://github.com/StellAuror/time40', '_blank')">See GitHub</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <img src="static/slide5.jpg">
-                            <div class="description">
-                                <h2>Lucent</h2>
-                                <p>The result of engineering work, the essence of which is the design of an analytical application allowing for the acquisition, transformation and presentation of data for supply chain employees.</p>
-                                <div class="description-button">
-                                    <button class="link-button" onclick="window.open('https://github.com/StellAuror/lucent', '_blank')" >See GitHub</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <img src="static/slide4.jpg">
-                            <div class="description">
-                                <h2>RPubs</h2>
-                                <p>Welcome to my RPubs account, your gateway to a curated collection of my reports and interactive documents. Explore insights on demography, electrification, football teams, weather, and more. Delve into a world of knowledge and discovery—all from a single platform!</p>
-                                <div class="description-button">
-                                    <button class="link-button" onclick="window.open('https://rpubs.com/StellAuror', '_blank')" >See RPubs</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="item">
-                            <img src="static/slide6.jpg">
-                            <div class="description">
-                                <h2>Airlines</h2>
-                                <p>Passanger's satisfaction dashboard. By selecting different dimensions, users can compare various passenger characteristics to assess their satisfaction with flights and explore the impact of individual factors. The algorithm also identifies similar passengers to one defined by user so that you can verify likelihood of such a passanger.</p>
-                                <div class="description-button">
-                                    <button class="link-button" onclick="window.open('https://github.com/StellAuror/airlane-passangers', 'See GitHub')" >Details</button>
-                                </div>
-                            </div>
+                        <div class="project-details">
+                            <h2>Hotel Location | Power BI</h2>
+                            <p>Discover the tourist value of any location with this Power BI app. It analyzes various factors such as attractions, accessibility, accommodation, and local amenities to provide an insightful score, businesses identify the most promising destinations.</p>
+                            <a href="https://github.com/StellAuror/assessment-betasi" target="_blank" class="project-link">See GitHub</a>
                         </div>
                     </div>
-                    <div class="buttons">
-                        <button id="prev"><</button>
-                        <button id="next">></button>
+                    
+                    
+                    <!-- InfoFlare -->
+                    <div class="project-card">
+                        <div class="project-image">
+                            <img src="static/InfoFlare.png" alt="InfoFlare">
+                        </div>
+                        <div class="project-details">
+                            <h2>InfoFlare | X Account</h2>
+                            <p>InfoFlare is a data-driven project dedicated to providing insights and visualizations centered on various topics. The project emphasizes transparency and clarity, making complex data accessible and understandable for a wide audience.</p>
+                            <a href="https://x.com/mk_infoflare" target="_blank" class="project-link">See X (Twitter)</a>
+                        </div>
                     </div>
-                    <ul class="dots">
-                        <li class="activated"></li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                    </ul>
+        
+                    <!-- Lucent -->
+                    <div class="project-card">
+                        <div class="project-image">
+                            <img src="static/lucent.png" alt="Lucent">
+                        </div>
+                        <div class="project-details">
+                            <h2>Lucent | Shiny App. </h2>
+                            <p>The result of engineering work, the essence of which is the design of an analytical application allowing for the acquisition, transformation and presentation of data for supply chain employees.</p>
+                            <a href="https://github.com/StellAuror/lucent" target="_blank" class="project-link">See GitHub</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Asteria -->
+                    <div class="project-card">
+                        <div class="project-image">
+                            <img src="static/asteria.png" alt="Asteria">
+                        </div>
+                        <div class="project-details">
+                            <h2>Asteria | Shiny App.</h2>
+                            <p>"This app records and analyzes strength performance results using advanced LLM technology. It offers detailed insights and trends, helping users track progress, optimize training, and enhance their fitness journey with data-driven recommendations."</p>
+                            <a href="https://github.com/StellAuror/asteria" target="_blank" class="project-link">See RPubs</a>
+                        </div>
+                    </div>
+                    
+                    <!-- Time40 -->
+                    <div class="project-card">
+                        <div class="project-image">
+                            <img src="static/time40.png" alt="Time40">
+                        </div>
+                        <div class="project-details">
+                            <h2>Time40 | Shiny Scraping App.</h2>
+                            <p>Time40 is an application that uses scraping to obtain data and then analyze it in a simple drill-through form. Are you thirsty? This app will help you to find the best tea (or coffee) to buy at fiveoclock.eu ;)</p>
+                            <a href="https://github.com/StellAuror/time40" target="_blank" class="project-link">See GitHub</a>
+                        </div>
+                    </div>
+
+                    <!-- Minecraft -->
+                    <div class="project-card">
+                        <div class="project-image">
+                            <img src="static/mc-transactions.png" alt="Minecraft">
+                        </div>
+                        <div class="project-details">
+                            <h2>Trading Analysis | Shiny App.</h2>
+                            <p>This app analyzes economic offers from the Minecraft system, providing players with insights into item trade values, market trends, and pricing strategies. It helps optimize in-game economy decisions, making trading more efficient and profitable.</p>
+                            <a href="https://github.com/StellAuror/mc-transactions" target="_blank" class="project-link">See RPubs</a>
+                        </div>
+                    </div>
+
+                    <!-- RPubs -->
+                    <div class="project-card">
+                        <div class="project-image">
+                            <img src="static/rpubs.png" alt="RPubs">
+                        </div>
+                        <div class="project-details">
+                            <h2>RPubs</h2>
+                            <p>Welcome to my RPubs account, your gateway to a curated collection of my reports and interactive documents. Explore insights on demography, electrification, football teams, weather, and more. Delve into a world of knowledge and discovery—all from a single platform!</p>
+                            <a href="https://rpubs.com/StellAuror" target="_blank" class="project-link">See RPubs</a>
+                        </div>
+                    </div>
+
+
+                    <!-- Airlines -->
+                    <div class="project-card">
+                        <div class="project-image">
+                            <img src="static/slide6.jpg" alt="Airlines">
+                        </div>
+                        <div class="project-details">
+                            <h2>Airlines | Shiny App.</h2>
+                            <p>Passanger's satisfaction dashboard. By selecting different dimensions, users can compare various passenger characteristics to assess their satisfaction with flights and explore the impact of individual factors. The algorithm also identifies similar passengers to one defined by user so that you can verify likelihood of such a passanger.</p>
+                            <a href="https://github.com/StellAuror/airlane-passangers" target="_blank" class="project-link">See GitHub</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="nav">
             <button onclick="showTab('about'); changeColor(this); " class="button-nav" id="button-nav-startup">ABOUT</button>
             <button onclick="showTab('career'); changeColor(this);" class="button-nav"  id="button-nav-career">CAREER</button>
-            <button onclick="showTab('degree'); changeColor(this);" class="button-nav"  id="button-nav-degree">STUDY</button>
+            <button onclick="showTab('degree'); changeColor(this);" class="button-nav"  id="button-nav-degree">EDUCATION</button>
             <button onclick="showTab('skills'); changeColor(this);" class="button-nav"  id="button-nav-skills">SKILLS</button>
-            <button onclick="showTab('projects'); changeColor(this);" class="button-nav"  id="button-nav-projects">WORK</button>
+            <button onclick="showTab('projects'); changeColor(this);" class="button-nav"  id="button-nav-projects">PROJECTS</button>
         </div>
     </div>
-    <script src="button.js"></script>
-    <script src="slider.js"></script>
+    <script src="js/button.js"></script>
+    <script src="js/slider.js"></script>
 </body>
 </html>
