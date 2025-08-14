@@ -1,0 +1,485 @@
+/* Timeline Portfolio Component Styles */
+#fetch-journey, #journey {
+    height: 100vh;
+    max-width: 1200px;
+    width: 100%;
+    position: relative;
+    overflow: hidden; /* brak przewijania całej aplikacji */
+}
+
+.timeline-app-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.timeline-main-content {
+    height: calc(100vh - 350px);
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) minmax(200px, 1fr);
+    gap: 20px;
+    padding: 20px;
+    position: relative;
+    width: 100%;
+}
+
+/* Panel prawy */
+.timeline-right-panel {
+    border-radius: 12px;
+    width: 100%;
+    padding: 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    min-width: 0;     /* pozwala zwężać w gridzie */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#timeline-right-content {
+    width: 100%;
+}
+
+/* Panel lewy */
+.timeline-left-panel {
+    max-width: 600px;
+    width: 100%;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+}
+#timeline-left-content {
+    width: 100%;
+}
+
+.timeline-event-title {
+    margin-top: -10px;
+    font-size: 4rem;
+    font-weight: 300;
+    margin-bottom: 12px;
+    color: #fff;
+    font-family: 'BlinkMacSystemFont';
+}
+
+.timeline-event-year {
+    margin-bottom: 0px;
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.timeline-event-description {
+    line-height: 1.6;
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    text-align: justify;
+}
+
+.timeline-event-media {
+    display: block;
+    max-height: 800px;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.timeline-event-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.timeline-tag {
+    background: #1a8cd8;
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Nawigacja */
+.timeline-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left:  -20px;
+    right: -20px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    padding: 0 20px;
+    z-index: 10;
+}
+
+.timeline-nav-button {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.212);
+    z-index: 10;
+    border: none;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10rem;
+    transition: all 0.3s ease;
+    pointer-events: all;
+}
+
+.timeline-nav-button:hover {
+    color: white;
+    transform: scale(1.1);
+}
+
+.timeline-nav-button:disabled {
+    cursor: not-allowed;
+    transform: none;
+    color: #aaaaaa00;
+}
+
+/* Oś czasu */
+.timeline-wrapper {
+    position: relative;
+    touch-action: pan-x;
+    overflow-x: scroll;
+}
+
+.timeline {
+    position: relative;
+    bottom: 30px;
+    height: 300px;
+}
+
+/* Główna linia osi czasu */
+.timeline-axis {
+    position: absolute;
+    bottom: 30px;
+    left: 60px;
+    right: 60px;
+    height: 1px;
+    background: #6c757d;
+    z-index: 1;
+}
+
+/* Znaczniki na osi (ticks) */
+.timeline-tick {
+    position: absolute;
+    bottom: 25px;
+    width: 1px;
+    height: 10px;
+    background: #6c757d;
+    z-index: 2;
+}
+
+/* Etykiety lat */
+.timeline-label {
+    position: absolute;
+    bottom: 8px;
+    font-size: 0.7rem;
+    color: #495057;
+    font-weight: 500;
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+/* Bloki wydarzeń */
+.timeline-item {
+    position: absolute;
+    bottom: 45px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 3;
+}
+
+.timeline-block {
+    background: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 8px 10px;
+    width: 120px;
+    min-height: 100px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+.timeline-item:hover .timeline-block {
+    transform: translateY(-10px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.timeline-item.timeline-active .timeline-block {
+    background: #007bff;
+    border-color: #0056b3;
+    height: 200px;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 3px 12px rgba(0, 123, 255, 0.3);
+}
+
+.timeline-block-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    line-height: 1.2;
+    color: #212529;
+}
+
+.timeline-item.timeline-active .timeline-block-title {
+    color: white;
+}
+
+.timeline-block-desc {
+    font-size: 0.65rem;
+    color: #6c757d;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.timeline-item.timeline-active .timeline-block-desc {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Linia łącząca blok z osią */
+.timeline-connector {
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 15px;
+    background: #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.timeline-item.timeline-active .timeline-connector {
+    background: #007bff;
+    width: 2px;
+}
+
+/* Punkt połączenia z osią */
+.timeline-point {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 8px;
+    background: #6c757d;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    z-index: 3;
+}
+
+.timeline-item.timeline-active .timeline-point {
+    background: #007bff;
+    width: 6px;
+    height: 6px;
+}
+
+/* Animacje */
+.timeline-fade-in {
+    animation: timelineFadeIn 0.5s ease-in-out;
+}
+
+@keyframes timelineFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.timeline-slide-in {
+    animation: timelineSlideIn 0.4s ease-out;
+}
+
+@keyframes timelineSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Loading state */
+.timeline-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    font-size: 1.1rem;
+    color: #7f8c8d;
+}
+
+/* Mobile Responsive Timeline - 1000px and below */
+@media (max-width: 1000px) {
+    /* Enable proper vertical scrolling for mobile */
+    #fetch-journey, #journey {
+        height: auto;
+        overflow: visible;
+        touch-action: pan-y;
+    }
+
+    .timeline-app-container {
+        overflow: visible;
+        touch-action: pan-y;
+        height: auto;
+        min-height: 100vh;
+    }
+
+    .timeline-main-content {
+        height: auto;
+        min-height: calc(100vh - 100px);
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px;
+        touch-action: pan-y;
+    }
+
+    /* Content panels - stack vertically with proper spacing */
+    .timeline-right-panel {
+        order: 2;
+        width: 100%;
+        max-width: none;
+        padding: 20px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: flex-start;
+        min-height: auto;
+        touch-action: pan-y;
+    }
+
+    .timeline-left-panel {
+        order: 3;
+        width: 100%;
+        max-width: none;
+        padding: 20px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: flex-start;
+        min-height: auto;
+        margin: 0;
+        padding: 0;
+        touch-action: pan-y;
+    }
+
+    #timeline-left-content,
+    #timeline-right-content {
+        margin: 0;
+        padding: 0;
+        touch-action: pan-y;
+    }
+    
+    /* Event content - improve text handling and spacing */
+    .timeline-event-title {
+        font-size: 2.5rem;
+        font-weight: 300;
+        margin-top: 0;
+        margin-bottom: 12px;
+        text-align: center;
+        word-wrap: break-word;
+        hyphens: auto;
+        line-height: 1.1;
+        touch-action: pan-y;
+    }
+
+    .timeline-event-year {
+        font-size: 1rem;
+        text-align: center;
+        margin-bottom: 16px;
+        font-weight: 600;
+        touch-action: pan-y;
+    }
+
+    .timeline-event-description {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        text-align: justify;
+        margin-bottom: 16px;
+        height: auto;
+        touch-action: pan-y;
+    }
+  
+    .timeline {
+        touch-action: pan-x;
+    }
+    
+    .timeline-navigation {
+        position: fixed;
+        touch-action: none;
+    }
+
+    .timeline-nav-button {
+        touch-action: manipulation;
+        background: rgba(255, 255, 255, 0.192);
+        color: rgba(255, 255, 255, 0.685);
+        border: none;
+        width: 60px;
+        height: 60px;
+        margin-top: 200px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+        pointer-events: all;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+        backdrop-filter: blur(5px);
+    }
+
+    .timeline-nav-button:hover,
+    .timeline-nav-button:active {
+        background: rgba(255, 255, 255, 1);
+        transform: scale(1.05);
+        color: #007bff;
+    }
+
+    .timeline-nav-button:disabled {
+        visibility: hidden;
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) and (pointer: coarse) {
+        .timeline-item:hover .timeline-block {
+            transform: none;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .timeline-nav-button:hover {
+            transform: none;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+        }
+        
+        .timeline-nav-button:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 1);
+            color: #007bff;
+        }
+
+        /* Increase touch targets for timeline items */
+        .timeline-item {
+            padding: 8px;
+            margin: -8px;
+            touch-action: manipulation;
+        }
+    }
+}

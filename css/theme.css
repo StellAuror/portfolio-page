@@ -1,0 +1,68 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: #fff;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: #000000;
+    color: #ffffff;
+    overflow-x: hidden;
+    width: 100%;
+    font-size: 1.3rem;
+
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    height: 100vh; /* zmiana z min-height */
+}
+
+.sidebar {
+    display:  block;
+    width: 320px;
+    background-color: #000000;
+    padding: 2rem;
+    height: 100vh;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    border-left: 1px solid #333;
+    border-right: 1px solid #333;
+    height: 100vh;
+    overflow-y: auto;
+    height: 100%;
+    overflow-x: hidden;
+    position: relative;
+    max-width: 1200px;
+    width: 100%;
+}
+
+
+/* Stylowanie scrolla dla WebKit (Chrome, Edge, Safari) */
+.main-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.main-content::-webkit-scrollbar-track {
+    background: #000000; /* zlewający się z tłem */
+}
+
+.main-content::-webkit-scrollbar-thumb {
+    background-color: #333333; /* lekko widoczny suwak */
+    border-radius: 4px;
+}
+
+/* Stylowanie dla Firefox */
+.main-content {
+    scrollbar-width: thin;
+    scrollbar-color: #333333 #000000;
+}

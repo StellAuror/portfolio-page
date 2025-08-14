@@ -1,0 +1,35 @@
+<!-- Projects Section -->
+<section id="projects" class="content-section">
+    <h2 class="section-header" data-lang="projects.title">Projects</h2>
+    <p class="section-subtitle" data-lang="projects.subtitle">A collection of my recent work and personal projects.</p>
+
+    <div class="projects-grid" id="projectsGrid">
+        <!-- Projects will be dynamically loaded here -->
+    </div>
+</section>
+
+<!-- Project Modal -->
+<div class="modal-overlay" id="projectModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-image" id="modalImage"></div>
+            <button class="modal-close" onclick="closeProjectModal()">×</button>
+        </div>
+        <div class="modal-content">
+            <h2 class="modal-title" id="modalTitle">Project Title</h2>
+            <p class="modal-tech" id="modalTech">Technologies Used</p>
+            <p class="modal-description" id="modalDescription">Project description goes here...</p>
+            
+            <div class="modal-features">
+                <h4>Key Features</h4>
+                <ul class="features-list" id="modalFeatures">
+                    <!-- Features will be dynamically loaded here -->
+                </ul>
+            </div>
+
+            <div class="modal-links" id="modalLinks">
+                <!-- Links will be dynamically loaded here -->
+            </div>
+        </div>
+    </div>
+</div>

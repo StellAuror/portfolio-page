@@ -1,0 +1,31 @@
+.lang-switcher {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 0.7rem;
+  border-radius: 8px;
+}
+
+.lang-switcher-switch {
+  background: transparent;
+  border: 1px solid #555;
+  color: #eee;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.lang-switcher-switch:hover {
+  background: #222;
+  color: #fff;
+  border-color: #888;
+}
+
+.lang-switcher-switch:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #666;
+}

@@ -1,0 +1,600 @@
+{
+    "profile": {
+        "title": "Data Analyst",
+        "location": "Poland, Nysa"
+    },
+    "music": {
+        "status": "Music",
+        "popup": "Click the button above to play ambient music!"
+    },
+    "about": {
+        "title": "About Me",
+        "subtitle": "Data analyst with passion and 3 years of experience",
+        "greeting": "Hi, I’m Michał — I turn data into decisions.",
+        "p1": "I first encountered data analysis in middle school, designing spreadsheet tools for teachers to process semester results. Since then, I’ve been exploring how data can meaningfully impact the real world.",
+        "p2": "I combine technical skills with curiosity and a human-centered approach. For me, analysis is not just charts and code — it’s above all about connecting insights with people, context, and outcomes.",
+        "p3": "If you’re curious too, take a look at my portfolio. Let’s search together for insights worth putting into action."
+    },
+    "story": {
+        "title": "The Beginning",
+        "description": "Every journey starts with curiosity. Mine began with late nights, endless questions, and the relentless pursuit of turning ideas into reality. This is where passion meets purpose."
+    },
+    "stories": [
+        {
+            "image": "static/gallery/weather-app.png",
+            "title": "Curiosity & Passion",
+            "description": "Every project starts with curiosity — questions that won’t let go and ideas that demand to be built. It’s what drives me to experiment and look for new ways forward."
+        },
+        {
+            "image": "static/gallery/flowers.png",
+            "title": "Creating & Growing",
+            "description": "Countless hours spent coding, exploring data, and solving problems taught me that challenges are opportunities to learn. Each project has sharpened my skills and deepened my understanding — of the analytical process."
+        },
+        {
+            "image": "static/gallery/netgraph.png",
+            "title": "Insight & Impact",
+            "description": "Data isn’t just numbers — it’s stories waiting to be uncovered. Over time I’ve learned how to turn complex information into clear insights that shape better decisions."
+        },
+        {
+            "image": "static/gallery/hotels.png",
+            "title": "Ready for Challenges",
+            "description": "I adapt quickly to new situations and thrive under pressure. I see challenges as a chance to push past limits and keep questioning the status quo."
+        }
+    ],
+    "journey": {
+        "title": "Journey",
+        "subtitle": "Professional and educational path I have taken"
+    },
+    "timelineData": [
+        {
+            "id": 1,
+            "date": 2025.65,
+            "date_full": "Jul 2025",
+            "title": "Microsoft Certified: Data Analyst Associate (PL-300)",
+            "description": "I earned the Microsoft Certified: Data Analyst Associate (PL-300) certification, demonstrating proficiency in preparing, modeling, visualizing, analyzing, and securing data using Power BI. The certificate proves I design effective dashboards and translate business requirements into actionable insights that support business decisions. <br><br> <a style='color:#007bff' target='blank' href='https://learn.microsoft.com/api/credentials/share/en-us/MichaKrawczuk-2645/142518F38A7994A?sharingId=9C2497028F072997'>See certificate</a>",
+            "tags": [
+                "certification",
+                "Microsoft",
+                "Power BI"
+            ],
+            "media": "static/pl-300.png"
+        },
+        {
+            "id": 2,
+            "date": 2024.99,
+            "date_full": "Apr 2023 – Dec 2024",
+            "title": "Data Analyst — Novartis Global Artwork",
+            "description": "I was a core member of the international operations team. I designed and maintained reporting dashboards, developed analytical tools, and established KPIs to monitor performance. I led process-optimization projects, supported SAP workflow integrations, and delivered actionable insights that influenced strategic decisions.",
+            "tags": [
+                "data analyst",
+                "Novartis",
+                "analytics"
+            ],
+            "media": "static/nvs.jpg"
+        },
+        {
+            "id": 3,
+            "date": 2024,
+            "date_full": "Oct 2020 – Jan 2024",
+            "title": "Engineer's Degree — Wrocław University of Science and Technology",
+            "description": "I completed an Engineer's degree in Management Engineering with a specialization in IT Applications in Business. For my final thesis I developed an interactive R Shiny application to monitor the product-labeling process at a pharmaceutical company, which improved transparency and decision-making efficiency.",
+            "tags": [
+                "education",
+                "engineer's degree",
+                "R Shiny"
+            ],
+            "media": "static/pwr.jpg"
+        },
+        {
+            "id": 4,
+            "date": 2023.25,
+            "date_full": "Jun 2022 – Mar 2023",
+            "title": "Intern — Novartis Global Artwork",
+            "description": "I supported the international operations team by assisting supervisors with daily tasks, preparing and automating recurring reports, and contributing to internal initiatives. I developed practical skills in data handling, process documentation, and cross-department communication.",
+            "tags": [
+                "internship",
+                "Novartis",
+                "data analysis"
+            ],
+            "media": "static/nvs.jpg"
+        },
+        {
+            "id": 6,
+            "date": 2022.5,
+            "date_full": "Jan 2022 – Jun 2022",
+            "title": "DataCamp Courses",
+            "description": "I completed a series of DataCamp courses covering R programming, data manipulation, data visualization, dashboard development, and introductory machine learning. I applied the acquired skills in practical analytical projects.",
+            "tags": [
+                "courses",
+                "DataCamp",
+                "R"
+            ],
+            "media": "static/datacamp.png"
+        },
+        {
+            "id": 7,
+            "date": 2020.4,
+            "date_full": "Oct 2016 – May 2020",
+            "title": "High School — Carolinum in Nysa",
+            "description": "I completed an advanced high-school curriculum focused on Mathematics, Physics, Computer Science, and English, which helped me develop strong analytical and problem-solving skills.",
+            "tags": [
+                "education",
+                "high school"
+            ],
+            "media": "static/carolinum.jpg"
+        }
+    ],
+    "projects": {
+        "title": "Projects",
+        "subtitle": "A collection of my recent work and personal projects. In some cases AI was used only for preview images. All AI-generated graphics were generated with Adobre Firefly and include metadata to ensure transparency and ethical use.",
+        "items": {
+            "project0": {
+                "title": "Weather-App | Power BI",
+                "tech": "Power BI • REST API",
+                "description": "Take a deep dive into the short-term weather forecast and compare it with historical patterns for any major location in Europe.",
+                "features": [
+                    "6-day forecast",
+                    "Hourly historical data on over 50 European capitals since 1970"
+                ],
+                "links": [
+                    {
+                        "href": "https://github.com/StellAuror/weather-app",
+                        "label": "GitHub",
+                        "icon": "🐙"
+                    },
+                    {
+                        "href": "https://rpubs.com/StellAuror",
+                        "label": "RPubs",
+                        "icon": "📄"
+                    }
+                ],
+                "image": "static/projects/weather-app.png",
+                "preview": "static/projects/weather-app.png"
+            },
+            "project1": {
+                "title": "Hotel Location | Power BI",
+                "tech": "Power BI",
+                "description": "Discover the tourist value of Cracow with this Power BI app. It analyzes attractions, accessibility, accommodation, and local amenities to provide an insightful score.",
+                "features": [
+                    "Tourist value scoring",
+                    "Attraction and amenities analysis",
+                    "Destination potential identification"
+                ],
+                "links": [
+                    {
+                        "href": "https://github.com/StellAuror/assessment-betasi",
+                        "label": "GitHub",
+                        "icon": "🐙"
+                    }
+                ],
+                "image": "static/projects/hotels.png",
+                "preview": "static/projects/hotels.png"
+            },
+            "project2": {
+                "title": "InfoFlare | X Account",
+                "tech": "Data Visualization • Social Media",
+                "description": "Data-driven project providing insights and visualizations on various topics with transparency and clarity.",
+                "features": [
+                    "Data visualization",
+                    "Wide range of topics",
+                    "Accessible for broad audiences"
+                ],
+                "links": [
+                    {
+                        "href": "https://x.com/mk_infoflare",
+                        "label": "X (Twitter)",
+                        "icon": "🐦"
+                    }
+                ],
+                "image": "static/projects/FlightsEU.png",
+                "preview": "static/projects/info-flare.png"
+            },
+            "project3": {
+                "title": "Lucent | Shiny App.",
+                "tech": "R • Shiny",
+                "description": "Analytical application for supply chain employees enabling acquisition, transformation, and presentation of data.",
+                "features": [
+                    "Data acquisition",
+                    "Transformation pipeline",
+                    "Interactive data presentation"
+                ],
+                "links": [
+                    {
+                        "href": "https://github.com/StellAuror/lucent",
+                        "label": "GitHub",
+                        "icon": "🐙"
+                    }
+                ],
+                "image": "static/projects/lucent.png",
+                "preview": "static/projects/lucent.png"
+            },
+            "project4": {
+                "title": "Asteria | Shiny App.",
+                "tech": "R • Shiny • LLM",
+                "description": "Records and analyzes strength performance results with advanced LLM technology, offering detailed insights and trends.",
+                "features": [
+                    "Strength performance tracking",
+                    "Trend analysis",
+                    "Data-driven recommendations"
+                ],
+                "links": [
+                    {
+                        "href": "https://github.com/StellAuror/asteria",
+                        "label": "GitHub",
+                        "icon": "🐙"
+                    }
+                ],
+                "image": "static/projects/asteria.png",
+                "preview": "static/projects/ai-asteria.jpg"
+            },
+            "project5": {
+                "title": "Time40 | Shiny Scraping App.",
+                "tech": "R • Shiny • Web Scraping",
+                "description": "Uses web scraping to obtain and analyze data in a drill-through form to find the best tea or coffee options.",
+                "features": [
+                    "Data scraping from fiveoclock.eu",
+                    "Simple drill-through analytics",
+                    "Tea and coffee recommendations"
+                ],
+                "links": [
+                    {
+                        "href": "https://github.com/StellAuror/time40",
+                        "label": "GitHub",
+                        "icon": "🐙"
+                    }
+                ],
+                "image": "static/projects/time40.png",
+                "preview": "static/projects/ai-time40.jpg"
+            },
+            "project6": {
+                "title": "Trading Analysis | Shiny App.",
+                "tech": "R • Shiny",
+                "description": "Analyzes Minecraft in-game trade offers, providing insights into trade values, market trends, and pricing strategies.",
+                "features": [
+                    "Trade value analysis",
+                    "Market trend insights",
+                    "Pricing strategy optimization"
+                ],
+                "links": [
+                    {
+                        "href": "https://github.com/StellAuror/mc-transactions",
+                        "label": "GitHub",
+                        "icon": "🐙"
+                    }
+                ],
+                "image": "static/projects/mc-transactions.png",
+                "preview": "static/projects/ai-mc-transactions.jpg"
+            },
+            "project7": {
+                "title": "Data Wrangling Titans | Article",
+                "tech": "R • Python",
+                "description": "Compares R's tidyverse and Python's pandas in terms of efficiency, readability, and performance.",
+                "features": [
+                    "Side-by-side code comparison",
+                    "Performance benchmarking",
+                    "Readability analysis"
+                ],
+                "links": [
+                    {
+                        "href": "https://rpubs.com/StellAuror/pandas",
+                        "label": "RPubs",
+                        "icon": "📄"
+                    }
+                ],
+                "image": "static/projects/py-vs-r.png",
+                "preview": "static/projects/wrangling.png"
+            },
+            "project8": {
+                "title": "Poland through the Eyes of Eurostat Data — Energy Analysis",
+                "tech": "R • Eurostat • Data Visualization",
+                "description": "An exploratory data analysis of Poland’s energy production, consumption, and sources between 2008–2022, based on Eurostat API data. The project positions Poland in the EU context, comparing key metrics with other member states, and visualizes trends, dependencies, and inefficiencies in the country’s energy sector.",
+                "features": [
+                    "Analysis",
+                    "Eurostat",
+                    "Energy Trends"
+                ],
+                "links": [
+                    {
+                        "href": "https://rpubs.com/StellAuror/plene",
+                        "label": "RPubs",
+                        "icon": "📄"
+                    }
+                ],
+                "image": "static/projects/emergu-waste.png",
+                "preview": "static/projects/energy.jpg"
+            },
+            "project9": {
+                "title": "Poland — Facts and Curiosities from Wikipedia",
+                "tech": "R • Eurostat • Data Visualization",
+                "description": "A data-driven overview of Poland, created through web scraping from Wikipedia (English and Polish versions). The report presents selected facts and curiosities about the country’s geography, population, language, history, economy, religion, major cities, and sports culture, combining statistical insights with cultural highlights. Each data point is sourced and linked to its original page.",
+                "features": [
+                    "Analysis",
+                    "Wikipedia",
+                    "Curosity"
+                ],
+                "links": [
+                    {
+                        "href": "https://rpubs.com/StellAuror/pwiki",
+                        "label": "RPubs",
+                        "icon": "📄"
+                    }
+                ],
+                "image": "static/projects/age-pyramid.png",
+                "preview": "static/projects/football-team.png"
+            },
+            "project10": {
+                "title": "Solar Farm Analysis",
+                "tech": "R • Eurostat • Data Visualization",
+                "description": "A data-driven evaluation of a 5.6 kWh residential solar farm, including automated data collection, cleaning, and performance analysis to assess efficiency, seasonal trends, and the impact of outages",
+                "features": [
+                    "Analysis",
+                    "Solar Farm",
+                    "Private"
+                ],
+                "links": [
+                    {
+                        "href": "https://rpubs.com/StellAuror/solar",
+                        "label": "RPubs",
+                        "icon": "📄"
+                    }
+                ],
+                "image": "static/projects/solar-path.png",
+                "preview": "static/projects/energy.jpg"
+            },
+            "project11": {
+                "title": "Airlines | Shiny App.",
+                "tech": "R • Shiny • Machine Learning",
+                "description": "Passenger satisfaction dashboard allowing comparison of characteristics and satisfaction levels, with similar passenger prediction.",
+                "features": [
+                    "Passenger satisfaction analysis",
+                    "Dimension-based filtering",
+                    "Similarity algorithm"
+                ],
+                "links": [
+                    {
+                        "href": "https://github.com/StellAuror/airlane-passangers",
+                        "label": "GitHub",
+                        "icon": "🐙"
+                    }
+                ],
+                "image": "static/projects/airlines.png",
+                "preview": "static/projects/ai-airlines.jpg"
+            }
+        }
+    },
+    "skills": {
+        "title": "Skills",
+        "subtitle": "Analytical, technical, and interpersonal competencies developed through commercial and personal projects.",
+        "analytics-title": "Skills Analytics",
+        "mastery-distribution": "Mastery Distribution",
+        "category-distribution": "Category Breakdown",
+        "categories": [
+            {
+                "name": "Coding & BI Tools",
+                "skills": [
+                    {
+                        "name": "R",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Python",
+                        "mastery": 3
+                    },
+                    {
+                        "name": "T-SQL (analytical)",
+                        "mastery": 4
+                    },
+                    {
+                        "name": "Power BI",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "QlikSense",
+                        "mastery": 3
+                    },
+                    {
+                        "name": "Tableau",
+                        "mastery": 2
+                    },
+                    {
+                        "name": "Alteryx",
+                        "mastery": 1
+                    },
+                    {
+                        "name": "Excel",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Power Automate",
+                        "mastery": 4
+                    },
+                    {
+                        "name": "HTML / CSS / JS",
+                        "mastery": 3
+                    },
+                    {
+                        "name": "Git / GitHub",
+                        "mastery": 3
+                    }
+                ]
+            },
+            {
+                "name": "Hard Skills",
+                "skills": [
+                    {
+                        "name": "Data Analysis",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Data Visualization",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Report Creation",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Dashboard Creation",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "ETL / ELT",
+                        "mastery": 4
+                    },
+                    {
+                        "name": "BPMN / UML / ARIS",
+                        "mastery": 4
+                    },
+                    {
+                        "name": "Process Optimization",
+                        "mastery": 3
+                    },
+                    {
+                        "name": "Machine Learning",
+                        "mastery": 3
+                    },
+                    {
+                        "name": "Working with LLMs",
+                        "mastery": 3
+                    },
+                    {
+                        "name": "Working with APIs",
+                        "mastery": 4
+                    },
+                    {
+                        "name": "Process Automation",
+                        "mastery": 4
+                    },
+                    {
+                        "name": "UI/UX Design",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "KPI Design",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "SAP Environment Knowledge",
+                        "mastery": 3
+                    },
+                    {
+                        "name": "Data Storytelling",
+                        "mastery": 5
+                    }
+                ]
+            },
+            {
+                "name": "Soft Skills",
+                "skills": [
+                    {
+                        "name": "Analytical Thinking",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Communication",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Self-Reliance",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Attention to Detail",
+                        "mastery": 4
+                    },
+                    {
+                        "name": "Flexibility",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Knowledge Management (Zettelkasten)",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Problem-Solving",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Presenting Results",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Teamwork",
+                        "mastery": 4
+                    }
+                ]
+            },
+            {
+                "name": "Languages",
+                "skills": [
+                    {
+                        "name": "Polish",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "English",
+                        "mastery": 4
+                    }
+                ]
+            }
+        ]
+    },
+    "skillDescriptions": {
+        "r": "Very good knowledge of R, including creating complex dashboards, data modeling, and visualization in commercial projects.",
+        "python": "Intermediate knowledge, including data analysis, GUI application design, and automation.",
+        "t-sql (analytical)": "Very good knowledge of creating complex queries, aggregations, and code optimization for business analysis.",
+        "power bi": "Very good knowledge of designing interactive reports and dashboards, data modeling, and performance optimization.",
+        "qliksense": "Intermediate knowledge in creating visualizations and data analysis in QlikSense, based on internal training and certification, as well as collaboration with professional QlikSense developers.",
+        "tableau": "Basic knowledge of the tool, enabling the creation of simple dashboards and visualizations.",
+        "alteryx": "Familiarity with basic ETL tools, requiring further practice for independent projects.",
+        "excel": "Very good knowledge of advanced formulas, VBA usage, pivot tables, Power Query, and data modeling in Power Pivot.",
+        "power automate": "Good knowledge of creating flows that automate business processes and integrate with Microsoft 365 services, supported by experience in automation projects.",
+        "html / css / js": "Intermediate knowledge of web technologies, enabling the creation and modification of websites.",
+        "git / github": "Intermediate knowledge of working with repositories, resolving conflicts, and basic team collaboration.",
+        "n8n": "Familiarity with basic platform functions and experience in building simple workflows.",
+        "data analysis": "Advanced skills in examining, cleaning, transforming, and modeling data in business projects.",
+        "data visualization": "Advanced design and optimization of visualizations that facilitate the interpretation of complex data.",
+        "report creation": "Advanced creation of reports combining data, insights, and graphic elements tailored to the audience.",
+        "dashboard creation": "Advanced design of interactive panels for monitoring indicators and processes.",
+        "etl / elt": "Very good knowledge of designing and optimizing processes for extracting, transforming, and loading data.",
+        "bpmn / uml / aris": "Very good knowledge of modeling business processes and IT systems.",
+        "process optimization": "Intermediate knowledge of methods for improving processes in typical applications.",
+        "machine learning": "Advanced creation and optimization of models, data preparation, and prediction quality assessment.",
+        "working with api": "Very good knowledge of integrating systems via APIs, including authentication and data handling.",
+        "process automation": "Very good knowledge of designing automation to reduce manual work.",
+        "ui/ux design": "Advanced knowledge of designing user interfaces and experiences according to usability principles.",
+        "kpi design": "Advanced definition and implementation of measurable business performance indicators, supported by many years of experience working with Process Owners.",
+        "knowledge of sap environment": "Intermediate knowledge of operating SAP modules and applying them in analytical projects.",
+        "data storytelling": "Advanced combination of narrative and visualization to effectively convey insights.",
+        "analytical thinking": "Advanced ability to analyze information and draw conclusions in complex situations.",
+        "communication": "Advanced ability to clearly and precisely convey information in speech and writing.",
+        "independence": "Advanced ability to organize work and make decisions without supervision.",
+        "attention to detail": "Very good attention to details that affect work quality.",
+        "flexibility": "Advanced ability to adapt to changing conditions and priorities.",
+        "knowledge management (zettelkasten)": "Advanced use of the Zettelkasten system for long-term knowledge gathering and linking.",
+        "problem solving": "Advanced ability to diagnose the causes of problems and find effective solutions.",
+        "results presentation": "Advanced ability to present results clearly and tailored to the audience.",
+        "teamwork": "Very good ability to collaborate and share knowledge within a team.",
+        "polish": "Native proficiency in Polish, both spoken and written.",
+        "english": "Very good proficiency in English, both spoken and written, enabling fluent business communication."
+    },
+    "popup": {
+        "loading": "Loading description...",
+        "noDescription": "Detailed information about {skillName} is not available in the current language.",
+        "descriptionError": "Description for {skillName} could not be loaded. Please check the language file or network connection.",
+        "loadError": "Error loading description for {skillName}."
+    },
+    "analytics": {
+        "masteryLevel": "Level {level}",
+        "categoryCount": "{count} ({percentage}%)",
+        "summary": "{totalSkills} skills across {totalCategories} categories",
+        "totalSkills": "Total Skills",
+        "categories": "Categories",
+        "avgMastery": "Avg Mastery",
+        "expertLevel": "Expert Level",
+        "card": {
+            "itemsCount": "{count} items",
+            "metrics": "{current}/{total}"
+        }
+    }
+}

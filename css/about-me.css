@@ -1,0 +1,50 @@
+.main-content {
+    height: 100%;
+    overflow-x: hidden;
+    position: relative;
+    max-width: 1200px;
+    width: 100%;
+}
+
+.content-section {
+    display: none;
+    width: 100%;
+    margin-bottom: 100px;
+    animation: fadeIn 0.3s ease;
+}
+
+.content-section.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+ 
+.section-header {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #fff, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.section-subtitle {
+    color: #71767b;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+    max-width: 70%;
+}
+
+.text-wraper {
+    max-width: 1190px;
+}
+
+a, .copy-text {
+    color: #71767b;
+    text-decoration: none;
+}
