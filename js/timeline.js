@@ -62,10 +62,8 @@ async function setLanguage(newLang) {
 
 // Initialize timeline with current language
 async function init() {
-    // Fetch initial data
     window.timelineData = await fetchTimelineData(currentLang);
-    
-    // Wait few seconds to ensure all elements are ok
+
     setTimeout(() => {
         if (!document.getElementById('journey')) return;
         if (document.querySelector('.timeline-wrapper')?.clientWidth === 0) {
@@ -75,14 +73,9 @@ async function init() {
         if (window.timelineData.length > 0) {
             renderTimeline();
             showEvent(0);
+            setupEventListeners();   // moved here so it runs once
         }
     }, 500);
-    
-    if (window.timelineData.length > 0) {
-        renderTimeline();
-        showEvent(0);
-        setupEventListeners();
-    }
 }
 
 function renderTimeline() {
@@ -266,22 +259,32 @@ function scrollToActiveItem() {
     autoScrollToActiveItem();
 }
 
+let __touchGesturesBound = false;
+let __controlsBound = false;
+
 function setupTouchGestures() {
     const wrapper = document.querySelector('.timeline-wrapper');
     if (!wrapper) return;
-    
+    if (__touchGesturesBound) return;  // <- prevent duplicates
+    __touchGesturesBound = true;
+
     let startX = 0;
     let startTime = 0;
     let isScrolling = false;
+    let startScrollLeft = 0;
 
     wrapper.addEventListener('touchstart', (e) => {
         startX = e.touches[0].clientX;
         startTime = Date.now();
         isScrolling = false;
+        startScrollLeft = wrapper.scrollLeft;
     }, { passive: true });
 
+    // Consider it "scrolling" only if scrollLeft actually changes
     wrapper.addEventListener('touchmove', () => {
-        isScrolling = true;
+        if (Math.abs(wrapper.scrollLeft - startScrollLeft) > 5) {
+            isScrolling = true;
+        }
     }, { passive: true });
 
     wrapper.addEventListener('touchend', (e) => {
@@ -290,7 +293,7 @@ function setupTouchGestures() {
         const endTime = Date.now();
         const deltaX = startX - endX;
         const deltaTime = endTime - startTime;
-        if (Math.abs(deltaX) > 50 && deltaTime < 300) {
+        if (Math.abs(deltaX) > 50 && deltaTime < 200) {
             if (deltaX > 0 && currentIdx < timelineData.length - 1) {
                 showEvent(currentIdx + 1);
             } else if (deltaX < 0 && currentIdx > 0) {
@@ -301,9 +304,12 @@ function setupTouchGestures() {
 }
 
 function setupEventListeners() {
+    if (__controlsBound) return;  // <- prevent duplicates
+    __controlsBound = true;
+
     const nextBtn = document.getElementById('timeline-next-btn');
     const prevBtn = document.getElementById('timeline-prev-btn');
-    
+
     if (nextBtn) {
         nextBtn.addEventListener('click', () => {
             if (currentIdx > 0) showEvent(currentIdx - 1);
@@ -332,7 +338,6 @@ function setupEventListeners() {
         }, 250);
     });
 }
-
 async function tryInitTimeline() {
     if (__timelineInitialized) return false;
 
