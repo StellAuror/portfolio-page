@@ -21,22 +21,22 @@
     },
     "stories": [
         {
-            "image": "static/gallery/weather-app.png",
+            "image": "static/gallery/weather-app.webp",
             "title": "Ciekawość i pasja",
             "description": "Każdy projekt zaczyna się od ciekawości — pytań, które nie dają spokoju, i pomysłów domagających się realizacji. To ona prowadzi mnie do eksperymentów i poszukiwania nowych rozwiązań."
         },
         {
-            "image": "static/gallery/flowers.png",
+            "image": "static/gallery/flowers.webp",
             "title": "Tworzenie i rozwój",
             "description": "Godziny spędzone na kodowaniu, analizie danych i rozwiązywaniu problemów nauczyły mnie, że wyzwania to okazje do nauki. Każdy projekt poszerzał moje umiejętności i pozwalał lepiej rozumieć czym jest analiza danych."
         },
         {
-            "image": "static/gallery/netgraph.png",
+            "image": "static/gallery/netgraph.webp",
             "title": "Wgląd i wpływ",
             "description": "Dane to nie tylko liczby — to historie, które można odkryć i opowiedzieć. W miarę nowych doświadczeń nauczyłem się przekładać złożone informacje na jasne wnioski, które wspierają podejmowanie trafnych decyzji."
         },
         {
-            "image": "static/gallery/hotels.png",
+            "image": "static/gallery/hotels.webp",
             "title": "Gotowość na wyzwania",
             "description": "Szybko odnajduję się w nowych sytuacjach i potrafię działać pod presją. Wyzwania traktuję jak okazję, by przekraczać dotychczasowe granice i nieustannie kontestować status quo."
         }
@@ -57,20 +57,20 @@
                 "Microsoft",
                 "Power BI"
             ],
-            "media": "static/pl-300.png"
+            "media": "static/pl-300.webp"
         },
         {
             "id": 2,
             "date": 2024.99,
             "date_full": "Kwi 2023 – Gru 2024",
             "title": "Analityk danych — Novartis Global Artwork",
-            "description": "Byłem kluczowym członkiem międzynarodowego zespołu operacyjnego. Projektowałem i utrzymywałem pulpity raportowe, tworzyłem narzędzia analityczne oraz definiowałem wskaźniki KPI do monitorowania efektywności. Prowadziłem inicjatywy optymalizacji procesów, wspierałem integracje przepływów pracy w systemie SAP oraz dostarczałem praktyczne wnioski wspomagające decyzje strategiczne.",
+            "description": "Byłem analitykiem w międzynarodowego zespołu operacyjnego. Projektowałem i utrzymywałem pulpity raportowe, tworzyłem narzędzia analityczne oraz definiowałem wskaźniki KPI do monitorowania efektywności. Prowadziłem inicjatywy optymalizacji procesów, wspierałem integracje przepływów pracy w systemie SAP oraz dostarczałem praktyczne wnioski wspomagające decyzje strategiczne.",
             "tags": [
                 "analityk danych",
                 "Novartis",
                 "analiza"
             ],
-            "media": "static/nvs.jpg"
+            "media": "static/nvs.webp"
         },
         {
             "id": 3,
@@ -83,7 +83,7 @@
                 "tytuł inżyniera",
                 "R Shiny"
             ],
-            "media": "static/pwr.jpg"
+            "media": "static/pwr.webp"
         },
         {
             "id": 4,
@@ -96,7 +96,7 @@
                 "Novartis",
                 "analiza danych"
             ],
-            "media": "static/nvs.jpg"
+            "media": "static/nvs.webp"
         },
         {
             "id": 6,
@@ -109,10 +109,23 @@
                 "DataCamp",
                 "R"
             ],
-            "media": "static/datacamp.png"
+            "media": "static/datacamp.webp"
         },
         {
             "id": 7,
+            "date": 2022.1,
+            "date_full": "Lip 2020 – Gru 2020, Lip 2021 – Sty 2022",
+            "title": "Pracownik Magazynowy — Amazon Fulfillment Poland",
+            "description": "Wspierałem operacje logistyczne Amazon w dynamicznym środowisku magazynowym. Do moich obowiązków należało wykładanie i konsolidowanie towarów w celu utrzymania sprawnych procesów, a następnie obsługa zamówień klientów, obejmująca ich przyjmowanie, sortowanie produktów oraz przygotowanie do wysyłki. W trakcie tej pracy zdobyłem praktyczne doświadczenie w korzystaniu z systemów zarządzania magazynem oraz lepiej zrozumiałem przepływ danych i wskaźniki operacyjne z perspektywy pracownika.",
+            "tags": [
+                "magazyn",
+                "Amazon",
+                "operacje"
+            ],
+            "media": "static/amazon.webp"
+        },
+        {
+            "id": 8,
             "date": 2020.4,
             "date_full": "Paź 2016 – Maj 2020",
             "title": "Liceum Ogólnokształcące — Carolinum w Nysie",
@@ -121,7 +134,7 @@
                 "edukacja",
                 "liceum"
             ],
-            "media": "static/carolinum.jpg"
+            "media": "static/carolinum.webp"
         }
     ],
     "projects": {
@@ -141,15 +154,10 @@
                         "href": "https://github.com/StellAuror/weather-app",
                         "label": "GitHub",
                         "icon": "🐙"
-                    },
-                    {
-                        "href": "https://rpubs.com/StellAuror",
-                        "label": "RPubs",
-                        "icon": "📄"
                     }
                 ],
-                "image": "static/projects/weather-app.png",
-                "preview": "static/projects/weather-app.png"
+                "image": "static/projects/weather-app.webp",
+                "preview": "static/projects/weather-app.webp"
             },
             "project1": {
                 "title": "Hotel Location | Power BI",
@@ -167,8 +175,8 @@
                         "icon": "🐙"
                     }
                 ],
-                "image": "static/projects/hotels.png",
-                "preview": "static/projects/hotels.png"
+                "image": "static/projects/hotels.webp",
+                "preview": "static/projects/hotels.webp"
             },
             "project2": {
                 "title": "InfoFlare | Konto X",
@@ -186,8 +194,8 @@
                         "icon": "🐦"
                     }
                 ],
-                "image": "static/projects/FlightsEU.png",
-                "preview": "static/projects/info-flare.png"
+                "image": "static/projects/FlightsEU.webp",
+                "preview": "static/projects/info-flare.webp"
             },
             "project3": {
                 "title": "Lucent | Aplikacja Shiny",
@@ -205,8 +213,8 @@
                         "icon": "🐙"
                     }
                 ],
-                "image": "static/projects/lucent.png",
-                "preview": "static/projects/lucent.png"
+                "image": "static/projects/lucent.webp",
+                "preview": "static/projects/lucent.webp"
             },
             "project4": {
                 "title": "Asteria | Aplikacja Shiny",
@@ -224,8 +232,8 @@
                         "icon": "🐙"
                     }
                 ],
-                "image": "static/projects/asteria.png",
-                "preview": "static/projects/ai-asteria.jpg"
+                "image": "static/projects/asteria.webp",
+                "preview": "static/projects/ai-asteria.webp"
             },
             "project5": {
                 "title": "Time40 | Aplikacja Shiny do scrapingu",
@@ -243,8 +251,8 @@
                         "icon": "🐙"
                     }
                 ],
-                "image": "static/projects/time40.png",
-                "preview": "static/projects/ai-time40.jpg"
+                "image": "static/projects/time40.webp",
+                "preview": "static/projects/ai-time40.webp"
             },
             "project6": {
                 "title": "Trading Analysis | Aplikacja Shiny",
@@ -262,8 +270,8 @@
                         "icon": "🐙"
                     }
                 ],
-                "image": "static/projects/mc-transactions.png",
-                "preview": "static/projects/ai-mc-transactions.jpg"
+                "image": "static/projects/mc-transactions.webp",
+                "preview": "static/projects/ai-mc-transactions.webp"
             },
             "project7": {
                 "title": "Data Wrangling Titans | Artykuł",
@@ -281,8 +289,8 @@
                         "icon": "📄"
                     }
                 ],
-                "image": "static/projects/py-vs-r.png",
-                "preview": "static/projects/wrangling.png"
+                "image": "static/projects/py-vs-r.webp",
+                "preview": "static/projects/wrangling.webp"
             },
             "project8": {
                 "title": "Polska oczami danych Eurostatu — analiza energetyczna",
@@ -300,8 +308,8 @@
                         "icon": "📄"
                     }
                 ],
-                "image": "static/projects/emergu-waste.png",
-                "preview": "static/projects/energy.jpg"
+                "image": "static/projects/emergu-waste.webp",
+                "preview": "static/projects/energy.webp"
             },
             "project9": {
                 "title": "Polska — fakty i ciekawostki z Wikipedii",
@@ -319,8 +327,8 @@
                         "icon": "📄"
                     }
                 ],
-                "image": "static/projects/age-pyramid.png",
-                "preview": "static/projects/football-team.png"
+                "image": "static/projects/age-pyramid.webp",
+                "preview": "static/projects/football-team.webp"
             },
             "project10": {
                 "title": "Analiza farmy fotowoltaicznej",
@@ -338,8 +346,8 @@
                         "icon": "📄"
                     }
                 ],
-                "image": "static/projects/solar-path.png",
-                "preview": "static/projects/energy.jpg"
+                "image": "static/projects/solar-path.webp",
+                "preview": "static/projects/energy.webp"
             },
             "project11": {
                 "title": "Airlines | Aplikacja Shiny",
@@ -357,8 +365,8 @@
                         "icon": "🐙"
                     }
                 ],
-                "image": "static/projects/airlines.png",
-                "preview": "static/projects/ai-airlines.jpg"
+                "image": "static/projects/airlines.webp",
+                "preview": "static/projects/ai-airlines.webp"
             }
         }
     },

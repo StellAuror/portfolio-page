@@ -29,3 +29,10 @@
   outline: none;
   box-shadow: 0 0 0 2px #666;
 }
+
+@media (max-width: 1000px) {
+  .lang-switcher {
+    bottom: 60px;
+    left: 0.5rem;
+  }  
+}

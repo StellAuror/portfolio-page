@@ -37,7 +37,7 @@ window.addEventListener('touchend', e => {
   endX = e.changedTouches[0].clientX;
   const deltaX = endX - startX;
 
-  if (deltaX > 150) {  // swipe right - open sidebar
+  if (deltaX > 100) {  // swipe right - open sidebar
     sidebar.style.display = 'block';
   } else if (deltaX < -100) {  // swipe left - close sidebar
     sidebar.style.display = 'none';

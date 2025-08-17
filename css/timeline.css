@@ -141,7 +141,6 @@
 
 /* Oś czasu */
 .timeline-wrapper {
-    visibility: hidden;
     position: relative;
     touch-action: pan-x;
     overflow-x: scroll;
@@ -420,6 +419,10 @@
     .timeline {
         touch-action: pan-x;
     }
+
+    .timeline-wrapper {
+        visibility: hidden;
+    }
     
     .timeline-navigation {
         position: fixed;
@@ -456,6 +459,7 @@
     .timeline-nav-button:disabled {
         visibility: hidden;
     }
+    
 
     /* Touch device optimizations */
     @media (hover: none) and (pointer: coarse) {
@@ -482,5 +486,11 @@
             margin: -8px;
             touch-action: manipulation;
         }
+    }
+}
+
+@media (max-height: 1000px) {
+    .timeline-wrapper {
+        visibility: hidden;
     }
 }
