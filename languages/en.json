@@ -8,12 +8,12 @@
         "popup": "Click the button above to play ambient music!"
     },
     "about": {
-        "title": "About Me",
-        "subtitle": "Data analyst with passion and 3 years of experience",
+        "title": "About me",
+        "subtitle": "Data Analyst with passion and 3 years of experience",
         "greeting": "Hi, I’m Michał — I turn data into decisions.",
-        "p1": "I first encountered data analysis in middle school, designing spreadsheet tools for teachers to process semester results. Since then, I’ve been exploring how data can meaningfully impact the real world.",
-        "p2": "I combine technical skills with curiosity and a human-centered approach. For me, analysis is not just charts and code — it’s above all about connecting insights with people, context, and outcomes.",
-        "p3": "If you’re curious too, take a look at my portfolio. Let’s search together for insights worth putting into action."
+        "p1": "My interest in analysis started early — back in middle school I was already designing spreadsheets for teachers to help them make sense of grades and results. What began as a curiosity soon grew into a passion and a deliberate career path. Every stage of my studies and work became an opportunity to deepen my understanding of how data reflects the complexity of reality and how it can help us interpret it.",
+        "p2": "For me, data analysis is more than a set of methods — it’s a way of thinking. It’s not only about identifying patterns but also about explaining them in a way that makes sense to others. Numbers only gain meaning once they become part of a conversation — when they provide perspective, support decisions, and open up new opportunities. That’s why I focus on connecting the analytical side with the human factor and the context in which data exists.",
+        "p3": "In my portfolio, you’ll find projects that put this philosophy into practice. Each of them shows that analysis doesn’t end with tables and charts, but finds its purpose in real decisions and changes that affect people and processes. That transformation — from raw information to informed action — is, to me, the ultimate goal of working with data."
     },
     "story": {
         "title": "The Beginning",
