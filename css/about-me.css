@@ -44,6 +44,11 @@
     max-width: 1190px;
 }
 
+.text-wraper {
+    font-weight: 100;
+
+}
+
 a, .copy-text {
     color: #71767b;
     text-decoration: none;
