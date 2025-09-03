@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BI Solution Consultation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+        }
+
+        .main-layout {
+            display: flex;
+            gap: 30px;
+        }
+
+        .form-section {
+            flex: 2;
+        }
+
+        .pricing-section {
+            flex: 1;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .pricing-section.hidden {
+            opacity: 0;
+            transform: translateX(20px);
+            pointer-events: none;
+        }
+
+        .step {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .step.hidden {
+            display: none;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .step-number {
+            background: #333;
+            color: #fff;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 0.9rem;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .options-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 6px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .option:hover {
+            border-color: #555;
+            background: #222;
+        }
+
+        .option.selected {
+            border-color: #fff;
+            background: #222;
+        }
+
+        .option input[type="radio"],
+        .option input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .option-title {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .option-description {
+            color: #888;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .option-price {
+            color: #ccc;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .pricing-panel {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 25px;
+        }
+
+        .pricing-header {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+        }
+
+        .price-display {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+        }
+
+        .price-range {
+            color: #888;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        .waterfall-container {
+            height: 350px;
+            position: relative;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            background: linear-gradient(to bottom, #0a0a0a, #111);
+            margin-bottom: 20px;
+        }
+
+        .waterfall-chart {
+            height: 280px;
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            position: relative;
+        }
+
+        .waterfall-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+            min-width: 40px;
+        }
+
+        .waterfall-bar {
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .waterfall-bar.base {
+            background: linear-gradient(to top, #1a5490, #2196F3);
+        }
+
+        .waterfall-bar.increase {
+            background: linear-gradient(to top, #0d7938, #4CAF50);
+        }
+
+        .waterfall-bar.total {
+            background: linear-gradient(to top, #c94b00, #ff6f00);
+            box-shadow: 0 0 20px rgba(255, 111, 0, 0.3);
+        }
+
+        .waterfall-bar:hover {
+            filter: brightness(1.2);
+            transform: translateY(-2px);
+        }
+
+        .waterfall-connector {
+            position: absolute;
+            top: 0;
+            right: -3px;
+            width: calc(100% + 3px);
+            height: 2px;
+            background: #666;
+            z-index: 1;
+        }
+
+        .waterfall-label {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.65rem;
+            color: #999;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .waterfall-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            color: #fff;
+            font-weight: 600;
+            white-space: nowrap;
+            background: rgba(0,0,0,0.8);
+            padding: 2px 6px;
+            border-radius: 3px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .waterfall-bar:hover .waterfall-value {
+            opacity: 1;
+        }
+
+        .waterfall-column.total .waterfall-value {
+            opacity: 1;
+            font-size: 0.9rem;
+            background: #ff6f00;
+            color: #000;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #999;
+        }
+        .waterfall-segment {
+            background: #3c3c3c;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .legend-color.base {
+            background: linear-gradient(to right, #1a5490, #2196F3);
+        }
+
+        .legend-color.increase {
+            background: linear-gradient(to right, #0d7938, #4CAF50);
+        }
+
+        .legend-color.total {
+            background: linear-gradient(to right, #c94b00, #ff6f00);
+        }
+
+        .summary-section {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .summary-title {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .summary-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .summary-item {
+            color: #ccc;
+            font-size: 0.95rem;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .summary-item:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+        }
+
+        .cta-button {
+            background: #fff;
+            color: #000;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 30px;
+            font-weight: 500;
+        }
+
+        .cta-button:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 968px) {
+            .main-layout {
+                flex-direction: column;
+            }
+            
+            .pricing-section {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>BI Solution Consultation</h1>
+        <p class="subtitle">Configure your custom business intelligence solution or speak with our experts</p>
+
+        <div class="main-layout">
+            <div class="form-section">
+                <!-- Step 1: Getting Started -->
+                <div class="step" id="step1">
+                    <div class="step-header">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Getting Started</div>
+                    </div>
+
+                <!-- Expert mode summary -->
+                <div class="summary-section" id="expert-summary" style="display: none;">
+                    <div class="summary-title">Consultation Summary</div>
+                    <div class="summary-items" id="expert-summary-items">
+                        <div class="summary-item">No options selected yet</div>
+                    </div>
+                    <button class="cta-button">Schedule Expert Consultation</button>
+                </div>
+                    <div class="options-grid">
+                        <label class="option">
+                            <input type="radio" name="getting-started" value="configure">
+                            <div class="option-title">Configure My Solution</div>
+                            <div class="option-description">Build a custom BI solution with transparent pricing and timeline estimates</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="getting-started" value="expert">
+                            <div class="option-title">Speak with an Expert</div>
+                            <div class="option-description">Get personalized guidance from our BI specialists for complex requirements</div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Configuration Steps (2-7) -->
+                <div class="step hidden" id="step2-config">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Industry Focus</div>
+                    </div>
+                    <div class="options-grid">
+                        <label class="option">
+                            <input type="radio" name="industry" value="finance" data-price-modifier="1.3">
+                            <div class="option-title">
+                                Finance & Banking
+                                <span class="option-price">+30%</span>
+                            </div>
+                            <div class="option-description">Regulatory compliance, risk analysis, fraud detection</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="industry" value="supply-chain" data-price-modifier="1.2">
+                            <div class="option-title">
+                                Supply Chain & Logistics
+                                <span class="option-price">+20%</span>
+                            </div>
+                            <div class="option-description">Inventory optimization, delivery tracking, demand forecasting</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="industry" value="hr" data-price-modifier="1.0">
+                            <div class="option-title">
+                                Human Resources
+                                <span class="option-price">+0%</span>
+                            </div>
+                            <div class="option-description">Employee analytics, performance tracking, recruitment insights</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="industry" value="healthcare" data-price-modifier="1.3">
+                            <div class="option-title">
+                                Healthcare
+                                <span class="option-price">+30%</span>
+                            </div>
+                            <div class="option-description">HIPAA compliance, patient analytics, operational efficiency</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="industry" value="manufacturing" data-price-modifier="1.2">
+                            <div class="option-title">
+                                Manufacturing
+                                <span class="option-price">+20%</span>
+                            </div>
+                            <div class="option-description">Production efficiency, quality control, equipment monitoring</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="industry" value="retail" data-price-modifier="1.1">
+                            <div class="option-title">
+                                Retail & E-commerce
+                                <span class="option-price">+10%</span>
+                            </div>
+                            <div class="option-description">Customer analytics, inventory management, sales optimization</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="industry" value="other" data-price-modifier="1.0">
+                            <div class="option-title">
+                                Other Industry
+                                <span class="option-price">+0%</span>
+                            </div>
+                            <div class="option-description">Custom solution tailored to your specific needs</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="step hidden" id="step3-config">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Data Integration Scope</div>
+                    </div>
+                    <div class="options-grid">
+                        <label class="option">
+                            <input type="radio" name="data-sources" value="single" data-price="2000">
+                            <div class="option-title">
+                                Single Data Source
+                                <span class="option-price">+$2,000</span>
+                            </div>
+                            <div class="option-description">One database, CRM, or system (2-3 weeks)</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="data-sources" value="multiple-small" data-price="6000">
+                            <div class="option-title">
+                                2-5 Data Sources
+                                <span class="option-price">+$6,000</span>
+                            </div>
+                            <div class="option-description">Multiple systems integration (4-6 weeks)</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="data-sources" value="multiple-medium" data-price="12000">
+                            <div class="option-title">
+                                5-10 Data Sources
+                                <span class="option-price">+$12,000</span>
+                            </div>
+                            <div class="option-description">Complex ecosystem integration (8-10 weeks)</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="data-sources" value="enterprise" data-price="20000">
+                            <div class="option-title">
+                                10+ Data Sources
+                                <span class="option-price">+$20,000</span>
+                            </div>
+                            <div class="option-description">Enterprise-level integration (12+ weeks)</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="step hidden" id="step4-config">
+                    <div class="step-header">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Data Maturity Level</div>
+                    </div>
+                    <div class="options-grid">
+                        <label class="option">
+                            <input type="radio" name="data-maturity" value="excellent" data-price="0">
+                            <div class="option-title">
+                                Excellent Understanding
+                                <span class="option-price">+$0</span>
+                            </div>
+                            <div class="option-description">Well-documented data structure, clear relationships, defined business rules</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="data-maturity" value="good" data-price="3000">
+                            <div class="option-title">
+                                Good Understanding
+                                <span class="option-price">+$3,000</span>
+                            </div>
+                            <div class="option-description">Most areas documented, some gaps need clarification</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="data-maturity" value="limited" data-price="8000">
+                            <div class="option-title">
+                                Limited Understanding
+                                <span class="option-price">+$8,000</span>
+                            </div>
+                            <div class="option-description">Requires comprehensive data discovery and documentation</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="step hidden" id="step5-config">
+                    <div class="step-header">
+                        <div class="step-number">5</div>
+                        <div class="step-title">Analytics Requirements (Select all that apply)</div>
+                    </div>
+                    <div class="options-grid">
+                        <label class="option">
+                            <input type="checkbox" name="analytics" value="quality" data-price="2500">
+                            <div class="option-title">
+                                Data Quality Assessment
+                                <span class="option-price">+$2,500</span>
+                            </div>
+                            <div class="option-description">Identify inconsistencies, duplicates, and data issues</div>
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" name="analytics" value="descriptive" data-price="2500">
+                            <div class="option-title">
+                                Descriptive Analytics
+                                <span class="option-price">+$2,500</span>
+                            </div>
+                            <div class="option-description">Historical trends, patterns, and business insights</div>
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" name="analytics" value="predictive" data-price="2500">
+                            <div class="option-title">
+                                Predictive Analytics
+                                <span class="option-price">+$2,500</span>
+                            </div>
+                            <div class="option-description">Forecasting, ML models, and predictive insights</div>
+                        </label>
+                        <label class="option">
+                            <input type="checkbox" name="analytics" value="realtime" data-price="2500">
+                            <div class="option-title">
+                                Real-time Monitoring
+                                <span class="option-price">+$2,500</span>
+                            </div>
+                            <div class="option-description">Live dashboards, alerts, and streaming analytics</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="step hidden" id="step6-config">
+                    <div class="step-header">
+                        <div class="step-number">6</div>
+                        <div class="step-title">Ongoing Support</div>
+                    </div>
+                    <div class="options-grid">
+                        <label class="option">
+                            <input type="radio" name="support" value="implementation" data-price="0">
+                            <div class="option-title">
+                                Implementation Only
+                                <span class="option-price">+$0</span>
+                            </div>
+                            <div class="option-description">One-time setup with comprehensive handover documentation</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="support" value="hypercare" data-price="4000">
+                            <div class="option-title">
+                                Hyper-care Support
+                                <span class="option-price">+$4,000</span>
+                            </div>
+                            <div class="option-description">3-6 months of intensive post-launch support and optimization</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="support" value="247" data-price="12000">
+                            <div class="option-title">
+                                24/7 Expert Support
+                                <span class="option-price">+$12,000</span>
+                            </div>
+                            <div class="option-description">Ongoing dedicated support with SLA guarantees</div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="step hidden" id="step7-config">
+                    <div class="step-header">
+                        <div class="step-number">7</div>
+                        <div class="step-title">Documentation Requirements</div>
+                    </div>
+                    <div class="options-grid">
+                        <label class="option">
+                            <input type="radio" name="documentation" value="business" data-price="2000">
+                            <div class="option-title">
+                                Business Documentation
+                                <span class="option-price">+$2,000</span>
+                            </div>
+                            <div class="option-description">User guides, process flows, business rules documentation</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="documentation" value="technical" data-price="2500">
+                            <div class="option-title">
+                                Technical Documentation
+                                <span class="option-price">+$2,500</span>
+                            </div>
+                            <div class="option-description">Architecture diagrams, code documentation, deployment guides</div>
+                        </label>
+                        <label class="option">
+                            <input type="radio" name="documentation" value="complete" data-price="4500">
+                            <div class="option-title">
+                                Complete Documentation Suite
+                                <span class="option-price">+$4,500</span>
+                            </div>
+                            <div class="option-description">Full business and technical documentation package</div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Expert Steps (2-5) -->
+                <div class="step hidden" id="step2-expert">
+                    <div class="step-header">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Contact Information</div>
+                    </div>
+                    <div class="options-grid" style="display: flex; flex-direction: column; gap: 15px;">
+                        <input type="text" placeholder="Full Name" style="padding: 10px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                        <input type="email" placeholder="Email Address" style="padding: 10px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                        <input type="tel" placeholder="Phone Number" style="padding: 10px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                    </div>
+                </div>
+
+                <div class="step hidden" id="step3-expert">
+                    <div class="step-header">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Description</div>
+                    </div>
+                    <div class="options-grid">
+                        <textarea placeholder="Please describe your business needs..." style="width: 100%; min-height: 150px; padding: 15px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px; resize: vertical;"></textarea>
+
+                    </div>
+                </div>
+
+                <div class="step hidden" id="step4-expert" srtyle="display: none; !important;">
+                    <div class="step-header">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Schedule 30 Meeting</div>
+                    </div>
+                    <div class="options-grid">
+                        <input type="datetime-local" style="padding: 10px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px;">
+
+                    </div>
+                </div>
+
+                <div class="step hidden" id="step5-expert">
+                    <div class="step-header">
+                        <div class="step-number">5</div>
+                        <div class="step-title">We will tell you what to do with your data.</div>
+                    </div>
+                    <div class="options-grid">
+                        <p style="color: #888;">Our experts will review your information and contact you within 24 hours.</p>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="pricing-section hidden" id="pricing-panel">
+                <div class="pricing-panel">
+                    <div class="pricing-header">Estimated Investment</div>
+                    <div class="price-display" id="total-price">$15,000</div>
+                    <div class="price-range">Range: $12,000 - $75,000</div>
+                    
+                    <div class="waterfall-container">
+                        <div class="waterfall-chart" id="waterfall-chart">
+                            <!-- Waterfall segments will be added dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="summary-section" style="margin-top: 30px; background: transparent; border: none; padding: 0;">
+                        <div class="summary-title">Configuration Summary</div>
+                        <div class="summary-items" id="summary-items">
+                            <div class="summary-item">No options selected yet</div>
+                        </div>
+                        <button class="cta-button" style="width: 100%;">Schedule Consultation</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BASE_PRICE = 15000;
+        let currentMode = null;
+        let selections = {
+            mode: null,
+            industry: null,
+            industryModifier: 1.0,
+            dataSources: 0,
+            dataMaturity: 0,
+            analytics: [],
+            support: 0,
+            documentation: 0,
+            // Expert mode selections
+            objectives: null,
+            timeline: null,
+            budget: null,
+            challenges: []
+        };
+
+        // Initialize event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Getting started selection
+            document.querySelectorAll('input[name="getting-started"]').forEach(radio => {
+                radio.addEventListener('change', handleGettingStarted);
+            });
+
+            // Configuration mode selections
+            document.querySelectorAll('input[name="industry"]').forEach(radio => {
+                radio.addEventListener('change', handleIndustrySelection);
+            });
+
+            document.querySelectorAll('input[name="data-sources"]').forEach(radio => {
+                radio.addEventListener('change', handleDataSourcesSelection);
+            });
+
+            document.querySelectorAll('input[name="data-maturity"]').forEach(radio => {
+                radio.addEventListener('change', handleDataMaturitySelection);
+            });
+
+            document.querySelectorAll('input[name="analytics"]').forEach(checkbox => {
+                checkbox.addEventListener('change', handleAnalyticsSelection);
+            });
+
+            document.querySelectorAll('input[name="support"]').forEach(radio => {
+                radio.addEventListener('change', handleSupportSelection);
+            });
+
+            document.querySelectorAll('input[name="documentation"]').forEach(radio => {
+                radio.addEventListener('change', handleDocumentationSelection);
+            });
+
+            // Expert mode selections
+            document.querySelectorAll('input[name="objectives"]').forEach(radio => {
+                radio.addEventListener('change', handleObjectivesSelection);
+            });
+
+            document.querySelectorAll('input[name="timeline"]').forEach(radio => {
+                radio.addEventListener('change', handleTimelineSelection);
+            });
+
+            document.querySelectorAll('input[name="budget"]').forEach(radio => {
+                radio.addEventListener('change', handleBudgetSelection);
+            });
+
+            document.querySelectorAll('input[name="challenges"]').forEach(checkbox => {
+                checkbox.addEventListener('change', handleChallengesSelection);
+            });
+
+            // Handle option selection visuals
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function(e) {
+                    // Prevent double triggering if clicking directly on input
+                    if (e.target.tagName === 'INPUT') return;
+                    
+                    const input = this.querySelector('input');
+                    if (input.type === 'radio') {
+                        // Clear other selections in the same group
+                        document.querySelectorAll(`input[name="${input.name}"]`).forEach(radio => {
+                            radio.closest('.option').classList.remove('selected');
+                        });
+                        this.classList.add('selected');
+                        input.checked = true;
+                        input.dispatchEvent(new Event('change'));
+                    } else if (input.type === 'checkbox') {
+                        input.checked = !input.checked;
+                        this.classList.toggle('selected');
+                        input.dispatchEvent(new Event('change'));
+                    }
+                });
+            });
+        }
+
+        function handleGettingStarted(e) {
+            const value = e.target.value;
+            currentMode = value;
+            selections.mode = value;
+
+            // Hide all steps first
+            document.querySelectorAll('.step:not(#step1)').forEach(step => {
+                step.classList.add('hidden');
+            });
+
+            if (value === 'configure') {
+                // Show configuration steps
+                document.getElementById('step2-config').classList.remove('hidden');
+                document.getElementById('step3-config').classList.remove('hidden');
+                document.getElementById('step4-config').classList.remove('hidden');
+                document.getElementById('step5-config').classList.remove('hidden');
+                document.getElementById('step6-config').classList.remove('hidden');
+                document.getElementById('step7-config').classList.remove('hidden');
+                document.getElementById('pricing-panel').classList.remove('hidden');
+                calculatePrice();
+            } else if (value === 'expert') {
+                // Show expert steps
+                document.getElementById('step2-expert').classList.remove('hidden');
+                document.getElementById('step3-expert').classList.remove('hidden');
+                document.getElementById('step4-expert').classList.remove('hidden');
+                document.getElementById('step5-expert').classList.remove('hidden');
+                document.getElementById('pricing-panel').classList.add('hidden');
+            }
+
+            updateSummary();
+        }
+
+        function handleIndustrySelection(e) {
+            selections.industry = e.target.closest('.option').querySelector('.option-title').childNodes[0].textContent.trim();
+            selections.industryModifier = parseFloat(e.target.dataset.priceModifier);
+            calculatePrice();
+            updateSummary();
+        }
+
+        function handleDataSourcesSelection(e) {
+            selections.dataSources = parseInt(e.target.dataset.price);
+            calculatePrice();
+            updateSummary();
+        }
+
+        function handleDataMaturitySelection(e) {
+            selections.dataMaturity = parseInt(e.target.dataset.price);
+            calculatePrice();
+            updateSummary();
+        }
+
+        function handleAnalyticsSelection(e) {
+            const price = parseInt(e.target.dataset.price);
+            const name = e.target.closest('.option').querySelector('.option-title').childNodes[0].textContent.trim();
+            
+            if (e.target.checked) {
+                selections.analytics.push({ name, price });
+            } else {
+                selections.analytics = selections.analytics.filter(item => item.name !== name);
+            }
+            
+            calculatePrice();
+            updateSummary();
+        }
+
+        function handleSupportSelection(e) {
+            selections.support = parseInt(e.target.dataset.price);
+            calculatePrice();
+            updateSummary();
+        }
+
+        function handleDocumentationSelection(e) {
+            selections.documentation = parseInt(e.target.dataset.price);
+            calculatePrice();
+            updateSummary();
+        }
+
+        function handleObjectivesSelection(e) {
+            selections.objectives = e.target.closest('.option').querySelector('.option-title').textContent.trim();
+            updateSummary();
+        }
+
+        function handleTimelineSelection(e) {
+            selections.timeline = e.target.closest('.option').querySelector('.option-title').textContent.trim();
+            updateSummary();
+        }
+
+        function handleBudgetSelection(e) {
+            selections.budget = e.target.closest('.option').querySelector('.option-title').textContent.trim();
+            updateSummary();
+        }
+
+        function handleChallengesSelection(e) {
+            const name = e.target.closest('.option').querySelector('.option-title').textContent.trim();
+            
+            if (e.target.checked) {
+                selections.challenges.push(name);
+            } else {
+                selections.challenges = selections.challenges.filter(item => item !== name);
+            }
+            
+            updateSummary();
+        }
+
+        function calculatePrice() {
+            if (currentMode !== 'configure') return;
+
+            let baseWithIndustry = BASE_PRICE * selections.industryModifier;
+            let analyticsTotal = selections.analytics.reduce((sum, item) => sum + item.price, 0);
+            
+            let total = baseWithIndustry + 
+                       selections.dataSources + 
+                       selections.dataMaturity + 
+                       analyticsTotal +
+                       selections.support + 
+                       selections.documentation;
+
+            // Update price display
+            document.getElementById('total-price').textContent = `${total.toLocaleString()}`;
+            
+            // Update waterfall chart
+            updateWaterfallChart(baseWithIndustry, total);
+        }
+
+        function updateWaterfallChart(baseWithIndustry, total) {
+            const chartContainer = document.getElementById('waterfall-chart');
+            chartContainer.innerHTML = '';
+
+            const segments = [];
+            
+            // Base implementation
+            segments.push({
+                name: 'Base Implementation',
+                value: BASE_PRICE,
+                height: (BASE_PRICE / total) * 100
+            });
+
+            // Industry modifier (if any)
+            if (selections.industryModifier > 1) {
+                const industryExtra = baseWithIndustry - BASE_PRICE;
+                segments.push({
+                    name: `${selections.industry} Complexity`,
+                    value: industryExtra,
+                    height: (industryExtra / total) * 100
+                });
+            }
+
+            // Data sources
+            if (selections.dataSources > 0) {
+                segments.push({
+                    name: 'Data Integration',
+                    value: selections.dataSources,
+                    height: (selections.dataSources / total) * 100
+                });
+            }
+
+            // Data maturity
+            if (selections.dataMaturity > 0) {
+                segments.push({
+                    name: 'Data Discovery',
+                    value: selections.dataMaturity,
+                    height: (selections.dataMaturity / total) * 100
+                });
+            }
+
+            // Analytics
+            selections.analytics.forEach(analytics => {
+                segments.push({
+                    name: analytics.name,
+                    value: analytics.price,
+                    height: (analytics.price / total) * 100
+                });
+            });
+
+            // Support
+            if (selections.support > 0) {
+                segments.push({
+                    name: 'Ongoing Support',
+                    value: selections.support,
+                    height: (selections.support / total) * 100
+                });
+            }
+
+            // Documentation
+            if (selections.documentation > 0) {
+                segments.push({
+                    name: 'Documentation',
+                    value: selections.documentation,
+                    height: (selections.documentation / total) * 100
+                });
+            }
+
+            // Create segments
+            segments.forEach(segment => {
+                const div = document.createElement('div');
+                div.className = 'waterfall-segment';
+                div.style.height = `${segment.height}%`;
+                
+                const tooltip = document.createElement('div');
+                tooltip.className = 'waterfall-tooltip';
+                tooltip.textContent = `${segment.name}: ${segment.value.toLocaleString()}`;
+                
+                div.appendChild(tooltip);
+                chartContainer.appendChild(div);
+            });
+        }
+
+        function updateSummary() {
+            const summaryItems = document.getElementById('summary-items');
+            summaryItems.innerHTML = '';
+
+            if (currentMode === 'configure') {
+                const items = [];
+                
+                if (selections.industry) {
+                    items.push(`Industry: ${selections.industry}`);
+                }
+                if (selections.dataSources > 0) {
+                    const sourceText = {
+                        2000: 'Single Data Source',
+                        6000: '2-5 Data Sources',
+                        12000: '5-10 Data Sources',
+                        20000: '10+ Data Sources'
+                    };
+                    items.push(`Integration: ${sourceText[selections.dataSources]}`);
+                }
+                if (selections.dataMaturity >= 0 && document.querySelector('input[name="data-maturity"]:checked')) {
+                    const maturityText = {
+                        0: 'Excellent Data Understanding',
+                        3000: 'Good Data Understanding',
+                        8000: 'Limited Data Understanding'
+                    };
+                    items.push(`Data Maturity: ${maturityText[selections.dataMaturity]}`);
+                }
+                if (selections.analytics.length > 0) {
+                    items.push(`Analytics: ${selections.analytics.map(a => a.name).join(', ')}`);
+                }
+                if (selections.support >= 0 && document.querySelector('input[name="support"]:checked')) {
+                    const supportText = {
+                        0: 'Implementation Only',
+                        4000: 'Hyper-care Support',
+                        12000: '24/7 Expert Support'
+                    };
+                    items.push(`Support: ${supportText[selections.support]}`);
+                }
+                if (selections.documentation >= 0 && document.querySelector('input[name="documentation"]:checked')) {
+                    const docText = {
+                        2000: 'Business Documentation',
+                        2500: 'Technical Documentation',
+                        4500: 'Complete Documentation Suite'
+                    };
+                    items.push(`Documentation: ${docText[selections.documentation]}`);
+                }
+
+                if (items.length === 0) {
+                    items.push('Please complete the configuration steps above');
+                }
+
+                items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'summary-item';
+                    div.textContent = item;
+                    summaryItems.appendChild(div);
+                });
+
+            } else if (currentMode === 'expert') {
+                const items = [];
+                
+                if (selections.objectives) {
+                    items.push(`Business Objective: ${selections.objectives}`);
+                }
+                if (selections.timeline) {
+                    items.push(`Timeline: ${selections.timeline}`);
+                }
+                if (selections.budget) {
+                    items.push(`Budget Range: ${selections.budget}`);
+                }
+                if (selections.challenges.length > 0) {
+                    items.push(`Key Challenges: ${selections.challenges.join(', ')}`);
+                }
+
+                if (items.length === 0) {
+                    items.push('Please complete the consultation questions above');
+                }
+
+                items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'summary-item';
+                    div.textContent = item;
+                    summaryItems.appendChild(div);
+                });
+            } else {
+                const div = document.createElement('div');
+                div.className = 'summary-item';
+                div.textContent = 'No options selected yet';
+                summaryItems.appendChild(div);
+            }
+        }
+
+        // Handle CTA button
+        document.querySelector('.cta-button').addEventListener('click', function() {
+            if (currentMode === 'configure') {
+                const total = document.getElementById('total-price').textContent;
+                alert(`Thank you for configuring your BI solution!\n\nEstimated Investment: ${total}\n\nOur team will contact you shortly to discuss your requirements in detail.`);
+            } else if (currentMode === 'expert') {
+                alert(`Thank you for your interest!\n\nOur BI experts will review your requirements and contact you within 24 hours with a personalized consultation.`);
+            } else {
+                alert('Please select either "Configure My Solution" or "Speak with an Expert" to continue.');
+            }
+        });
+    </script>
+</body>
+</html>
