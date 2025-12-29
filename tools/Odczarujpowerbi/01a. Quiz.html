@@ -1,0 +1,567 @@
+01a. Quiz = 
+
+"
+
+<!DOCTYPE html>
+<html lang='pl'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Quiz: Podstawy DAX</title>
+    <style>
+    * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+    
+            body {
+                font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 1.7;
+                color: #333;
+                background: transparent;
+                padding: 20px;
+            }
+    
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                background: transparent;
+                padding: 40px;
+            }
+    
+            .navigation {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 40px;
+                padding-bottom: 20px;
+                border-bottom: 1px solid #e1e4e8;
+            }
+    
+            button {
+                background: #6b1718;
+                color: white;
+                border: none;
+                padding: 12px 28px;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 1em;
+                font-weight: 500;
+                transition: background 0.2s;
+            }
+    
+            button:hover {
+                background: #380c0c;
+            }
+    
+            button:disabled {
+                background: #e5e5e5;
+                cursor: not-allowed;
+            }
+    
+            .page-indicator {
+                color: #666;
+                font-size: 1em;
+            }
+    
+            .page {
+                display: none;
+                min-height: 500px;
+            }
+    
+            .page.active {
+                display: block;
+                animation: fadeIn 0.3s ease-in;
+            }
+    
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+    
+            h1 {
+                font-size: 26px;
+                line-height: 36px;
+                font-weight: 600;
+                padding-top: 14px;
+                padding-bottom: 6px;
+                margin-bottom: 1em;
+                color: #6b1718;
+                border-bottom: 2px solid #6b1718;
+            }
+    
+            h2 {
+                font-size: 26px;
+                line-height: 36px;
+                font-weight: 600;
+                padding-top: 14px;
+                padding-bottom: 6px;
+                margin: 1.5em 0 0.8em 0;
+                color: #1a1a1a;
+                border-bottom: 2px solid #1a1a1a;
+            }
+    
+            .question-box {
+                background: #f8f9fa;
+                border-left: 3px solid #6b1718;
+                padding: 20px;
+                margin: 1.5em 0;
+                border-radius: 3px;
+            }
+    
+            .question-box p {
+                margin: 0;
+                font-size: 1.05em;
+                color: #1a1a1a;
+            }
+    
+            .answers {
+                margin-top: 1.5em;
+            }
+    
+            .answer-option {
+                background: white;
+                border: 2px solid #e1e4e8;
+                padding: 15px 20px;
+                margin: 10px 0;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: all 0.2s;
+                font-size: 1.05em;
+            }
+    
+            .answer-option:hover {
+                border-color: #6b1718;
+                background: #fef5f5;
+            }
+    
+            .answer-option.selected {
+                border-color: #6b1718;
+                background: #ffe5e6;
+            }
+    
+            .answer-option.correct {
+                border-color: #ccc;
+                background: #d4edda;
+            }
+    
+            .answer-option.incorrect {
+                border-color: #b82b4e;
+                background: #f8d7da;
+            }
+    
+            .feedback {
+                margin-top: 1.5em;
+                padding: 15px 20px;
+                border-radius: 4px;
+                display: none;
+                font-size: 1.05em;
+            }
+    
+            .feedback.show {
+                display: block;
+            }
+    
+            .feedback.correct {
+                background: #d4edda;
+                border-left: 3px solid #28a745;
+                color: #155724;
+            }
+    
+            .feedback.incorrect {
+                background: #f8d7da;
+                border-left: 3px solid #b82b4e;
+                color: #721c24;
+            }
+    
+            .check-button {
+                margin-top: 1.5em;
+                background: #6b1718;
+            }
+    
+            .check-button:hover:not(:disabled) {
+                background: #380c0c;
+            }
+    
+            .check-button:disabled {
+                background: #ccc;
+            }
+    
+            pre {
+                background: #f8f9fa;
+                border-left: 3px solid #6b1718;
+                padding: 18px;
+                margin: 1em 0;
+                overflow-x: auto;
+                border-radius: 3px;
+            }
+    
+            code {
+                font-family: 'Fira Code', 'Courier New', monospace;
+                font-size: 0.95em;
+                color: #b82b4e;
+            }
+    
+            .score-box {
+                background: #6b1718;
+                color: white;
+                padding: 20px;
+                border-radius: 4px;
+                text-align: center;
+                font-size: 1.2em;
+                margin-bottom: 2em;
+            }
+    
+            .summary-item {
+                background: #f8f9fa;
+                padding: 15px;
+                margin: 10px 0;
+                border-radius: 4px;
+                border-left: 3px solid #ccc;
+            }
+    
+            .summary-item.correct {
+                border-left-color: #28a745;
+            }
+    
+            .summary-item.incorrect {
+                border-left-color: #b82b4e;
+            }
+    
+            strong {
+                font-weight: 700;
+                color: #1a1a1a;
+            }
+    
+            p {
+                margin-bottom: 1em;
+            }
+    </style>
+</head>
+<body>
+
+<div class='container'>
+    <!-- Nawigacja na górze -->
+    <div class='navigation'>
+        <button id='prevBtn' onclick='changePage(-1)'>← Poprzednia</button>
+        <span class='page-indicator'>
+            Pytanie <span id='currentPage'>1</span> z <span id='totalPages'>6</span>
+        </span>
+        <button id='nextBtn' onclick='changePage(1)'>Następna →</button>
+    </div>
+
+    <!-- Pytanie 1 -->
+    <div class='page active'>
+        <h1>Pytanie 1</h1>
+        <div class='question-box'>
+            <p><strong>Co oznacza skrót DAX?</strong></p>
+        </div>
+        <div class='answers'>
+            <div class='answer-option' onclick='selectAnswer(0, 0)'>
+                A) Data Analysis eXpressions
+            </div>
+            <div class='answer-option' onclick='selectAnswer(0, 1)'>
+                B) Dynamic Analytics eXtension
+            </div>
+            <div class='answer-option' onclick='selectAnswer(0, 2)'>
+                C) Database Analysis eXtended
+            </div>
+            <div class='answer-option' onclick='selectAnswer(0, 3)'>
+                D) Data Application eXtension
+            </div>
+        </div>
+        <button class='check-button' onclick='checkAnswer(0, 0)'>Sprawdź odpowiedź</button>
+        <div class='feedback' id='feedback-0'></div>
+    </div>
+
+    <!-- Pytanie 2 -->
+    <div class='page'>
+        <h1>Pytanie 2</h1>
+        <div class='question-box'>
+            <p><strong>Jak prawidłowo odwołać się do kolumny w DAX?</strong></p>
+        </div>
+        <div class='answers'>
+            <div class='answer-option' onclick='selectAnswer(1, 0)'>
+                A) <code>Kolumna[Tabela]</code>
+            </div>
+            <div class='answer-option' onclick='selectAnswer(1, 1)'>
+                B) <code>[Kolumna]</code>
+            </div>
+            <div class='answer-option' onclick='selectAnswer(1, 2)'>
+                C) <code>Tabela[Kolumna]</code>
+            </div>
+            <div class='answer-option' onclick='selectAnswer(1, 3)'>
+                D) <code>Kolumna.Tabela</code>
+            </div>
+        </div>
+        <button class='check-button' onclick='checkAnswer(1, 2)'>Sprawdź odpowiedź</button>
+        <div class='feedback' id='feedback-1'></div>
+    </div>
+
+    <!-- Pytanie 3 -->
+    <div class='page'>
+        <h1>Pytanie 3</h1>
+        <div class='question-box'>
+            <p><strong>Jak odwołać się do miary (measure) w DAX?</strong></p>
+        </div>
+        <div class='answers'>
+            <div class='answer-option' onclick='selectAnswer(2, 0)'>
+                A) <code>Tabela[Miara]</code>
+            </div>
+            <div class='answer-option' onclick='selectAnswer(2, 1)'>
+                B) <code>[Miara]</code>
+            </div>
+            <div class='answer-option' onclick='selectAnswer(2, 2)'>
+                C) <code>Miara()</code>
+            </div>
+            <div class='answer-option' onclick='selectAnswer(2, 3)'>
+                D) Obie odpowiedzi A i B są poprawne
+            </div>
+        </div>
+        <button class='check-button' onclick='checkAnswer(2, 3)'>Sprawdź odpowiedź</button>
+        <div class='feedback' id='feedback-2'></div>
+    </div>
+
+    <!-- Pytanie 4 -->
+    <div class='page'>
+        <h1>Pytanie 4</h1>
+        <div class='question-box'>
+            <p><strong>Która funkcja sumuje wartości z kolumny?</strong></p>
+        </div>
+        <div class='answers'>
+            <div class='answer-option' onclick='selectAnswer(3, 0)'>
+                A) SUMX()
+            </div>
+            <div class='answer-option' onclick='selectAnswer(3, 1)'>
+                B) SUM()
+            </div>
+            <div class='answer-option' onclick='selectAnswer(3, 2)'>
+                C) TOTAL()
+            </div>
+            <div class='answer-option' onclick='selectAnswer(3, 3)'>
+                D) AGGREGATE()
+            </div>
+        </div>
+        <button class='check-button' onclick='checkAnswer(3, 1)'>Sprawdź odpowiedź</button>
+        <div class='feedback' id='feedback-3'></div>
+    </div>
+
+    <!-- Pytanie 5 -->
+    <div class='page'>
+        <h1>Pytanie 5</h1>
+        <div class='question-box'>
+            <p><strong>Czym różni się <code>COUNT</code> od <code>COUNTROWS</code>?</strong></p>
+        </div>
+        <div class='answers'>
+            <div class='answer-option' onclick='selectAnswer(4, 0)'>
+                A) <code>COUNT</code> liczy kolumny, <code>COUNTROWS</code> liczy wiersze
+            </div>
+            <div class='answer-option' onclick='selectAnswer(4, 1)'>
+                B) <code>COUNT</code> liczy niepuste wartości w kolumnie, <code>COUNTROWS</code> liczy wszystkie wiersze tabeli
+            </div>
+            <div class='answer-option' onclick='selectAnswer(4, 2)'>
+                C) Nie ma różnicy
+            </div>
+            <div class='answer-option' onclick='selectAnswer(4, 3)'>
+                D) <code>COUNT</code> jest szybsze niż <code>COUNTROWS</code>
+            </div>
+        </div>
+        <button class='check-button' onclick='checkAnswer(4, 1)'>Sprawdź odpowiedź</button>
+        <div class='feedback' id='feedback-4'></div>
+    </div>
+
+    <!-- Pytanie 6 -->
+    <div class='page'>
+        <h1>Pytanie 6</h1>
+        <div class='question-box'>
+            <p><strong>Co robi funkcja <code>DISTINCTCOUNT</code>?</strong></p>
+        </div>
+        <div class='answers'>
+            <div class='answer-option' onclick='selectAnswer(5, 0)'>
+                A) Liczy wszystkie wartości w kolumnie
+            </div>
+            <div class='answer-option' onclick='selectAnswer(5, 1)'>
+                B) Liczy unikalne (niepowtarzające się) wartości
+            </div>
+            <div class='answer-option' onclick='selectAnswer(5, 2)'>
+                C) Usuwa duplikaty z tabeli
+            </div>
+            <div class='answer-option' onclick='selectAnswer(5, 3)'>
+                D) Zwraca liczbę różnych tabel
+            </div>
+        </div>
+        <button class='check-button' onclick='checkAnswer(5, 1)'>Sprawdź odpowiedź</button>
+        <div class='feedback' id='feedback-5'></div>
+    </div>
+
+    <!-- Podsumowanie quizu -->
+    <div class='page'>
+        <h1>Podsumowanie quizu</h1>
+        <div class='score-box' id='finalScore'>
+            Twój wynik: <span id='scoreText'>0/6</span> (<span id='percentText'>0%</span>)
+        </div>
+        <div id='summaryContent'></div>
+        <button onclick='restartQuiz()' style='margin-top: 20px; width: 100%;'> Rozpocznij quiz od nowa</button>
+    </div>
+</div>
+
+<script>
+    let currentPage = 1;
+    const totalPages = 7;
+    const totalQuestions = 6;
+    
+    const userAnswers = new Array(totalQuestions).fill(null);
+    const answeredQuestions = new Array(totalQuestions).fill(false);
+    
+    const correctAnswers = [0, 2, 3, 1, 1, 1];
+    
+    const explanations = ['DAX to skr\u00f3t od Data Analysis Expressions - j\u0119zyk formu\u0142 u\u017cywany w Power BI, Excel Power Pivot i Analysis Services.', 'W DAX zawsze u\u017cywamy sk\u0142adni <code>Tabela[Kolumna</code>], gdzie nazwa tabeli jest przed nawiasem kwadratowym, a nazwa kolumny wewn\u0105trz.', 'Do miar mo\u017cna odwo\u0142ywa\u0107 si\u0119 zar\u00f3wno przez <code>[Nazwa Miary]</code> jak i przez <code>Tabela[Nazwa Miary]</code>. Pierwsza sk\u0142adnia jest cz\u0119\u015bciej u\u017cywana i kr\u00f3tsza.', '<code>SUM(Tabela[Kolumna])</code> sumuje wszystkie warto\u015bci w kolumnie, pomijaj\u0105c warto\u015bci puste (BLANK) i uwzgl\u0119dniaj\u0105c aktualny kontekst filtrowania.', '<code>COUNT</code> liczy niepuste warto\u015bci numeryczne w konkretnej kolumnie, podczas gdy <code>COUNTROWS</code> liczy wszystkie wiersze w tabeli (nawet je\u015bli maj\u0105 puste warto\u015bci).', '<code>DISTINCTCOUNT</code> liczy ile jest unikalnych (niepowtarzaj\u0105cych si\u0119) warto\u015bci. Np. dla {1, 2, 2, 3, 3, 3} zwr\u00f3ci 3.'];
+    
+    document.getElementById('totalPages').textContent = totalQuestions;
+    
+        function selectAnswer(questionIndex, answerIndex) {
+            if (answeredQuestions[questionIndex]) return;
+    
+            const answers = document.querySelectorAll('.page')[questionIndex].querySelectorAll('.answer-option');
+            answers.forEach(a => a.classList.remove('selected'));
+            answers[answerIndex].classList.add('selected');
+            userAnswers[questionIndex] = answerIndex;
+        }
+    
+        function checkAnswer(questionIndex, correctIndex) {
+            if (answeredQuestions[questionIndex]) return;
+    
+            const answers = document.querySelectorAll('.page')[questionIndex].querySelectorAll('.answer-option');
+            const feedback = document.getElementById('feedback-' + questionIndex);
+            const checkBtn = document.querySelectorAll('.page')[questionIndex].querySelector('.check-button');
+    
+            if (userAnswers[questionIndex] === null) {
+                feedback.className = 'feedback show incorrect';
+                feedback.textContent = 'Proszę najpierw wybrać odpowiedź!';
+                return;
+            }
+    
+            answeredQuestions[questionIndex] = true;
+            checkBtn.disabled = true;
+    
+            const isCorrect = userAnswers[questionIndex] === correctIndex;
+    
+            answers.forEach((answer, index) => {
+                answer.style.cursor = 'default';
+                if (index === correctIndex) {
+                    answer.classList.add('correct');
+                } else if (index === userAnswers[questionIndex]) {
+                    answer.classList.add('incorrect');
+                }
+            });
+    
+            feedback.className = 'feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+            feedback.innerHTML = (isCorrect ? '✅ Świetnie! ' : '❌ Nieprawidłowo. ') + explanations[questionIndex];
+        }
+    
+        function showSummary() {
+            let correctCount = 0;
+            for (let i = 0; i < totalQuestions; i++) {
+                if (userAnswers[i] === correctAnswers[i]) {
+                    correctCount++;
+                }
+            }
+    
+            const percentage = Math.round((correctCount / totalQuestions) * 100);
+            document.getElementById('scoreText').textContent = correctCount + '/' + totalQuestions;
+            document.getElementById('percentText').textContent = percentage + '%';
+    
+            let summaryHTML = '<h2>Szczegóły odpowiedzi:</h2>';
+            for (let i = 0; i < totalQuestions; i++) {
+                const isCorrect = userAnswers[i] === correctAnswers[i];
+                summaryHTML += `
+                    <div class='summary-item ${isCorrect ? 'correct' : 'incorrect'}'>
+                        <strong>Pytanie ${i + 1}:</strong> ${isCorrect ? '✅ Poprawnie' : '❌ Niepoprawnie'}<br>
+                        <small>${explanations[i]}</small>
+                    </div>
+                `;
+            }
+    
+            document.getElementById('summaryContent').innerHTML = summaryHTML;
+        }
+    
+        function restartQuiz() {
+            userAnswers.fill(null);
+            answeredQuestions.fill(false);
+            currentPage = 1;
+    
+            document.querySelectorAll('.page').forEach((page, index) => {
+                if (index < totalQuestions) {
+                    const answers = page.querySelectorAll('.answer-option');
+                    answers.forEach(a => {
+                        a.className = 'answer-option';
+                        a.style.cursor = 'pointer';
+                    });
+                    const feedback = page.querySelector('.feedback');
+                    feedback.className = 'feedback';
+                    const checkBtn = page.querySelector('.check-button');
+                    checkBtn.disabled = false;
+                }
+            });
+    
+            showPage(1);
+        }
+    
+        function showPage(n) {
+            const pages = document.querySelectorAll('.page');
+    
+            if (n > totalPages) currentPage = totalPages;
+            if (n < 1) currentPage = 1;
+    
+            pages.forEach(page => page.classList.remove('active'));
+            pages[currentPage - 1].classList.add('active');
+    
+            // Wyświetl numer pytania lub 'Podsumowanie'
+            const pageIndicator = document.getElementById('currentPage');
+            if (currentPage <= totalQuestions) {
+                pageIndicator.textContent = currentPage;
+            } else {
+                pageIndicator.textContent = 'Podsumowanie';
+            }
+    
+            // Zmień przycisk 'Następna' na 'Zakończ' przed ostatnim pytaniem
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentPage === totalQuestions) {
+                nextBtn.textContent = 'Zakończ →';
+                nextBtn.onclick = function() {
+                    showSummary();
+                    changePage(1);
+                };
+            } else if (currentPage < totalPages) {
+                nextBtn.textContent = 'Następna →';
+                nextBtn.onclick = function() {
+                    changePage(1);
+                };
+            }
+    
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage === totalPages;
+    
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    
+        function changePage(n) {
+            currentPage += n;
+            showPage(currentPage);
+        }
+    
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') changePage(-1);
+            if (e.key === 'ArrowRight') changePage(1);
+        });
+    
+        showPage(1);
+</script>
+
+</body>
+</html>
+
+"

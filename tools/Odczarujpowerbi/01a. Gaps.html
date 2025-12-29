@@ -1,0 +1,907 @@
+01a. Gaps = 
+
+"
+
+<!DOCTYPE html>
+<html lang='pl'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>DAX Gaps</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #333;
+        background: transparent;
+        padding: 20px;
+    }
+    
+    .container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: transparent;
+        padding: 40px;
+    }
+    
+    h3 {
+        font-size: 26px;
+        line-height: 36px;
+        font-weight: 600;
+        padding-top: 14px;
+        padding-bottom: 6px;
+        margin-bottom: 1em;
+        color: #6b1718;
+        border-bottom: 2px solid #6b1718;
+    }
+    
+    .task-description {
+        font-size: 1.1em;
+        margin: 20px 0;
+    }
+    
+    .code-container {
+        background: #f8f9fa;
+        border: 2px solid #e1e4e8;
+        border-radius: 6px;
+        padding: 25px;
+        margin: 30px 0;
+        font-family: 'Courier New', monospace;
+        font-size: 1.05em;
+        line-height: 1.8;
+    }
+    
+    .drop-zone {
+        display: inline-block;
+        min-width: 180px;
+        height: 36px;
+        background: white;
+        border: 2px dashed #6b1718;
+        border-radius: 4px;
+        padding: 6px 12px;
+        margin: 0 4px;
+        vertical-align: middle;
+        text-align: center;
+        transition: all 0.2s;
+    }
+    
+    .drop-zone.drag-over {
+        background: #ffe6e6;
+        border-color: #380c0c;
+    }
+    
+    .drop-zone.filled {
+        background: #e9ecef;
+        border: 2px solid #6c757d;
+        border-style: solid;
+    }
+    
+    .drop-zone.correct {
+        background: #d4edda;
+        border: 2px solid #28a745;
+        border-style: solid;
+    }
+    
+    .drop-zone.incorrect {
+        background: #f8d7da;
+        border: 2px solid #dc3545;
+        border-style: solid;
+    }
+    
+    .functions-title {
+        font-size: 1em;
+        margin: 30px 0 15px 0;
+        color: #333;
+    }
+    
+    .function-chip {
+        display: inline-block;
+        background: #6b1718;
+        color: white;
+        padding: 10px 20px;
+        margin: 8px;
+        border-radius: 20px;
+        cursor: grab;
+        font-family: 'Courier New', monospace;
+        font-size: 1em;
+        font-weight: 500;
+        transition: all 0.2s;
+        user-select: none;
+    }
+    
+    .function-chip:hover {
+        background: #380c0c;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(107, 23, 24, 0.3);
+    }
+    
+    .function-chip:active {
+        cursor: grabbing;
+    }
+    
+    .function-chip.used {
+        opacity: 0.3;
+        cursor: not-allowed;
+        pointer-events: none;
+    }
+    
+    .button-group {
+        margin-top: 30px;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+    
+    button {
+        background: #6b1718;
+        color: white;
+        border: none;
+        padding: 14px 32px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 1.05em;
+        font-weight: 600;
+        transition: all 0.2s;
+    }
+    
+    button:hover {
+        background: #380c0c;
+        transform: translateY(-1px);
+    }
+    
+    button.reset-btn {
+        background: #6b1718;
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
+    
+    button.reset-btn:hover {
+        background: #380c0c;
+    }
+    
+    .feedback {
+        margin-top: 25px;
+        padding: 20px;
+        border-radius: 6px;
+        display: none;
+        font-size: 1.05em;
+    }
+    
+    .feedback.show {
+        display: block;
+        animation: slideDown 0.3s ease-out;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .feedback.correct {
+        background: #d4edda;
+        border-left: 4px solid #28a745;
+        color: #155724;
+    }
+    
+    .feedback.incorrect {
+        background: #f8d7da;
+        border-left: 4px solid #dc3545;
+        color: #721c24;
+    }
+    
+    .hint-box {
+        background: #fafafa;
+        border-left: 4px solid #ccc;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 4px;
+        color: #121212;
+        font-size: 0.95em;
+    }
+    .pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between; 
+        gap: 20px;
+        margin: 30px auto; 
+        padding: 20px;
+        border-radius: 6px;
+    	max-width: 900px;
+        border-bottom: 1px solid #e0e0e0;
+        width: 100%;
+    }
+    
+    .page-info {
+        font-weight: 600;
+        color: #666666; 
+    }
+    
+    .nav-button {
+        background: #6b1718;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: all 0.2s;
+    }
+    
+    .nav-button:hover:not(:disabled) {
+        background: #380c0c;
+        transform: translateY(-1px);
+    }
+    
+    .nav-button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+    
+    
+    .nav-button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+    
+    
+    .page {
+        display: none;
+    }
+    
+    .page.active {
+        display: block;
+    }
+    
+    h2 {
+        font-size: 32px;
+        font-weight: 700;
+        margin-bottom: 30px;
+        color: #6b1718;
+        text-align: center;
+    }
+    
+    .summary-stats {
+        display: flex;
+        gap: 20px;
+        margin: 30px 0;
+        justify-content: center;
+    }
+    
+    .stat-box {
+        background: linear-gradient(135deg, #6b1718 0%, #380c0c 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+        flex: 1;
+        max-width: 300px;
+        box-shadow: 0 4px 15px rgba(107, 23, 24, 0.2);
+    }
+    
+    .stat-label {
+        font-size: 0.95em;
+        opacity: 0.9;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .stat-value {
+        font-size: 2.5em;
+        font-weight: 700;
+    }
+    
+    .summary-details {
+        margin: 40px 0;
+    }
+    
+    .summary-details h3 {
+        font-size: 22px;
+        margin-bottom: 20px;
+        color: #6b1718;
+    }
+    
+    .task-summary-item {
+        background: #f8f9fa;
+        padding: 15px 20px;
+        margin: 12px 0;
+        border-radius: 6px;
+        border-left: 4px solid #ccc;
+        font-size: 1.05em;
+    }
+    
+    .task-summary-item.correct {
+        background: #d4edda;
+        border-left-color: #28a745;
+    }
+    
+    .task-summary-item.incorrect {
+        background: #f8d7da;
+        border-left-color: #dc3545;
+    }
+    
+    .task-summary-item.skipped {
+        background: #e9ecef;
+        border-left-color: #6c757d;
+    }
+    </style>
+</head>
+<body>
+
+<div class='pagination'>
+    <button class='nav-button' id='prevBtn' onclick='prevPage()'>← Poprzednie</button>
+    <span class='page-info'>Zadanie <span id='currentPage'>1</span> z <span id='totalPages'>6</span></span>
+    <button class='nav-button' id='nextBtn' onclick='nextPage()'>Następne →</button>
+</div>
+
+<div class='page active' data-page='1'>
+<div class='container'>
+    <div class='task-description'>
+        <h3>Odwoływanie się do kolumn</h3>
+        Jak prawidłowo odwołać się do kolumny Kwota w tabeli Sprzedaz w języku DAX?
+    </div>
+
+    <div>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='Sprzedaz.Kwota'>Sprzedaz.Kwota</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='[Kwota]'>[Kwota]</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='Sprzedaz[Kwota]'>Sprzedaz[Kwota]</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='Kwota'>Kwota</span>
+    </div>
+
+    <div class='code-container'>
+        <div>DAX</div>
+        <div>Suma Sprzedaży = SUM(<div class='drop-zone' data-slot='0' ondrop='drop(event)' ondragover='allowDrop(event)' ondragleave='dragLeave(event)'></div>)</div>
+    </div>
+
+    <div class='button-group'>
+        <button onclick='checkSolution()'>Sprawdź rozwiązanie</button>
+        <button class='reset-btn' onclick='resetTask()'>Reset</button>
+    </div>
+
+    <div class='hint-box'>
+        W DAX używamy nawiasów kwadratowych, a nie kropki. Format to: NazwaTabeli[NazwaKolumny].
+    </div>
+
+    <div class='feedback' id='feedback'></div>
+</div>
+</div>
+
+<div class='page' data-page='2'>
+<div class='container'>
+    <div class='task-description'>
+        <h3>Nazwy z apostrofami</h3>
+        Masz tabelę o nazwie Tabela Sprzedaży (ze spacją) i kolumnę Kwota Netto. Jak prawidłowo się do niej odwołać?
+    </div>
+
+    <div>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='Tabela Sprzedaży[Kwota Netto]'>Tabela Sprzedaży[Kwota Netto]</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='´Tabela Sprzedaży´[Kwota Netto]'>´Tabela Sprzedaży´[Kwota Netto]</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='[Kwota Netto]'>[Kwota Netto]</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='[Tabela Sprzedaży][Kwota Netto]'>[Tabela Sprzedaży][Kwota Netto]</span>
+    </div>
+
+    <div class='code-container'>
+        <div>DAX</div>
+        <div>Suma = SUM(<div class='drop-zone' data-slot='0' ondrop='drop(event)' ondragover='allowDrop(event)' ondragleave='dragLeave(event)'></div>)</div>
+    </div>
+
+    <div class='button-group'>
+        <button onclick='checkSolution()'>Sprawdź rozwiązanie</button>
+        <button class='reset-btn' onclick='resetTask()'>Reset</button>
+    </div>
+
+    <div class='hint-box'>
+        Gdy nazwa zawiera spacje, musisz ją ująć w specjalne znaki.
+    </div>
+
+    <div class='feedback' id='feedback'></div>
+</div>
+</div>
+
+<div class='page' data-page='3'>
+<div class='container'>
+    <div class='task-description'>
+        <h3>Funkcja agregująca SUM</h3>
+        Chcesz obliczyć sumę wszystkich wartości w kolumnie Kwota z tabeli Sprzedaz. Która funkcja jest odpowiednia?
+    </div>
+
+    <div>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='AVERAGE'>AVERAGE</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='SUM'>SUM</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='COUNT'>COUNT</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='SUMX'>SUMX</span>
+    </div>
+
+    <div class='code-container'>
+        <div>DAX</div>
+        <div>Suma Sprzedaży = <div class='drop-zone' data-slot='0' ondrop='drop(event)' ondragover='allowDrop(event)' ondragleave='dragLeave(event)'></div>(Sprzedaz[Kwota])</div>
+    </div>
+
+    <div class='button-group'>
+        <button onclick='checkSolution()'>Sprawdź rozwiązanie</button>
+        <button class='reset-btn' onclick='resetTask()'>Reset</button>
+    </div>
+
+    <div class='hint-box'>
+        Szukasz podstawowej funkcji agregującej, której nazwa w języku angielskim oznacza suma.
+    </div>
+
+    <div class='feedback' id='feedback'></div>
+</div>
+</div>
+
+<div class='page' data-page='4'>
+<div class='container'>
+    <div class='task-description'>
+        <h3>Funkcja IF</h3>
+        Chcesz utworzyć kategorię sprzedaży: jeśli kwota > 1000, to Wysoka, w przeciwnym razie Niska. Jak uzupełnić formułę?
+    </div>
+
+    <div>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='IF'>IF</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='CASE'>CASE</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='″Wysoka″'>″Wysoka″</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='″Niska″'>″Niska″</span>
+    </div>
+
+    <div class='code-container'>
+        <div>DAX</div>
+        <div>Kategoria =</div>
+        <div><div class='drop-zone' data-slot='0' ondrop='drop(event)' ondragover='allowDrop(event)' ondragleave='dragLeave(event)'></div>(</div>
+        <div>    Sprzedaz[Kwota] > 1000,</div>
+        <div>    <div class='drop-zone' data-slot='1' ondrop='drop(event)' ondragover='allowDrop(event)' ondragleave='dragLeave(event)'></div>,</div>
+        <div>    <div class='drop-zone' data-slot='2' ondrop='drop(event)' ondragover='allowDrop(event)' ondragleave='dragLeave(event)'></div></div>
+        <div>)</div>
+    </div>
+
+    <div class='button-group'>
+        <button onclick='checkSolution()'>Sprawdź rozwiązanie</button>
+        <button class='reset-btn' onclick='resetTask()'>Reset</button>
+    </div>
+
+    <div class='hint-box'>
+        W DAX funkcja warunkowa to po prostu IF z trzema parametrami: warunek, co zwrócić gdy prawda, co zwrócić gdy fałsz.
+    </div>
+
+    <div class='feedback' id='feedback'></div>
+</div>
+</div>
+
+<div class='page' data-page='5'>
+<div class='container'>
+    <div class='task-description'>
+        <h3>Funkcja SUMX</h3>
+        Chcesz obliczyć sumę wartości zamówień (Ilość × Cena) dla każdego wiersza. Którą funkcję powinieneś użyć?
+    </div>
+
+    <div>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='SUM'>SUM</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='SUMX'>SUMX</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='CALCULATE'>CALCULATE</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='TOTALX'>TOTALX</span>
+    </div>
+
+    <div class='code-container'>
+        <div>DAX</div>
+        <div>Suma Wartości =</div>
+        <div><div class='drop-zone' data-slot='0' ondrop='drop(event)' ondragover='allowDrop(event)' ondragleave='dragLeave(event)'></div>(</div>
+        <div>    Sprzedaz,</div>
+        <div>    Sprzedaz[Ilość] * Sprzedaz[Cena]</div>
+        <div>)</div>
+    </div>
+
+    <div class='button-group'>
+        <button onclick='checkSolution()'>Sprawdź rozwiązanie</button>
+        <button class='reset-btn' onclick='resetTask()'>Reset</button>
+    </div>
+
+    <div class='hint-box'>
+        Potrzebujesz funkcji iteracyjnej (z końcówką X), która sumuje wyniki obliczeń dla każdego wiersza.
+    </div>
+
+    <div class='feedback' id='feedback'></div>
+</div>
+</div>
+
+<div class='page' data-page='6'>
+<div class='container'>
+    <div class='task-description'>
+        <h3>Operator łączenia tekstów</h3>
+        Chcesz połączyć imię i nazwisko klienta ze spacją pomiędzy. Jaki operator użyć?
+    </div>
+
+    <div>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='+'>+</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='&'>&</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='!'>!</span>
+        <span class='function-chip' draggable='true' ondragstart='drag(event)' data-function='CONCAT'>CONCAT</span>
+    </div>
+
+    <div class='code-container'>
+        <div>DAX</div>
+        <div>Pełna Nazwa =</div>
+        <div>Klienci[Imię] <div class='drop-zone' data-slot='0' ondrop='drop(event)' ondragover='allowDrop(event)' ondragleave='dragLeave(event)'></div> Klienci[Nazwisko]</div>
+    </div>
+
+    <div class='button-group'>
+        <button onclick='checkSolution()'>Sprawdź rozwiązanie</button>
+        <button class='reset-btn' onclick='resetTask()'>Reset</button>
+    </div>
+
+    <div class='feedback' id='feedback'></div>
+</div>
+</div>
+
+<div class='page' data-page='7'>
+<div class='container'>
+    <h2>Podsumowanie wyników</h2>
+
+    <div class='summary-stats'>
+        <div class='stat-box'>
+            <div class='stat-label'>Ukończone zadania</div>
+            <div class='stat-value'><span id='completedCount'>0</span> / 6</div>
+        </div>
+        <div class='stat-box'>
+            <div class='stat-label'>Wynik</div>
+            <div class='stat-value'><span id='percentageScore'>0</span>%</div>
+        </div>
+    </div>
+
+    <div class='summary-details'>
+        <h3>Szczegóły zadań</h3>
+        <div id='tasksSummary'></div>
+    </div>
+
+    <div class='button-group'>
+        <button onclick='resetAllTasks()' style='width: 100%;'>🔄 Rozpocznij od nowa</button>
+    </div>
+</div>
+</div>
+
+<script>
+    let currentPage = 1;
+    const totalTasks = 6;
+    const totalPages = 7;
+
+    const taskAttempts = new Array(totalTasks).fill(0);
+    const taskCompleted = new Array(totalTasks).fill(false);
+    const taskCorrect = new Array(totalTasks).fill(false);
+
+    const slotsPerPage = [1, 1, 1, 3, 1, 1];
+    let slots = new Array(slotsPerPage[0]).fill('');
+    const correctSolutions = [['Sprzedaz[Kwota]'], ['Tabela z apostrofem[Kwota Netto]'], ['SUM'], ['IF', 'Wysoka', 'Niska'], ['SUMX'], ['&']];
+    const correctFeedback = ['\u2705 Brawo! Rozwi\u0105zanie poprawne!\nW DAX zawsze odwo\u0142ujesz si\u0119 do kolumn poprzez nazw\u0119 tabeli i nazw\u0119 kolumny w nawiasach kwadratowych: Tabela[Kolumna]. To zapobiega niejednoznaczno\u015bci gdy masz kolumny o tych samych nazwach w r\u00f3\u017cnych tabelach.', '\u2705 Brawo! Rozwi\u0105zanie poprawne!\nGdy nazwa tabeli lub kolumny zawiera spacje, znaki specjalne lub polskie znaki, musisz uj\u0105\u0107 j\u0105 w apostrofy. Poprawna sk\u0142adnia to: nazwa z apostrofem. Nazwa kolumny w tym przypadku nie wymaga apostrof\u00f3w, bo jest ju\u017c w nawiasach kwadratowych.', '\u2705 Brawo! Rozwi\u0105zanie poprawne!\nFunkcja SUM() sumuje wszystkie warto\u015bci w kolumnie. Pomija warto\u015bci puste (BLANK) i uwzgl\u0119dnia aktualny kontekst filtrowania. To podstawowa funkcja agreguj\u0105ca w DAX.', '\u2705 Brawo! Rozwi\u0105zanie poprawne!\nFunkcja IF() w DAX ma sk\u0142adni\u0119: <code>IF(warunek, warto\u015b\u0107_je\u015bli_prawda, warto\u015b\u0107_je\u015bli_fa\u0142sz).</code> W tym przypadku: <code>IF(Sprzedaz[Kwota] > 1000, \u2033Wysoka\u2033, \u2033Niska\u2033).</code>', '\u2705 Brawo! Rozwi\u0105zanie poprawne!\nSUMX() to funkcja iteracyjna, kt\u00f3ra dla ka\u017cdego wiersza tabeli oblicza wyra\u017cenie, a potem sumuje wyniki. Sk\u0142adnia: SUMX(tabela, wyra\u017cenie). W tym przypadku dla ka\u017cdego wiersza mno\u017cy Ilo\u015b\u0107 \u00d7 Cena, a nast\u0119pnie sumuje wszystkie wyniki.', '\u2705 Brawo! Rozwi\u0105zanie poprawne!\nOperator ampersand w DAX s\u0142u\u017cy do \u0142\u0105czenia (konkatenacji) tekst\u00f3w. Poprawna sk\u0142adnia: <code>Klienci[Imi\u0119] &  Klienci[Nazwisko].</code> Mo\u017cesz \u0142\u0105czy\u0107 dowoln\u0105 liczb\u0119 element\u00f3w tekstowych u\u017cywaj\u0105c tego operatora.'];
+    const incorrectFeedback = [{}, {}, {}, {}, {}, {}];
+
+    function drag(event) {
+            event.dataTransfer.setData('function', event.target.getAttribute('data-function'));
+        }
+    
+        function allowDrop(event) {
+            event.preventDefault();
+            event.target.classList.add('drag-over');
+        }
+    
+        function dragLeave(event) {
+            event.target.classList.remove('drag-over');
+        }
+    
+        function drop(event) {
+            event.preventDefault();
+            event.target.classList.remove('drag-over');
+    
+            const functionName = event.dataTransfer.getData('function');
+            const slotIndex = parseInt(event.target.getAttribute('data-slot'));
+    
+            const activePage = document.querySelector('.page.active');
+            if (!activePage) return;
+    
+            if (slots[slotIndex]) {
+                const chips = activePage.querySelectorAll('.function-chip');
+                for (let i = 0; i < chips.length; i++) {
+                    if (chips[i].getAttribute('data-function') === slots[slotIndex]) {
+                        chips[i].classList.remove('used');
+                        break;
+                    }
+                }
+            }
+    
+            slots[slotIndex] = functionName;
+            event.target.textContent = functionName;
+    
+            // Resetuj WSZYSTKIE luki do szarego koloru (soft reset)
+            const zones = activePage.querySelectorAll('.drop-zone');
+            for (let i = 0; i < zones.length; i++) {
+                zones[i].classList.remove('correct', 'incorrect');
+                if (zones[i].textContent) {
+                    zones[i].classList.add('filled');
+                }
+            }
+    
+            const chips = activePage.querySelectorAll('.function-chip');
+            for (let i = 0; i < chips.length; i++) {
+                if (chips[i].getAttribute('data-function') === functionName) {
+                    chips[i].classList.add('used');
+                    break;
+                }
+            }
+    
+            const feedback = activePage.querySelector('.feedback');
+            if (feedback) {
+                feedback.classList.remove('show');
+            }
+        }
+    
+        function checkSolution() {
+            const activePage = document.querySelector('.page.active');
+            if (!activePage) return;
+    
+            const feedback = activePage.querySelector('.feedback');
+            if (!feedback) return;
+    
+            if (slots.includes('')) {
+                feedback.className = 'feedback show incorrect';
+                feedback.innerHTML = 'Niekompletne! Musisz wypełnić wszystkie miejsca w kodzie.';
+                return;
+            }
+    
+            const currentPageNum = parseInt(activePage.getAttribute('data-page'));
+            const pageIndex = currentPageNum - 1;
+    
+            // Zwiększ liczbę prób
+            taskAttempts[pageIndex]++;
+    
+            const isCorrect = checkCurrentPageSolution(pageIndex);
+            const zones = activePage.querySelectorAll('.drop-zone');
+    
+            if (isCorrect) {
+                feedback.className = 'feedback show correct';
+                feedback.innerHTML = correctFeedback[pageIndex];
+    
+                // Pokoloruj luki na zielono
+                for (let i = 0; i < zones.length; i++) {
+                    zones[i].classList.remove('filled', 'incorrect');
+                    zones[i].classList.add('correct');
+                }
+    
+                // Oznacz jako poprawnie wykonane (tylko za pierwszym razem)
+                if (!taskCompleted[pageIndex]) {
+                    taskCompleted[pageIndex] = true;
+                    taskCorrect[pageIndex] = true;
+                }
+            } else {
+                const userAnswer = slots.join(',');
+                const incorrectMessages = incorrectFeedback[pageIndex];
+    
+                // Pokoloruj luki - zielone dla poprawnych, czerwone dla błędnych
+                const solution = correctSolutions[pageIndex];
+                for (let i = 0; i < zones.length; i++) {
+                    zones[i].classList.remove('filled');
+                    if (slots[i] === solution[i]) {
+                        zones[i].classList.add('correct');
+                    } else {
+                        zones[i].classList.add('incorrect');
+                    }
+                }
+    
+                for (const pattern in incorrectMessages) {
+                    if (pattern === userAnswer) {
+                        feedback.className = 'feedback show incorrect';
+                        feedback.innerHTML = incorrectMessages[pattern];
+    
+                        // Oznacz jako zakończone (nawet jeśli błędnie)
+                        if (!taskCompleted[pageIndex]) {
+                            taskCompleted[pageIndex] = true;
+                            taskCorrect[pageIndex] = false;
+                        }
+                        return;
+                    }
+    
+                    if (pattern.includes('*')) {
+                        const regexPattern = '^' + pattern.replace(/\*/g, '.*') + '$';
+                        const regex = new RegExp(regexPattern);
+                        if (regex.test(userAnswer)) {
+                            feedback.className = 'feedback show incorrect';
+                            feedback.innerHTML = incorrectMessages[pattern];
+    
+                            // Oznacz jako zakończone (nawet jeśli błędnie)
+                            if (!taskCompleted[pageIndex]) {
+                                taskCompleted[pageIndex] = true;
+                                taskCorrect[pageIndex] = false;
+                            }
+                            return;
+                        }
+                    }
+                }
+    
+                const defaultMessage = incorrectMessages['default'];
+                feedback.className = 'feedback show incorrect';
+                feedback.innerHTML = defaultMessage || '❌ <strong>Niepoprawne rozwiązanie.</strong> Spróbuj ponownie!';
+    
+                // Oznacz jako zakończone (nawet jeśli błędnie)
+                if (!taskCompleted[pageIndex]) {
+                    taskCompleted[pageIndex] = true;
+                    taskCorrect[pageIndex] = false;
+                }
+            }
+        }
+    
+        function checkCurrentPageSolution(pageIndex) {
+            const solution = correctSolutions[pageIndex];
+            for (let i = 0; i < solution.length; i++) {
+                if (slots[i] !== solution[i]) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    
+        function resetTask() {
+            slots.fill('');
+    
+            const activePage = document.querySelector('.page.active');
+            if (!activePage) return;
+    
+            const zones = activePage.querySelectorAll('.drop-zone');
+            for (let i = 0; i < zones.length; i++) {
+                zones[i].textContent = '';
+                zones[i].classList.remove('filled', 'correct', 'incorrect');
+            }
+    
+            const chips = activePage.querySelectorAll('.function-chip');
+            for (let i = 0; i < chips.length; i++) {
+                chips[i].classList.remove('used');
+            }
+    
+            const feedback = activePage.querySelector('.feedback');
+            if (feedback) {
+                feedback.classList.remove('show');
+            }
+        }
+    
+        function showPage(pageNumber) {
+            const pages = document.querySelectorAll('.page');
+            for (let i = 0; i < pages.length; i++) {
+                pages[i].classList.remove('active');
+            }
+    
+            for (let i = 0; i < pages.length; i++) {
+                if (parseInt(pages[i].getAttribute('data-page')) === pageNumber) {
+                    pages[i].classList.add('active');
+                    break;
+                }
+            }
+    
+            currentPage = pageNumber;
+    
+            // Jeśli to strona podsumowania
+            if (currentPage === totalPages) {
+                updateSummary();
+                document.getElementById('currentPage').textContent = 'Podsumowanie';
+            } else {
+                const pageIndex = currentPage - 1;
+                document.getElementById('currentPage').textContent = currentPage;
+                slots = new Array(slotsPerPage[pageIndex]).fill('');
+                resetTask();
+            }
+    
+            // Zmień przycisk 'Następne' na 'Zakończ' przed ostatnim zadaniem
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentPage === totalTasks) {
+                nextBtn.textContent = 'Zakończ →';
+            } else if (currentPage < totalPages) {
+                nextBtn.textContent = 'Następne →';
+            }
+    
+            document.getElementById('prevBtn').disabled = (currentPage === 1);
+            document.getElementById('nextBtn').disabled = (currentPage === totalPages);
+        }
+    
+        function updateSummary() {
+            // Oblicz statystyki
+            let completedCount = 0;
+            let correctCount = 0;
+    
+            for (let i = 0; i < totalTasks; i++) {
+                if (taskCompleted[i]) {
+                    completedCount++;
+                    if (taskCorrect[i]) {
+                        correctCount++;
+                    }
+                }
+            }
+    
+            const percentage = completedCount > 0 ? Math.round((correctCount / completedCount) * 100) : 0;
+    
+            // Aktualizuj główne statystyki
+            document.getElementById('completedCount').textContent = completedCount;
+            document.getElementById('percentageScore').textContent = percentage;
+    
+            // Generuj szczegóły zadań
+            let summaryHTML = '';
+            for (let i = 0; i < totalTasks; i++) {
+                const status = !taskCompleted[i] ? 'skipped' : (taskCorrect[i] ? 'correct' : 'incorrect');
+                const statusText = !taskCompleted[i] ? '⚪ Pominięte' : (taskCorrect[i] ? '✅ Poprawnie' : '❌ Niepoprawnie');
+                const attemptsText = taskAttempts[i] > 0 ? ` (Próby: ${taskAttempts[i]})` : '';
+    
+                summaryHTML += `
+                    <div class='task-summary-item ${status}'>
+                        <strong>Zadanie ${i + 1}:</strong> ${statusText}${attemptsText}
+                    </div>
+                `;
+            }
+    
+            document.getElementById('tasksSummary').innerHTML = summaryHTML;
+        }
+    
+        function resetAllTasks() {
+            // Reset wszystkich statystyk
+            for (let i = 0; i < totalTasks; i++) {
+                taskAttempts[i] = 0;
+                taskCompleted[i] = false;
+                taskCorrect[i] = false;
+            }
+    
+            // Reset wszystkich stron zadań
+            const pages = document.querySelectorAll('.page');
+            for (let i = 0; i < totalTasks; i++) {
+                const page = pages[i];
+                if (!page) continue;
+    
+                const zones = page.querySelectorAll('.drop-zone');
+                for (let j = 0; j < zones.length; j++) {
+                    zones[j].textContent = '';
+                    zones[j].classList.remove('filled', 'correct', 'incorrect');
+                }
+    
+                const chips = page.querySelectorAll('.function-chip');
+                for (let j = 0; j < chips.length; j++) {
+                    chips[j].classList.remove('used');
+                }
+    
+                const feedback = page.querySelector('.feedback');
+                if (feedback) {
+                    feedback.classList.remove('show');
+                }
+            }
+    
+            // Wróć do pierwszego zadania
+            showPage(1);
+        }
+    
+        function nextPage() {
+            if (currentPage < totalPages) {
+                showPage(currentPage + 1);
+            }
+        }
+    
+        function prevPage() {
+            if (currentPage > 1) {
+                showPage(currentPage - 1);
+            }
+        }
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage(1);
+        });
+</script>
+
+</body>
+</html>
+
+"
