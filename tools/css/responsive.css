@@ -1,0 +1,354 @@
+/* Responsive Styles */
+
+/* Tablet Layout (768px - 1024px) */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 320px;
+    }
+
+    .search-box input {
+        min-width: 180px;
+    }
+
+    .folder-map-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    }
+
+    .welcome-content-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .recent-files-section,
+    .tag-cloud-section {
+        grid-column: 1;
+    }
+}
+
+/* Mobile Layout (< 768px) */
+@media (max-width: 768px) {
+    body {
+        overflow-y: auto;
+        height: auto;
+    }
+
+    /* Header Actions - Mobile */
+    .header-actions {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border-color);
+        padding: 0.75rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        z-index: 1000;
+    }
+
+    .search-box {
+        flex: 1;
+        min-width: 150px;
+        margin: 0;
+        padding: 0;
+    }
+
+    .search-box input {
+        font-size: 0.8125rem;
+    }
+
+    .search-box.expanded input {
+        width: 100%;
+    }
+
+    .search-box input:focus {
+        width: 100%;
+    }
+
+    .date-filter {
+        display: none;
+    }
+
+    .logout-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8125rem;
+    }
+
+    /* Explorer Container - Mobile */
+    .explorer-container.active {
+        margin-top: 60px;
+        height: calc(100vh - 60px);
+    }
+
+    /* Main Layout - Mobile (Stack Vertically) */
+    .main-layout {
+        flex-direction: column;
+        overflow-y: auto;
+        height: auto;
+    }
+
+    /* Sidebar - Mobile */
+    .sidebar {
+        width: 100%;
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+        position: relative;
+    }
+
+    .sidebar-header {
+        padding: 1rem;
+        height: auto;
+        min-height: 60px;
+    }
+
+    .breadcrumb {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .breadcrumb::-webkit-scrollbar {
+        display: none;
+    }
+
+    .breadcrumb-item {
+        padding: 0.375rem 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .breadcrumb-item svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    .sidebar-content {
+        padding: 0.75rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    /* Repository Cards - Mobile */
+    .repo-card {
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .repo-name {
+        font-size: 0.875rem;
+    }
+
+    .repo-description {
+        font-size: 0.75rem;
+    }
+
+    .repo-date {
+        position: static;
+        display: block;
+        margin-top: 0.5rem;
+    }
+
+    /* Content Area - Mobile */
+    .content-area {
+        padding: 1.5rem 1rem;
+        overflow-y: visible;
+        height: auto;
+    }
+
+    /* Welcome Screen - Mobile */
+    .welcome-hero {
+        padding: 2rem 0 2.5rem;
+    }
+
+    .welcome-hero h1 {
+        font-size: 2rem;
+    }
+
+    .welcome-hero p {
+        font-size: 1rem;
+    }
+
+    .welcome-stats {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .welcome-stat-card {
+        padding: 1.5rem;
+    }
+
+    .welcome-stat-value {
+        font-size: 2.5rem;
+    }
+
+    /* Content Grid - Mobile */
+    .welcome-content-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .recent-files-section,
+    .tag-cloud-section,
+    .folder-map-section {
+        padding: 1rem;
+    }
+
+    .recent-files-grid,
+    .folder-map-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Section Headers - Mobile */
+    .section-header h2 {
+        font-size: 1.5rem;
+    }
+
+    .section-icon-wrapper {
+        width: 36px;
+        height: 36px;
+    }
+
+    .section-icon-wrapper svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Tag Cloud - Mobile */
+    .tag-cloud-wrapper {
+        padding: 1.5rem;
+        min-height: 200px;
+    }
+
+    .tag-bubble {
+        font-size: 0.875rem !important;
+        padding: 0.5rem 0.875rem;
+    }
+
+    /* Folder Description - Mobile */
+    .folder-description {
+        padding: 1.5rem 1rem;
+    }
+
+    .folder-description h1 {
+        font-size: 1.75rem;
+    }
+
+    .folder-description h2 {
+        font-size: 1.5rem;
+    }
+
+    .folder-description h3 {
+        font-size: 1.125rem;
+    }
+
+    .folder-description p,
+    .folder-description li {
+        font-size: 0.9375rem;
+    }
+
+    /* File Preview - Mobile */
+    .file-preview-header {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+        margin-top: 0;
+    }
+
+    .file-info h1 {
+        font-size: 1.25rem;
+    }
+
+    .file-actions {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+
+    .file-action-btn {
+        flex: 1;
+        min-width: 120px;
+        justify-content: center;
+    }
+
+    /* Login - Mobile */
+    .login-box {
+        padding: 2rem 1.5rem;
+        max-width: 100%;
+        width: 95%;
+    }
+
+    .login-box h1 {
+        font-size: 1.5rem;
+    }
+
+    /* Touch-Friendly Improvements */
+    .repo-card,
+    .recent-file-card,
+    .folder-map-card,
+    .tag-bubble,
+    .breadcrumb-item,
+    .logout-btn,
+    .file-action-btn {
+        min-height: 44px;
+    }
+
+    /* Hide decorative animations on mobile for performance */
+    .login-container::before,
+    .login-container::after,
+    .welcome-hero::before {
+        display: none;
+    }
+}
+
+/* Small Mobile (< 480px) */
+@media (max-width: 480px) {
+    .header-actions {
+        padding: 0.5rem;
+    }
+
+    .welcome-hero h1 {
+        font-size: 1.75rem;
+    }
+
+    .welcome-hero p {
+        font-size: 0.9375rem;
+    }
+
+    .breadcrumb-item {
+        font-size: 0.8125rem;
+        padding: 0.25rem 0.375rem;
+    }
+
+    .section-header {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .section-header h2 {
+        font-size: 1.25rem;
+    }
+
+    .tag-bubble {
+        font-size: 0.8125rem !important;
+        padding: 0.375rem 0.75rem;
+    }
+
+    .recent-file-card,
+    .folder-map-card {
+        padding: 1rem;
+    }
+}
+
+/* Landscape Mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    .sidebar-content {
+        max-height: 200px;
+    }
+
+    .welcome-hero {
+        padding: 1.5rem 0;
+    }
+
+    .welcome-hero h1 {
+        font-size: 1.5rem;
+    }
+}

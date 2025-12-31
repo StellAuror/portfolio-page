@@ -1,0 +1,117 @@
+{
+  "folders": {
+    "Odczarujpowerbi": {
+      "description": "Kurs DAX - materiały edukacyjne do nauki Power BI",
+      "tags": ["DAX", "Tutorial", "Power BI"],
+      "files": {
+        "01. Podstawy DAX.html": {
+          "description": "Wprowadzenie do języka DAX i podstawowe koncepcje",
+          "tags": ["Tutorial", "Podstawy", "DAX"],
+          "createdDate": "2025-12-29"
+        },
+        "01. Podstawy DAX - Funkcje agregujące.html": {
+          "description": "Funkcje agregujące (SUM, AVERAGE, COUNT)",
+          "tags": ["Tutorial", "Funkcje", "Agregacja"],
+          "createdDate": "2025-12-29"
+        },
+        "01. Podstawy DAX - Funkcje dat.html": {
+          "description": "Funkcje dat (DATE, YEAR, MONTH)",
+          "tags": ["Tutorial", "Funkcje", "Daty"],
+          "createdDate": "2025-12-29"
+        },
+        "01. Podstawy DAX - Funkcje logiczne.html": {
+          "description": "Funkcje logiczne (IF, AND, OR)",
+          "tags": ["Tutorial", "Funkcje", "Logika"],
+          "createdDate": "2025-12-29"
+        },
+        "01. Podstawy DAX - Funkcje tekstowe.html": {
+          "description": "Funkcje tekstowe (CONCATENATE, LEFT, RIGHT)",
+          "tags": ["Tutorial", "Funkcje", "Tekst"],
+          "createdDate": "2025-12-29"
+        },
+        "01a. Gaps.html": {
+          "description": "Analiza luk w danych",
+          "tags": ["Tutorial", "Zaawansowane"],
+          "createdDate": "2025-12-29"
+        },
+        "01a. Quiz.html": {
+          "description": "Quiz sprawdzający wiedzę z podstaw DAX",
+          "tags": ["Quiz", "Test"],
+          "createdDate": "2025-12-29"
+        }
+      }
+    },
+    "Projekty Graficzne": {
+      "description": "Kolekcja projektów graficznych - palety kolorów i koncepcje wizualne",
+      "tags": ["Design", "UI", "Kolory"],
+      "files": {
+        "ocean.html": {
+          "description": "Paleta kolorów inspirowana oceanem",
+          "tags": ["Design", "Kolory", "Natura"],
+          "createdDate": "2025-12-29"
+        },
+        "sunset.html": {
+          "description": "Paleta kolorów inspirowana zachodem słońca",
+          "tags": ["Design", "Kolory", "Natura"],
+          "createdDate": "2025-12-29"
+        },
+        "forest.html": {
+          "description": "Paleta kolorów inspirowana lasem",
+          "tags": ["Design", "Kolory", "Natura"],
+          "createdDate": "2025-12-29"
+        }
+      }
+    },
+    "Dokumentacja": {
+      "description": "Dokumentacja brandingowa i wytyczne projektowe",
+      "tags": ["Branding", "Guidelines", "Dokumentacja"],
+      "files": {
+        "branding.html": {
+          "description": "Standardy brandingowe i identyfikacja wizualna",
+          "tags": ["Branding", "Standards"],
+          "createdDate": "2025-12-29"
+        },
+        "guidelines.html": {
+          "description": "Wytyczne projektowe i specyfikacje techniczne",
+          "tags": ["Guidelines", "Specyfikacja"],
+          "createdDate": "2025-12-29"
+        }
+      }
+    },
+    "Prototypy": {
+      "description": "Prototypy interfejsów użytkownika i warianty projektowe",
+      "tags": ["Prototypy", "UI", "Design"],
+      "files": {
+        "variant-a.html": {
+          "description": "Wariant A interfejsu",
+          "tags": ["Prototyp", "Wariant"],
+          "createdDate": "2025-12-29"
+        },
+        "variant-b.html": {
+          "description": "Wariant B interfejsu",
+          "tags": ["Prototyp", "Wariant"],
+          "createdDate": "2025-12-29"
+        }
+      },
+      "subfolders": {
+        "Motywy Ciemne": {
+          "description": "Prototypy z ciemnymi motywami kolorystycznymi",
+          "tags": ["Dark Mode", "Prototypy", "UI"],
+          "files": {
+            "dark-mode.html": {
+              "description": "Wersja interfejsu z ciemnym motywem",
+              "tags": ["Dark Mode", "UI"],
+              "createdDate": "2025-12-29"
+            }
+          }
+        }
+      }
+    }
+  },
+  "defaults": {
+    "folderDescription": "Folder z zawartością",
+    "folderTags": ["Content"],
+    "fileDescription": "Dokument HTML",
+    "fileTags": ["HTML"]
+  }
+}

@@ -1,0 +1,32 @@
+/* CSS Variables - Design Tokens */
+:root {
+    /* Background Colors */
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #141414;
+    --bg-tertiary: #1a1a1a;
+    --bg-card: #1e1e1e;
+    --bg-hover: #252525;
+    --bg-light: #ffffff;
+
+    /* Border Colors */
+    --border-color: #2a2a2a;
+    --border-accent: #3a3a3a;
+
+    /* Text Colors */
+    --text-primary: #e6edf3;
+    --text-secondary: #9198a8;
+    --text-tertiary: #6e7681;
+
+    /* Accent Colors */
+    --accent-primary: #ffffff;
+    --accent-secondary: #e6e6e6;
+    --accent-purple: #bc8cff;
+    --accent-green: #ef4444;
+    --accent-orange: #ff9f40;
+    --accent-pink: #ff7eb6;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.6);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.7);
+}
