@@ -7,6 +7,7 @@ import { renderView } from './render.js';
 import { loadFolders, showExplorer } from './data.js';
 import { initializeWelcomeInteractions } from './welcomeInteractions.js';
 import { initializeBrowserNavigation } from './navigation.js';
+import { initializeMobileNav } from './mobileNav.js';
 
 // Initialize application
 async function initializeApp() {
@@ -53,6 +54,9 @@ function initializeEventListeners() {
 
     // Welcome screen interactions
     initializeWelcomeInteractions();
+
+    // Mobile navigation (bottom nav + bottom sheets + swipe)
+    initializeMobileNav();
 }
 
 // Start the application when DOM is ready

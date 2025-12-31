@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Przewodnik Mobilny - Eksplorator Plików</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: #e6edf3;
+            padding: 2rem;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #141414;
+            padding: 2rem;
+            border: 1px solid #2a2a2a;
+            border-radius: 12px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #9198a8;
+            margin-bottom: 2rem;
+            font-size: 1.125rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin: 2rem 0 1rem;
+            color: #ffffff;
+            border-left: 4px solid #ffffff;
+            padding-left: 1rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 0.75rem;
+            color: #e6edf3;
+        }
+
+        p, li {
+            color: #9198a8;
+            margin-bottom: 0.75rem;
+        }
+
+        ul {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            padding: 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: #ffffff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .breakpoint-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .breakpoint-table th {
+            background: #252525;
+            color: #ffffff;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .breakpoint-table td {
+            padding: 1rem;
+            border-top: 1px solid #2a2a2a;
+            color: #9198a8;
+        }
+
+        .breakpoint-table tr:hover {
+            background: #1e1e1e;
+        }
+
+        code {
+            background: #0a0a0a;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #ff9f40;
+            font-size: 0.9rem;
+        }
+
+        .demo-section {
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .button-demo {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            background: #ffffff;
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0.5rem;
+        }
+
+        .button-demo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .button-demo:active {
+            transform: scale(0.95);
+        }
+
+        .responsive-indicator {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: #ffffff;
+            color: #000000;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .breakpoint-table {
+                font-size: 0.875rem;
+            }
+
+            .breakpoint-table th,
+            .breakpoint-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Przewodnik Mobilny</h1>
+        <p class="subtitle">Eksplorator Plików - Wersja Mobilna</p>
+
+        <h2>🎯 Główne Funkcje</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🍔</div>
+                <div class="feature-title">Hamburger Menu</div>
+                <p>Intuicyjny przycisk menu w lewym górnym rogu dla łatwej nawigacji.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">👆</div>
+                <div class="feature-title">Swipe Gestures</div>
+                <p>Przeciągnij od lewej krawędzi, aby otworzyć menu nawigacyjne.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">✨</div>
+                <div class="feature-title">Touch-Friendly</div>
+                <p>Wszystkie elementy mają minimum 48px wysokości dla łatwego dotykania.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <div class="feature-title">Płynne Animacje</div>
+                <p>Smooth transitions i feedback wizualny przy każdej interakcji.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📐</div>
+                <div class="feature-title">Responsive Design</div>
+                <p>Automatyczne dopasowanie do rozmiaru ekranu urządzenia.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">Optymalizacja</div>
+                <p>Szybkie ładowanie i płynne działanie nawet na słabszych urządzeniach.</p>
+            </div>
+        </div>
+
+        <h2>📏 Breakpointy Responsywne</h2>
+        <table class="breakpoint-table">
+            <thead>
+                <tr>
+                    <th>Urządzenie</th>
+                    <th>Szerokość</th>
+                    <th>Główne Zmiany</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Desktop</strong></td>
+                    <td><code>&gt; 1024px</code></td>
+                    <td>Pełny widok, sidebar zawsze widoczny</td>
+                </tr>
+                <tr>
+                    <td><strong>Tablet</strong></td>
+                    <td><code>768px - 1024px</code></td>
+                    <td>Zmniejszony sidebar, layout 1-kolumnowy</td>
+                </tr>
+                <tr>
+                    <td><strong>Mobile</strong></td>
+                    <td><code>&lt; 768px</code></td>
+                    <td>Hamburger menu, drawer navigation</td>
+                </tr>
+                <tr>
+                    <td><strong>Small Mobile</strong></td>
+                    <td><code>&lt; 480px</code></td>
+                    <td>Kompaktowe elementy, mniejsze czcionki</td>
+                </tr>
+                <tr>
+                    <td><strong>Extra Small</strong></td>
+                    <td><code>&lt; 360px</code></td>
+                    <td>Minimalne rozmiary, ultra-kompakt</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>🎮 Interaktywne Demo</h2>
+        <div class="demo-section">
+            <h3>Touch Feedback</h3>
+            <p>Kliknij/dotknij poniższych przycisków, aby zobaczyć responsywną animację:</p>
+            <button class="button-demo">Przycisk 1</button>
+            <button class="button-demo">Przycisk 2</button>
+            <button class="button-demo">Przycisk 3</button>
+        </div>
+
+        <h2>💡 Wskazówki dla Użytkowników</h2>
+        <ul>
+            <li><strong>Otwieranie menu:</strong> Kliknij ikonę 🍔 w lewym górnym rogu lub przeciągnij palcem od lewej krawędzi ekranu</li>
+            <li><strong>Zamykanie menu:</strong> Kliknij poza menu, przeciągnij w lewo lub naciśnij ESC</li>
+            <li><strong>Wyszukiwanie:</strong> Pole wyszukiwania dostosowuje się do szerokości ekranu</li>
+            <li><strong>Nawigacja:</strong> Breadcrumbs można przewijać poziomo na małych ekranach</li>
+            <li><strong>Karty:</strong> Wszystkie karty mają wizualny feedback przy dotknięciu</li>
+        </ul>
+
+        <h2>🔧 Optymalizacje Techniczne</h2>
+        <h3>Performance</h3>
+        <ul>
+            <li>Hardware-accelerated animations</li>
+            <li>Passive event listeners</li>
+            <li>Reduced motion support</li>
+            <li>Optimized scrolling</li>
+        </ul>
+
+        <h3>Accessibility</h3>
+        <ul>
+            <li>ARIA labels dla screen readers</li>
+            <li>Keyboard navigation (ESC key)</li>
+            <li>48px minimum touch targets</li>
+            <li>High contrast support</li>
+        </ul>
+
+        <h3>Kompatybilność</h3>
+        <ul>
+            <li>iOS Safari 14+</li>
+            <li>Chrome Mobile 90+</li>
+            <li>Firefox Mobile 88+</li>
+            <li>Samsung Internet 14+</li>
+        </ul>
+
+        <h2>📱 Safe Area Support</h2>
+        <p>Aplikacja respektuje safe areas dla urządzeń z notch (wcięcie):</p>
+        <ul>
+            <li><code>viewport-fit=cover</code> dla pełnoekranowego doświadczenia</li>
+            <li><code>env(safe-area-inset-*)</code> dla padding adjustments</li>
+            <li>Optymalizacja dla iPhone X i nowszych</li>
+        </ul>
+
+        <h2>🎨 Theme & Styling</h2>
+        <div class="demo-section">
+            <p><strong>Theme Color:</strong> <code>#0a0a0a</code></p>
+            <p><strong>Status Bar Style:</strong> Black Translucent</p>
+            <p><strong>App Mode:</strong> Standalone capable</p>
+        </div>
+
+        <h2>📖 Dalsze Kroki</h2>
+        <p>Aby w pełni przetestować wersję mobilną:</p>
+        <ol style="margin-left: 2rem; color: #9198a8;">
+            <li>Otwórz aplikację na urządzeniu mobilnym</li>
+            <li>Wypróbuj gestykulację dotykową (swipe)</li>
+            <li>Przetestuj w różnych orientacjach (portrait/landscape)</li>
+            <li>Sprawdź działanie na różnych rozmiarach ekranów</li>
+            <li>Oceń responsywność i płynność animacji</li>
+        </ol>
+    </div>
+
+    <div class="responsive-indicator" id="sizeIndicator">
+        Wykrywanie rozmiaru...
+    </div>
+
+    <script>
+        function updateSizeIndicator() {
+            const width = window.innerWidth;
+            const indicator = document.getElementById('sizeIndicator');
+
+            let size = '';
+            if (width > 1024) {
+                size = '🖥️ Desktop';
+            } else if (width > 768) {
+                size = '📱 Tablet';
+            } else if (width > 480) {
+                size = '📱 Mobile';
+            } else if (width > 360) {
+                size = '📱 Small Mobile';
+            } else {
+                size = '📱 Extra Small';
+            }
+
+            indicator.textContent = `${size} (${width}px)`;
+        }
+
+        // Update on load and resize
+        updateSizeIndicator();
+        window.addEventListener('resize', updateSizeIndicator);
+
+        // Add ripple effect to demo buttons
+        document.querySelectorAll('.button-demo').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const ripple = document.createElement('span');
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(0, 0, 0, 0.3);
+                    width: 100px;
+                    height: 100px;
+                    animation: ripple 0.6s ease-out;
+                    pointer-events: none;
+                `;
+                this.style.position = 'relative';
+                this.style.overflow = 'hidden';
+                this.appendChild(ripple);
+
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -5,31 +5,117 @@ import { renderView } from './render.js';
 
 // Initialize welcome screen interactions
 export function initializeWelcomeInteractions() {
-    // Recent files click handler
+    console.log('Initializing welcome interactions...');
+
+    // Wait for explorer to be shown, then setup handlers
+    waitForWelcomeContent();
+
+    // Setup click handlers (for desktop)
     document.addEventListener('click', (e) => {
         const recentCard = e.target.closest('.recent-file-card');
         if (recentCard) {
             handleRecentFileClick(recentCard);
+            return;
         }
 
-        // Folder map click handler
         const folderCard = e.target.closest('.folder-map-card');
         if (folderCard) {
             handleFolderMapClick(folderCard);
+            return;
         }
 
-        // Tag cloud click handler
-        const tagItem = e.target.closest('.tag-bubble, .tag-cloud-item');
+        const tagItem = e.target.closest('.tag-bubble');
         if (tagItem) {
             handleTagClick(tagItem);
+            return;
         }
 
-        // Stats card click handler
         const statCard = e.target.closest('.welcome-stat-card');
         if (statCard) {
             handleStatCardClick(statCard);
+            return;
         }
     });
+}
+
+// Wait for welcome content to be rendered
+function waitForWelcomeContent() {
+    const checkWelcome = () => {
+        const welcomeCards = document.querySelectorAll('.welcome-stat-card');
+        if (welcomeCards.length > 0) {
+            console.log('Welcome cards found, setting up touch handlers');
+            setupTouchHandlers();
+        } else {
+            console.log('Welcome cards not found yet, checking again...');
+            setTimeout(checkWelcome, 500);
+        }
+    };
+    checkWelcome();
+}
+
+// Setup touch handlers for all interactive elements
+function setupTouchHandlers() {
+    const contentArea = document.getElementById('contentArea');
+    if (!contentArea) {
+        console.log('Content area not found!');
+        return;
+    }
+
+    console.log('Setting up touch handlers on content area');
+
+    let touchStartTime = 0;
+    let startTarget = null;
+
+    contentArea.addEventListener('touchstart', (e) => {
+        touchStartTime = Date.now();
+        startTarget = e.target;
+        console.log('Touch start on content area, target:', e.target.className, 'tag?', e.target.closest('.tag-bubble'));
+    }, { passive: true });
+
+    contentArea.addEventListener('touchend', (e) => {
+        const touchDuration = Date.now() - touchStartTime;
+        console.log('Touch end - duration:', touchDuration, 'target:', startTarget?.className);
+
+        // Only handle quick taps
+        if (touchDuration > 300) {
+            console.log('Touch too long, ignoring');
+            return;
+        }
+
+        const target = startTarget;
+
+        const statCard = target.closest('.welcome-stat-card');
+        if (statCard) {
+            console.log('Stat card tap detected!');
+            e.preventDefault();
+            handleStatCardClick(statCard);
+            return;
+        }
+
+        const recentCard = target.closest('.recent-file-card');
+        if (recentCard) {
+            console.log('Recent card tap detected!');
+            e.preventDefault();
+            handleRecentFileClick(recentCard);
+            return;
+        }
+
+        const folderCard = target.closest('.folder-map-card');
+        if (folderCard) {
+            console.log('Folder card tap detected!');
+            e.preventDefault();
+            handleFolderMapClick(folderCard);
+            return;
+        }
+
+        const tagItem = target.closest('.tag-bubble');
+        if (tagItem) {
+            console.log('Tag tap detected!');
+            e.preventDefault();
+            handleTagClick(tagItem);
+            return;
+        }
+    }, { passive: false }); // NOT passive so we can preventDefault
 }
 
 // Handle recent file click
@@ -56,6 +142,16 @@ function handleFolderMapClick(card) {
 
     if (folder) {
         navigateToFolder(folder);
+
+        // On mobile, open sidebar to show folder contents
+        if (window.innerWidth <= 768) {
+            // Import and call openSidebar from mobileNav
+            import('./mobileNav.js').then(module => {
+                if (module.openSidebar) {
+                    module.openSidebar();
+                }
+            });
+        }
     }
 }
 

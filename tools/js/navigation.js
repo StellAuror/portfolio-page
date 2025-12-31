@@ -13,6 +13,9 @@ export function navigateToFolder(folder, skipHistory = false) {
     }
 
     renderView();
+
+    // Trigger custom event for mobile nav
+    document.dispatchEvent(new CustomEvent('navigationChanged'));
 }
 
 // Navigate to file
@@ -38,6 +41,9 @@ export function navigateToFile(folder, file, skipHistory = false) {
     }
 
     renderView();
+
+    // Trigger custom event for mobile nav
+    document.dispatchEvent(new CustomEvent('navigationChanged'));
 }
 
 // Navigate to root
@@ -49,6 +55,9 @@ export function navigateToRoot(skipHistory = false) {
     }
 
     renderView();
+
+    // Trigger custom event for mobile nav
+    document.dispatchEvent(new CustomEvent('navigationChanged'));
 }
 
 // Handle browser back/forward navigation
