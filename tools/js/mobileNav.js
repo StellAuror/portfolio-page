@@ -166,15 +166,27 @@ function setupEventListeners() {
     // Bottom nav items - add both click and touch support
     bottomNavItems.forEach(item => {
         let touchStartTime = 0;
+        let touchStartX = 0;
+        let touchStartY = 0;
 
         item.addEventListener('touchstart', (e) => {
             touchStartTime = Date.now();
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
         }, { passive: true });
 
         item.addEventListener('touchend', (e) => {
             const touchDuration = Date.now() - touchStartTime;
-            // Only handle quick taps
-            if (touchDuration < 200) {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+
+            // Calculate movement
+            const moveX = Math.abs(touchEndX - touchStartX);
+            const moveY = Math.abs(touchEndY - touchStartY);
+            const totalMove = Math.sqrt(moveX * moveX + moveY * moveY);
+
+            // Only handle deliberate taps (quick and minimal movement)
+            if (touchDuration < 300 && totalMove < 10) {
                 handleBottomNavClick(e);
             }
         }, { passive: true });
@@ -535,6 +547,8 @@ function setupSwipeGestures() {
     // Touch and click support for sidebar items
     if (sidebar) {
         let sidebarTouchStartTime = 0;
+        let sidebarTouchStartX = 0;
+        let sidebarTouchStartY = 0;
         let sidebarTouchHandled = false;
 
         // Touch support
@@ -542,20 +556,32 @@ function setupSwipeGestures() {
             // Only for repo-cards, not for swipe gestures
             if (e.target.closest('.repo-card')) {
                 sidebarTouchStartTime = Date.now();
+                sidebarTouchStartX = e.touches[0].clientX;
+                sidebarTouchStartY = e.touches[0].clientY;
                 sidebarTouchHandled = false;
             }
         }, { passive: true });
 
         sidebar.addEventListener('touchend', (e) => {
-            const touchDuration = Date.now() - sidebarTouchStartTime;
+            const card = e.target.closest('.repo-card');
+            if (!card) return;
 
-            // Only handle quick taps on repo-cards
-            if (e.target.closest('.repo-card') && touchDuration < 200 && !sidebarTouchHandled) {
+            const touchDuration = Date.now() - sidebarTouchStartTime;
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+
+            // Calculate movement
+            const moveX = Math.abs(touchEndX - sidebarTouchStartX);
+            const moveY = Math.abs(touchEndY - sidebarTouchStartY);
+            const totalMove = Math.sqrt(moveX * moveX + moveY * moveY);
+
+            // Only handle deliberate taps (quick and minimal movement)
+            if (touchDuration < 300 && totalMove < 15 && !sidebarTouchHandled) {
                 sidebarTouchHandled = true;
+                e.preventDefault(); // Prevent click event from firing
 
                 // Check if it's a file (not folder)
-                const card = e.target.closest('.repo-card');
-                const isFile = card?.querySelector('.repo-icon.file');
+                const isFile = card.querySelector('.repo-icon.file');
 
                 // Trigger click on the card
                 card.click();
@@ -563,14 +589,20 @@ function setupSwipeGestures() {
                 if (isFile) {
                     setTimeout(() => closeSidebar(), 200);
                 }
+
+                // Reset flag after delay
+                setTimeout(() => {
+                    sidebarTouchHandled = false;
+                }, 500);
             }
-        }, { passive: true });
+        }, { passive: false }); // NOT passive so we can preventDefault
 
         // Click support (for desktop)
         sidebar.addEventListener('click', (e) => {
             // Skip if touch already handled
             if (sidebarTouchHandled) {
-                sidebarTouchHandled = false;
+                e.preventDefault();
+                e.stopPropagation();
                 return;
             }
 

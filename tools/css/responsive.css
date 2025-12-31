@@ -343,6 +343,11 @@
         overflow: hidden;
     }
 
+    /* Hide tags section on mobile - not useful for touch */
+    .tag-cloud-section {
+        display: none !important;
+    }
+
     .recent-files-grid,
     .folder-map-grid {
         width: 100%;

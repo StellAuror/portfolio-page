@@ -65,20 +65,28 @@ function setupTouchHandlers() {
 
     let touchStartTime = 0;
     let startTarget = null;
+    let touchStartX = 0;
+    let touchStartY = 0;
 
     contentArea.addEventListener('touchstart', (e) => {
         touchStartTime = Date.now();
         startTarget = e.target;
-        console.log('Touch start on content area, target:', e.target.className, 'tag?', e.target.closest('.tag-bubble'));
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
     }, { passive: true });
 
     contentArea.addEventListener('touchend', (e) => {
         const touchDuration = Date.now() - touchStartTime;
-        console.log('Touch end - duration:', touchDuration, 'target:', startTarget?.className);
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
 
-        // Only handle quick taps
-        if (touchDuration > 300) {
-            console.log('Touch too long, ignoring');
+        // Calculate movement distance
+        const moveX = Math.abs(touchEndX - touchStartX);
+        const moveY = Math.abs(touchEndY - touchStartY);
+        const totalMove = Math.sqrt(moveX * moveX + moveY * moveY);
+
+        // Ignore if touch was too long or finger moved too much (scrolling)
+        if (touchDuration > 400 || totalMove > 15) {
             return;
         }
 
@@ -86,7 +94,6 @@ function setupTouchHandlers() {
 
         const statCard = target.closest('.welcome-stat-card');
         if (statCard) {
-            console.log('Stat card tap detected!');
             e.preventDefault();
             handleStatCardClick(statCard);
             return;
@@ -94,7 +101,6 @@ function setupTouchHandlers() {
 
         const recentCard = target.closest('.recent-file-card');
         if (recentCard) {
-            console.log('Recent card tap detected!');
             e.preventDefault();
             handleRecentFileClick(recentCard);
             return;
@@ -102,7 +108,6 @@ function setupTouchHandlers() {
 
         const folderCard = target.closest('.folder-map-card');
         if (folderCard) {
-            console.log('Folder card tap detected!');
             e.preventDefault();
             handleFolderMapClick(folderCard);
             return;
@@ -110,7 +115,6 @@ function setupTouchHandlers() {
 
         const tagItem = target.closest('.tag-bubble');
         if (tagItem) {
-            console.log('Tag tap detected!');
             e.preventDefault();
             handleTagClick(tagItem);
             return;
