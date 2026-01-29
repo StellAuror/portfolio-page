@@ -48,6 +48,19 @@
     "timelineData": [
         {
             "id": 1,
+            "date": 2026.5,
+            "date_full": "Aug 2025 - Present",
+            "title": "BI Developer — Odczaruj Power BI / Clikless",
+            "description": "I work as a BI Developer leading end-to-end projects with B2B clients ranging from corporations to small businesses, collaborating with Paweł Czapiewski at Odczaruj Power BI. My primary tech stack includes the complete Power BI environment (Fabric, Power Apps), supplemented by SQL, R, and occasional Python. I also provide mentoring and support for courses, helping teams master business intelligence tools and practices.",
+            "tags": [
+            "BI Developer",
+            "Power BI",
+            "B2B"
+            ],
+            "media": "static/odczaruj.webp"
+        },
+        {
+            "id": 2,
             "date": 2025.65,
             "date_full": "Jul 2025",
             "title": "Microsoft Certified: Data Analyst Associate (PL-300)",
@@ -60,7 +73,7 @@
             "media": "static/pl-300.webp"
         },
         {
-            "id": 2,
+            "id": 3,
             "date": 2024.99,
             "date_full": "Apr 2023 – Dec 2024",
             "title": "Data Analyst — Novartis Global Artwork",
@@ -73,7 +86,7 @@
             "media": "static/nvs.webp"
         },
         {
-            "id": 3,
+            "id": 4,
             "date": 2024,
             "date_full": "Oct 2020 – Jan 2024",
             "title": "Engineer's Degree — Wrocław University of Science and Technology",
@@ -86,7 +99,7 @@
             "media": "static/pwr.webp"
         },
         {
-            "id": 4,
+            "id": 5,
             "date": 2023.25,
             "date_full": "Jun 2022 – Mar 2023",
             "title": "Intern — Novartis Global Artwork",
@@ -386,7 +399,7 @@
                     },
                     {
                         "name": "Python",
-                        "mastery": 3
+                        "mastery": 4
                     },
                     {
                         "name": "T-SQL (analytical)",
@@ -446,8 +459,12 @@
                         "mastery": 5
                     },
                     {
+                        "name": "E2E Data Solutions",
+                        "mastery": 5
+                    },
+                    {
                         "name": "ETL / ELT",
-                        "mastery": 4
+                        "mastery": 5
                     },
                     {
                         "name": "BPMN / UML / ARIS",
@@ -548,6 +565,7 @@
         ]
     },
     "skillDescriptions": {
+        "e2e data solutions": "Very good knowledge of designing and implementing end-to-end data solutions, including data acquisition, processing, storage, and visualization. Expereince in many E2E B2B projects.",
         "r": "Very good knowledge of R, including creating complex dashboards, data modeling, and visualization in commercial projects.",
         "python": "Intermediate knowledge, including data analysis, GUI application design, and automation.",
         "t-sql (analytical)": "Very good knowledge of creating complex queries, aggregations, and code optimization for business analysis.",

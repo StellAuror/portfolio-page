@@ -48,6 +48,19 @@
     "timelineData": [
         {
             "id": 1,
+            "date": 2026.5,
+            "date_full": "Sie 2025 – obecnie",
+            "title": "Analityk BI — Odczaruj Power BI / Clikless",
+            "description": "Pracuję jako Analityk BI, prowadząc kompleksowe projekty dla klientów B2B — od korporacji po małe firmy — we współpracy z Pawłem Czapiewskim w Odczaruj Power BI. Mój główny stack technologiczny obejmuje pełne środowisko Power BI (Fabric, Power Apps), uzupełnione o SQL, R oraz okazjonalnie Pythona. Prowadzę także w mentoring i wspieram szkolenia, pomagając kursantom opanować narzędzia i praktyki Business Intelligence.",
+            "tags": [
+            "Analityk BI",
+            "Power BI",
+            "B2B"
+            ],
+            "media": "static/odczaruj.webp"
+        },
+        {
+            "id": 2,
             "date": 2025.65,
             "date_full": "Lip 2025",
             "title": "Microsoft Data Analyst Associate PL-300",
@@ -60,7 +73,7 @@
             "media": "static/pl-300.webp"
         },
         {
-            "id": 2,
+            "id": 3,
             "date": 2024.99,
             "date_full": "Kwi 2023 – Gru 2024",
             "title": "Analityk danych — Novartis Global Artwork",
@@ -73,7 +86,7 @@
             "media": "static/nvs.webp"
         },
         {
-            "id": 3,
+            "id": 4,
             "date": 2024,
             "date_full": "Paź 2020 – Sty 2024",
             "title": "Tytuł inżyniera — Politechnika Wrocławska",
@@ -86,7 +99,7 @@
             "media": "static/pwr.webp"
         },
         {
-            "id": 4,
+            "id": 5,
             "date": 2023.25,
             "date_full": "Cze 2022 – Mar 2023",
             "title": "Stażysta — Novartis Global Artwork",
@@ -386,7 +399,7 @@
                     },
                     {
                         "name": "Python",
-                        "mastery": 3
+                        "mastery": 4
                     },
                     {
                         "name": "T-SQL (analityczny)",
@@ -439,6 +452,10 @@
                     },
                     {
                         "name": "Tworzenie raportów",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Projekty E2E",
                         "mastery": 5
                     },
                     {
@@ -548,6 +565,7 @@
         ]
     },
     "skillDescriptions": {
+        "projekty e2e": "Bardzo dobra znajomość projektowania i wdrażania kompleksowych rozwiązań danych, obejmująca pozyskiwanie, przetwarzanie, przechowywanie i wizualizację danych. Doświadczenie w wielu projektach E2E B2B.",
         "r": "Bardzo dobra znajomość R, obejmująca tworzenie złożonych dashboardów, modelowanie i wizualizowanie danych w projektach komercyjnych.",
         "python": "Średniozaawansowana znajomość, obejmująca analizę danych, projektowanie aplikacji GUI i automatyzację",
         "t-sql (analityczny)": "Bardzo dobra znajomość tworzenia złożonych zapytań, agregacji i optymalizacji kodu pod kątem analiz biznesowych.",
