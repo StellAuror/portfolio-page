@@ -18,7 +18,7 @@
 }
 
 .analytics-title {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 500;
     color: #ffffff;
     letter-spacing: 0.1em;
@@ -64,7 +64,7 @@
 }
 
 .level-label {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: #888888;
     min-width: 80px;
     font-weight: 400;
@@ -302,7 +302,7 @@
 }
 
 .stat-label {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: #666666;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -437,7 +437,7 @@
 }
 
 .skill-name {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: #e0e0e0;
     font-weight: 400;
     letter-spacing: 0.025em;

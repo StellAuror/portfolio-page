@@ -16,6 +16,8 @@ const autoPlayBtn = document.getElementById('story-auto-play-btn');
 const autoPlayProgress = document.getElementById('story-auto-play-progress');
 const progressIndicators = document.getElementById('story-progress-indicators');
 
+let _currentLang = window.currentLang || "en";
+
 Object.defineProperty(window, "currentLang", {
   get: () => _currentLang,
   set: async (value) => {
@@ -24,8 +26,6 @@ Object.defineProperty(window, "currentLang", {
     showStory(0);              // <-- np. pokaż pierwszą po zmianie języka
   }
 });
-
-let _currentLang = "";
 async function waitForLang() {
   while (!currentLang) {
     await new Promise(resolve => setTimeout(resolve, 100));
