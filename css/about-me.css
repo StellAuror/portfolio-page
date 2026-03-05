@@ -9,7 +9,7 @@
 .content-section {
     display: none;
     width: 100%;
-    margin-bottom: 100px;
+    margin-bottom: 4rem;
     animation: fadeIn 0.3s ease;
 }
 
@@ -45,8 +45,9 @@
 }
 
 .text-wraper {
-    font-weight: 100;
-
+    font-weight: 400;
+    line-height: 1.75;
+    color: #d0d0d0;
 }
 
 a, .copy-text {
