@@ -9,7 +9,7 @@
     },
     "about": {
         "title": "O mnie",
-        "subtitle": "Analityk danych z pasją i 3-letnim doświadczeniem",
+        "subtitle": "Analityk danych z pasją i 4-letnim doświadczeniem",
         "greeting": "Cześć, jestem Michał — zamieniam dane w decyzje.",
         "p1": "Moje zainteresowanie analizą zaczęło się wcześnie, już w czasach gimnazjalnych projektowałem arkusze kalkulacyjne dla nauczycieli. Z czasem to zajęcie przerodziło się pasję i świadomy wybór ścieżki. Każdy kolejny etap nauki i pracy traktowałem jako okazję do pogłębiania zrozumienia, jak dane mogą odzwierciedlać złożoność rzeczywistości i pomagać w jej interpretacji.",
         "p2": "Analiza danych to dla mnie nie tylko zestaw metod, ale przede wszystkim sposób myślenia. Ważne jest zarówno dostrzeganie wzorców, jak i umiejętność ich wyjaśnienia w sposób zrozumiały dla innych. Liczby mają sens dopiero wtedy, gdy stają się elementem rozmowy — wnoszą perspektywę, wspierają decyzje i otwierają nowe możliwości działania. Dlatego kładę nacisk na łączenie strony analitycznej z czynnikiem ludzkim i kontekstem, w jakim funkcjonują dane.",
@@ -410,6 +410,14 @@
                         "mastery": 5
                     },
                     {
+                        "name": "Power BI Service",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Microsoft Fabric",
+                        "mastery": 5
+                    },
+                    {
                         "name": "QlikSense",
                         "mastery": 3
                     },
@@ -464,7 +472,23 @@
                     },
                     {
                         "name": "ETL / ELT",
-                        "mastery": 4
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Architektura Medalionowa",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Integracja źródeł danych",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Konsolidacja danych",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Wdrożenie ML",
+                        "mastery": 3
                     },
                     {
                         "name": "BPMN / UML / ARIS",
@@ -569,7 +593,9 @@
         "r": "Bardzo dobra znajomość R, obejmująca tworzenie złożonych dashboardów, modelowanie i wizualizowanie danych w projektach komercyjnych.",
         "python": "Średniozaawansowana znajomość, obejmująca analizę danych, projektowanie aplikacji GUI i automatyzację",
         "t-sql (analityczny)": "Bardzo dobra znajomość tworzenia złożonych zapytań, agregacji i optymalizacji kodu pod kątem analiz biznesowych.",
-        "power bi": "Bardzo dobra znajomość projektowania interaktywnych raportów i dashboardów, modelowania danych oraz optymalizacji wydajności.",
+        "power bi": "Ekspercka znajomość projektowania interaktywnych raportów i dashboardów, modelowania danych, optymalizacji DAX, row-level security i dostrajania wydajności w projektach komercyjnych.",
+        "power bi service": "Ekspercka znajomość administracji Power BI Service: zarządzanie obszarami roboczymi, pipeline'y wdrożeń, przepływy danych, zaplanowane odświeżanie, zarządzanie bramką oraz udostępnianie i osadzanie raportów w skali korporacyjnej.",
+        "microsoft fabric": "Ekspercka znajomość ekosystemu Microsoft Fabric dla analityków danych: budowanie środowisk w architekturze medalionowej (Bronze/Silver/Gold), łączenie i konsolidacja heterogenicznych źródeł danych przez Lakehouse i Warehouse, implementacja modeli ML w Notebookach oraz orkiestracja kompleksowych potoków analitycznych.",
         "qliksense": "Średniozaawansowana znajomość w zakresie tworzenia wizualizacji i analizy danych w QlikSense na podstawie wewnętrznych szkoleń i certyfikacji oraz współpracy z profesjonalnymi developerami QlikSense.",
         "tableau": "Podstawowa znajomość narzędzia, umożliwiająca tworzenie prostych dashboardów i wizualizacji.",
         "alteryx": "Znajomość podstawowych narzędzi ETL, wymagająca dalszej praktyki w samodzielnych projektach.",
@@ -583,6 +609,10 @@
         "tworzenie raportów": "Zaawansowane tworzenie raportów łączących dane, wnioski i elementy graficzne, dostosowanych do odbiorcy.",
         "tworzenie dashboardów": "Zaawansowane projektowanie interaktywnych paneli do monitorowania wskaźników i procesów.",
         "etl / elt": "Bardzo dobra znajomość projektowania i optymalizacji procesów pobierania, transformacji i ładowania danych.",
+        "architektura medalionowa": "Ekspercka znajomość projektowania warstwowych architektur danych Bronze/Silver/Gold w środowiskach Microsoft Fabric i Lakehouse, zapewniając jakość i governance danych na każdym poziomie.",
+        "integracja źródeł danych": "Ekspercka znajomość łączenia i orkiestracji heterogenicznych źródeł danych (bazy danych, API, pliki płaskie, usługi chmurowe) w ujednoliconych środowiskach analitycznych.",
+        "konsolidacja danych": "Ekspercka znajomość łączenia i harmonizowania danych z wielu systemów w spójne, gotowe do analizy zbiory danych, w tym wyrównywanie schematów i deduplikacja.",
+        "wdrożenie ml": "Zaawansowane umiejętności implementacji i wdrażania modeli uczenia maszynowego w platformach danych (Fabric Notebooks, Python), w tym inżynieria cech, ocena modeli i integracja z warstwami BI.",
         "bpmn / uml / aris": "Bardzo dobra znajomość modelowania procesów biznesowych i systemów informatycznych.",
         "optymalizacja procesów": "Średniozaawansowana znajomość metod usprawniania procesów w typowych zastosowaniach.",
         "uczenie maszynowe": "Zaawansowane tworzenie i optymalizacja modeli, przygotowanie danych oraz ocena jakości predykcji.",

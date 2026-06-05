@@ -9,7 +9,7 @@
     },
     "about": {
         "title": "About me",
-        "subtitle": "Data Analyst with passion and 3 years of experience",
+        "subtitle": "Data Analyst with passion and 4 years of experience",
         "greeting": "Hi, I’m Michał — I turn data into decisions.",
         "p1": "My interest in analysis started early — back in middle school I was already designing spreadsheets for teachers to help them make sense of grades and results. What began as a curiosity soon grew into a passion and a deliberate career path. Every stage of my studies and work became an opportunity to deepen my understanding of how data reflects the complexity of reality and how it can help us interpret it.",
         "p2": "For me, data analysis is more than a set of methods — it’s a way of thinking. It’s not only about identifying patterns but also about explaining them in a way that makes sense to others. Numbers only gain meaning once they become part of a conversation — when they provide perspective, support decisions, and open up new opportunities. That’s why I focus on connecting the analytical side with the human factor and the context in which data exists.",
@@ -410,6 +410,14 @@
                         "mastery": 5
                     },
                     {
+                        "name": "Power BI Service",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Microsoft Fabric",
+                        "mastery": 5
+                    },
+                    {
                         "name": "QlikSense",
                         "mastery": 3
                     },
@@ -465,6 +473,22 @@
                     {
                         "name": "ETL / ELT",
                         "mastery": 5
+                    },
+                    {
+                        "name": "Medallion Architecture",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Data Source Integration",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Data Consolidation",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "ML Implementation",
+                        "mastery": 3
                     },
                     {
                         "name": "BPMN / UML / ARIS",
@@ -569,7 +593,9 @@
         "r": "Very good knowledge of R, including creating complex dashboards, data modeling, and visualization in commercial projects.",
         "python": "Intermediate knowledge, including data analysis, GUI application design, and automation.",
         "t-sql (analytical)": "Very good knowledge of creating complex queries, aggregations, and code optimization for business analysis.",
-        "power bi": "Very good knowledge of designing interactive reports and dashboards, data modeling, and performance optimization.",
+        "power bi": "Expert knowledge of designing interactive reports and dashboards, data modeling, DAX optimization, row-level security, and performance tuning in commercial projects.",
+        "power bi service": "Expert knowledge of Power BI Service administration: workspaces, deployment pipelines, dataflows, scheduled refresh, gateway management, and sharing/embedding reports at enterprise scale.",
+        "microsoft fabric": "Expert knowledge of Microsoft Fabric ecosystem for data analysts: building medallion-architecture environments (Bronze/Silver/Gold), connecting and consolidating heterogeneous data sources via Lakehouses and Warehouses, implementing ML models with Notebooks, and orchestrating end-to-end analytics pipelines.",
         "qliksense": "Intermediate knowledge in creating visualizations and data analysis in QlikSense, based on internal training and certification, as well as collaboration with professional QlikSense developers.",
         "tableau": "Basic knowledge of the tool, enabling the creation of simple dashboards and visualizations.",
         "alteryx": "Familiarity with basic ETL tools, requiring further practice for independent projects.",
@@ -583,6 +609,10 @@
         "report creation": "Advanced creation of reports combining data, insights, and graphic elements tailored to the audience.",
         "dashboard creation": "Advanced design of interactive panels for monitoring indicators and processes.",
         "etl / elt": "Very good knowledge of designing and optimizing processes for extracting, transforming, and loading data.",
+        "medallion architecture": "Expert knowledge of designing Bronze/Silver/Gold layered data architectures in Microsoft Fabric and Lakehouse environments, ensuring data quality and governance at each tier.",
+        "data source integration": "Expert knowledge of connecting and orchestrating heterogeneous data sources (databases, APIs, flat files, cloud services) into unified analytical environments.",
+        "data consolidation": "Expert knowledge of merging and harmonizing data from multiple systems into consistent, analysis-ready datasets, including schema alignment and deduplication.",
+        "ml implementation": "Advanced skills in implementing and deploying machine learning models within data platforms (Fabric Notebooks, Python), including feature engineering, model evaluation, and integration with BI layers.",
         "bpmn / uml / aris": "Very good knowledge of modeling business processes and IT systems.",
         "process optimization": "Intermediate knowledge of methods for improving processes in typical applications.",
         "machine learning": "Advanced creation and optimization of models, data preparation, and prediction quality assessment.",
