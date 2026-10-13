@@ -56,7 +56,9 @@ function itemRanges(item) {
 let geometry = null; // per-item pixel geometry used by guides and auto-scroll
 
 // Cards row (the original white cards) + brackets on a real time axis, joined by curved links
-const CARD = { width: 120, height: 104, gap: 14, top: 16, link: 42, lanePitch: 13 };
+const CARD_DESKTOP = { width: 120, height: 104, gap: 14, top: 16, link: 42, lanePitch: 13 };
+const CARD_MOBILE = { width: 104, height: 76, gap: 10, top: 12, link: 26, lanePitch: 11 };
+let CARD = CARD_DESKTOP;
 
 function renderTimeline() {
     const timeline = document.querySelector('#journey .timeline');
@@ -66,6 +68,7 @@ function renderTimeline() {
     timeline.innerHTML = '';
     const items = window.timelineData;
     if (!items.length) return;
+    CARD = window.innerWidth <= 1000 ? CARD_MOBILE : CARD_DESKTOP;
 
     const ranges = items.map(itemRanges);
     const all = ranges.flat();
@@ -300,6 +303,11 @@ function showEvent(index, instant = false) {
     // Data is ordered newest-first: "newer" moves towards index 0
     document.getElementById('timeline-next-btn').disabled = index === 0;
     document.getElementById('timeline-prev-btn').disabled = index === items.length - 1;
+    document.querySelectorAll('#journey .tl-mnav').forEach(nav => {
+        nav.querySelector('.tl-mnav-prev').disabled = index === items.length - 1;
+        nav.querySelector('.tl-mnav-next').disabled = index === 0;
+        nav.querySelector('.tl-mnav-count').textContent = `${items.length - index} / ${items.length}`;
+    });
 
     autoScrollToActiveItem(instant);
 }
@@ -334,6 +342,20 @@ function bindControls() {
     });
     document.getElementById('timeline-prev-btn')?.addEventListener('click', () => {
         if (currentIdx < window.timelineData.length - 1) showEvent(currentIdx + 1);
+    });
+
+    // Mobile nav bars (above and below the content); the lower one brings the reader back up
+    document.querySelectorAll('#journey .tl-mnav').forEach(nav => {
+        const go = step => {
+            const next = currentIdx + step;
+            if (next < 0 || next >= window.timelineData.length) return;
+            showEvent(next);
+            if (nav.classList.contains('tl-mnav-bottom')) {
+                document.querySelector('#journey .timeline-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        };
+        nav.querySelector('.tl-mnav-prev').addEventListener('click', () => go(1));
+        nav.querySelector('.tl-mnav-next').addEventListener('click', () => go(-1));
     });
 
     // Arrow keys only while Journey is open

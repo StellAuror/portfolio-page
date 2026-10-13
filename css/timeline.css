@@ -430,6 +430,11 @@
 }
 
 /* Mobile Responsive Timeline - 1000px and below */
+/* Mobile step navigation — hidden on desktop */
+.tl-mnav {
+    display: none;
+}
+
 @media (max-width: 1000px) {
     #journey {
         height: auto;
@@ -440,19 +445,21 @@
         height: auto;
     }
 
-    /* Strip with events goes right under the header, content below it */
+    /* Order: header → time strip → step nav → image → text → step nav */
     .timeline-header { order: 0; }
     .timeline-container { order: 1; margin: 0 -1rem; }
-    .timeline-main-content { order: 2; }
+    .tl-mnav-top { order: 2; }
+    .timeline-main-content { order: 3; }
 
-
-
+    .timeline-header .section-subtitle {
+        margin-bottom: 0.5rem;
+    }
 
     .timeline-main-content {
         display: flex;
         flex-direction: column;
-        gap: 20px;
-        padding: 8px 0 0;
+        gap: 16px;
+        padding: 4px 0 0;
     }
 
     .timeline-navigation {
@@ -466,24 +473,106 @@
         overflow: visible;
     }
 
-    .timeline-left-panel { order: 1; }
-    .timeline-right-panel { order: 2; }
+    /* Image first, compact; text below */
+    .timeline-right-panel { order: 1; }
+    .timeline-left-panel { order: 2; }
+    .tl-mnav-bottom { order: 3; }
 
     .timeline-event-media {
         width: 100%;
+        height: 170px;
         max-height: none;
+        object-fit: cover;
+        border-radius: 12px;
+    }
+
+    .timeline-event-year {
+        font-size: 0.9rem;
+        margin-bottom: 8px;
     }
 
     .timeline-event-title {
-        font-size: 1.6rem;
+        font-size: 1.35rem;
+        line-height: 1.25;
+        margin-bottom: 12px;
     }
 
     .timeline-event-description {
-        font-size: 1rem;
+        font-size: 0.98rem;
+        line-height: 1.65;
     }
 
-}
+    /* Compact cards on the strip */
+    .timeline-block {
+        width: 104px;
+        height: 76px;
+        padding: 7px 8px;
+    }
 
+    .timeline-block-title {
+        font-size: 0.7rem;
+        -webkit-line-clamp: 4;
+        margin-bottom: 0;
+    }
+
+    .timeline-block-desc {
+        display: none;
+    }
+
+    .timeline-item:hover .timeline-block {
+        transform: none;
+    }
+
+    .tl-date {
+        font-size: 0.65rem;
+    }
+
+    /* ‹ 9 / 9 › */
+    .tl-mnav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .tl-mnav-top {
+        margin: 4px 0 8px;
+    }
+
+    .tl-mnav-bottom {
+        padding-top: 16px;
+        border-top: 1px solid #1a1a1a;
+    }
+
+    .tl-mnav button {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 1px solid #333;
+        background: transparent;
+        color: #fff;
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .tl-mnav button:active {
+        background: #1d9bf0;
+        border-color: #1d9bf0;
+    }
+
+    .tl-mnav button:disabled {
+        opacity: 0.25;
+    }
+
+    .tl-mnav-count {
+        color: #71767b;
+        font-size: 0.85rem;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.05em;
+    }
+}
 
 /* All periods are barely visible; the selected one slides out in full */
 .tl-span .tl-bracket,
