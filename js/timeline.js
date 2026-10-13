@@ -1,376 +1,433 @@
-// Journey timeline
-// Data comes from language.js ("langchange"); rendering waits until the
-// Journey section is visible, because layout depends on the wrapper width.
 window.timelineData = [];
 let currentIdx = 0;
-let timelineDirty = true;      // data or width changed since last render
-let renderedWidth = 0;
-let controlsBound = false;
+let currentLang = 'en'; 
+let __timelineInitialized = false;
 
-// Layout of the time strip (px)
-const TL = {
-    pad: 28,          // horizontal padding inside the strip
-    minPerMonth: 9,   // below this the strip scrolls horizontally
-    lanePitch: 38,    // vertical distance between lanes
-    laneGap: 14,      // min horizontal gap between items sharing a lane
-    labelFont: '600 12px Inter, sans-serif',
-    top: 10,          // space above the highest lane
-    axisGap: 16,      // space between lowest lane and the axis
-    axisArea: 52,     // axis + year labels + date chips
-};
-
-function journeyVisible() {
-    const wrapper = document.querySelector('#journey .timeline-wrapper');
-    return !!wrapper && wrapper.clientWidth > 0;
+// Function to fetch data from language-specific JSON file
+async function fetchTimelineData(lang = 'en') {
+    try {
+        const response = await fetch(`languages/${lang}.json`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch ${lang}.json: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.timelineData || data || []; // Handle different JSON structures
+    } catch (error) {
+        console.error(`Error loading timeline data for language ${lang}:`, error);
+        // Fallback to English if current language fails
+        if (lang !== 'en') {
+            console.log('Falling back to English...');
+            return fetchTimelineData('en');
+        }
+        return []; // Return empty array if all else fails
+    }
 }
 
-// "YYYY-MM" → absolute month index; end dates are inclusive, so they map to the month's end
-const monthIndex = ym => { const [y, m] = ym.split('-').map(Number); return y * 12 + (m - 1); };
-const nowIndex = () => { const d = new Date(); return d.getFullYear() * 12 + d.getMonth(); };
-
-function formatMonth(idx) {
-    const lang = document.documentElement.lang || 'en';
-    const d = new Date(Math.floor(idx / 12), idx % 12, 1);
-    return new Intl.DateTimeFormat(lang === 'pl' ? 'pl-PL' : 'en-GB', { month: 'short', year: 'numeric' }).format(d);
+// Function to update language and refresh timeline
+async function setLanguage(newLang) {
+    if (newLang === currentLang) return; // No change needed
+    
+    console.log(`Changing language from ${currentLang} to ${newLang}`);
+    currentLang = newLang;
+    
+    // Show loading state (optional)
+    const container = document.getElementById('timeline-items');
+    const leftContent = document.getElementById('timeline-left-content');
+    const rightContent = document.getElementById('timeline-right-content');
+    
+    if (container) container.innerHTML = '<div class="timeline-loading">Loading...</div>';
+    if (leftContent) leftContent.innerHTML = '<div class="fade-in">Loading...</div>';
+    if (rightContent) rightContent.innerHTML = '<div class="timeline-slide-in">Loading...</div>';
+    
+    try {
+        // Fetch new data
+        window.timelineData = await fetchTimelineData(newLang);
+        
+        // Reset current index
+        currentIdx = 0;
+        
+        // Re-render timeline with new data
+        if (window.timelineData.length > 0) {
+            renderTimeline();
+            showEvent(0);
+        } else {
+            console.warn(`No timeline data available for language: ${newLang}`);
+            if (container) container.innerHTML = '<div class="timeline-error">No data available</div>';
+        }
+    } catch (error) {
+        console.error('Error updating timeline language:', error);
+        if (container) container.innerHTML = '<div class="timeline-error">Error loading data</div>';
+    }
 }
 
-let measureCtx = null;
-function textWidth(text) {
-    measureCtx = measureCtx || document.createElement('canvas').getContext('2d');
-    measureCtx.font = TL.labelFont;
-    return Math.ceil(measureCtx.measureText(text).width);
+// Initialize timeline with current language
+async function init() {
+    window.timelineData = await fetchTimelineData(currentLang);
+
+    setTimeout(() => {
+        if (!document.getElementById('journey')) return;
+        if (document.querySelector('.timeline-wrapper')?.clientWidth === 0) {
+            console.warn('Timeline wrapper width is 0, waiting for ResizeObserver...');
+            return;
+        }
+        if (window.timelineData.length > 0) {
+            renderTimeline();
+            showEvent(0);
+            setupEventListeners();   // moved here so it runs once
+        }
+    }, 500);
 }
-
-// Periods of an item as month ranges [start, endExclusive]; ongoing ones end "now".
-// A single one-month period is drawn as a point (e.g. a certificate).
-function itemRanges(item) {
-    const periods = item.periods || [];
-    return periods.map(p => {
-        const s = monthIndex(p.start);
-        const ongoing = !p.end;
-        const e = ongoing ? nowIndex() + 1 : monthIndex(p.end) + 1;
-        return { s, e, ongoing, point: !ongoing && p.start === p.end && periods.length === 1 };
-    });
-}
-
-let geometry = null; // per-item pixel geometry used by guides and auto-scroll
-
-// Cards row (the original white cards) + brackets on a real time axis, joined by curved links
-const CARD = { width: 120, height: 104, gap: 14, top: 16, link: 42, lanePitch: 13 };
 
 function renderTimeline() {
-    const timeline = document.querySelector('#journey .timeline');
-    const wrapper = document.querySelector('#journey .timeline-wrapper');
-    if (!timeline || !wrapper) return;
+    const container = document.getElementById('timeline-items');
+    const timeline = document.querySelector('.timeline');
+    const wrapper = document.querySelector('.timeline-wrapper');
+    if (!container || !timeline || !wrapper) return;
 
-    timeline.innerHTML = '';
-    const items = window.timelineData;
-    if (!items.length) return;
-
-    const ranges = items.map(itemRanges);
-    const all = ranges.flat();
-    const first = Math.min(...all.map(r => r.s)) - 3;
-    const last = Math.max(...all.map(r => r.e)) + 4;
-    const months = last - first;
-    const minWidth = Math.max(wrapper.clientWidth, items.length * (CARD.width + CARD.gap) + 2 * TL.pad);
-    const perMonth = Math.max(TL.minPerMonth, (minWidth - 2 * TL.pad) / months);
-    const width = Math.ceil(months * perMonth + 2 * TL.pad);
-    const xOf = idx => TL.pad + (idx - first) * perMonth;
-
-    geometry = items.map((item, index) => {
-        const segs = ranges[index].map(r => ({ ...r, x0: xOf(r.s), x1: Math.max(xOf(r.e), xOf(r.s) + 2) }));
-        const x0 = Math.min(...segs.map(g => g.x0));
-        const x1 = Math.max(...segs.map(g => g.x1));
-        const point = segs.length === 1 && segs[0].point;
-        return { index, segs, x0, x1, point };
-    });
-
-    // Bracket lanes: only brackets that overlap in time get stacked
-    const laneEnds = [];
-    [...geometry].sort((a, b) => a.x0 - b.x0).forEach(g => {
-        const start = g.point ? g.x0 - 6 : g.x0;
-        const end = g.point ? g.x0 + 6 : g.x1;
-        let lane = laneEnds.findIndex(e => e + 6 <= start);
-        if (lane === -1) { lane = laneEnds.length; laneEnds.push(0); }
-        laneEnds[lane] = end;
-        g.lane = lane;
-    });
-
-    // Cards: as close as possible above their period, pushed apart so they never overlap
-    const order = [...geometry].sort((a, b) => (a.x0 + a.x1) - (b.x0 + b.x1));
-    let prevRight = -Infinity;
-    order.forEach(g => {
-        const ideal = (g.point ? g.x0 : (g.x0 + g.x1) / 2) - CARD.width / 2;
-        g.cardX = Math.max(ideal, prevRight + CARD.gap, TL.pad / 2);
-        prevRight = g.cardX + CARD.width;
-    });
-    let nextLeft = width - TL.pad / 2 + CARD.gap;
-    [...order].reverse().forEach(g => {
-        g.cardX = Math.min(g.cardX, nextLeft - CARD.gap - CARD.width);
-        nextLeft = g.cardX;
-    });
-
-    const bracketsTop = CARD.top + CARD.height + CARD.link;
-    const axisY = bracketsTop + laneEnds.length * CARD.lanePitch + 12;
-    timeline.style.width = width + 'px';
-    timeline.style.height = (axisY + TL.axisArea) + 'px';
-    geometry.axisY = axisY;
-
-    // Axis with month ticks, year ticks and year labels
-    const axis = document.createElement('div');
-    axis.className = 'tl-axis';
-    axis.style.top = axisY + 'px';
-    timeline.appendChild(axis);
-    for (let m = first; m <= last; m++) {
-        const isYear = m % 12 === 0;
-        const tick = document.createElement('div');
-        tick.className = isYear ? 'tl-tick tl-tick-year' : 'tl-tick';
-        tick.style.left = xOf(m) + 'px';
-        tick.style.top = axisY + 'px';
-        timeline.appendChild(tick);
-        if (isYear) {
-            const label = document.createElement('div');
-            label.className = 'tl-year';
-            label.style.left = xOf(m) + 'px';
-            label.style.top = (axisY + 10) + 'px';
-            label.textContent = m / 12;
-            timeline.appendChild(label);
+    // Remove old elements from axis (keep only container)
+    [...timeline.children].forEach(child => {
+        if (child.id !== 'timeline-items') {
+            timeline.removeChild(child);
         }
+    });
+
+    // Clear container from events (important for re-rendering)
+    container.innerHTML = '';
+
+    const wrapperWidth = wrapper.clientWidth;
+    const padding = 120;
+    const blockWidth = 120;
+    const minSpacing = 140;
+    const timelineWidth = Math.max(wrapperWidth - padding, (Array.isArray(timelineData) ? timelineData.length : 0) * minSpacing);
+
+    if (!Array.isArray(timelineData) || timelineData.length === 0) {
+        timeline.style.minWidth = (timelineWidth + padding) + 'px';
+        setupTouchGestures();
+        return;
     }
 
-    const today = document.createElement('div');
-    today.className = 'tl-today';
-    today.style.left = xOf(nowIndex() + new Date().getDate() / 31) + 'px';
-    today.style.top = bracketsTop + 'px';
-    today.style.height = (axisY - bracketsTop) + 'px';
-    timeline.appendChild(today);
+    // Assume timelineData[i].date is a number like 2020.5 (year + fraction)
+    const startValue = Math.min(...timelineData.map(item => Number(item.date)));
+    const endValue = Math.max(...timelineData.map(item => Number(item.date)));
+    const valueRange = endValue - startValue;
 
-    // Curved links between cards and their brackets
-    const svgNS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(svgNS, 'svg');
-    svg.setAttribute('class', 'tl-links');
-    svg.setAttribute('width', width);
-    svg.setAttribute('height', axisY);
-    timeline.appendChild(svg);
+    timeline.style.minWidth = (timelineWidth + padding) + 'px';
 
-    geometry.forEach(g => {
-        const item = items[g.index];
-        const laneTop = bracketsTop + (laneEnds.length - 1 - g.lane) * CARD.lanePitch;
-        g.legTop = laneTop;
+    // Axis
+    const axis = document.createElement('div');
+    axis.className = 'timeline-axis';
+    timeline.appendChild(axis);
 
-        // Bracket(s) or a diamond for one-off events
-        const span = document.createElement('div');
-        span.className = 'tl-span';
-        span.dataset.index = g.index;
-        if (g.point) {
-            const dot = document.createElement('span');
-            dot.className = 'tl-point';
-            dot.style.left = g.x0 + 'px';
-            dot.style.top = (laneTop - 1) + 'px';
-            span.appendChild(dot);
-        } else {
-            g.segs.forEach((seg, k) => {
-                const bracket = document.createElement('span');
-                bracket.className = 'tl-bracket' + (seg.ongoing ? ' tl-bracket-ongoing' : '');
-                bracket.style.left = seg.x0 + 'px';
-                bracket.style.top = laneTop + 'px';
-                bracket.style.width = (seg.x1 - seg.x0) + 'px';
-                span.appendChild(bracket);
-                const next = g.segs[k + 1];
-                if (next) {
-                    const bridge = document.createElement('span');
-                    bridge.className = 'tl-bridge';
-                    bridge.style.left = seg.x1 + 'px';
-                    bridge.style.top = (laneTop + 1) + 'px';
-                    bridge.style.width = (next.x0 - seg.x1) + 'px';
-                    span.appendChild(bridge);
-                }
-            });
-        }
-        span.addEventListener('click', () => showEvent(g.index));
-        timeline.appendChild(span);
+    // Draw tick and label only for events
+    timelineData.forEach((item, index) => {
+        const dateNum = Number(item.date);
+        const year = Math.floor(dateNum);
+        const fraction = dateNum - year;
 
-        // Link: card bottom-centre → nearest point of the period
-        const cx = g.cardX + CARD.width / 2;
-        const cy = CARD.top + CARD.height;
-        const tx = g.point ? g.x0 : Math.min(Math.max(cx, g.x0 + 3), g.x1 - 3);
-        const ty = laneTop - 1;
-        const path = document.createElementNS(svgNS, 'path');
-        const bend = (ty - cy) / 2;
-        path.setAttribute('d', `M${cx},${cy} C${cx},${cy + bend} ${tx},${ty - bend} ${tx},${ty}`);
-        path.setAttribute('class', 'tl-link');
-        path.setAttribute('pathLength', '1');
-        path.dataset.index = g.index;
-        svg.appendChild(path);
+        // Map fraction to month
+        let month = Math.round(fraction * 12);
+        if (month <= 0) month = 1;
+        if (month > 12) month = 12;
 
-        // The card itself (original look)
-        const card = document.createElement('button');
-        card.type = 'button';
-        card.className = 'timeline-item';
-        card.dataset.index = g.index;
-        card.style.left = g.cardX + 'px';
-        card.style.top = CARD.top + 'px';
-        card.title = item.date_full;
-        card.innerHTML = `
+        const relativePosition = valueRange > 0
+            ? (dateNum - startValue) / valueRange
+            : (timelineData.length > 1 ? index / (timelineData.length - 1) : 0.5);
+
+        const leftPosition = padding / 2 + (relativePosition * timelineWidth);
+
+        // Tick
+        const tick = document.createElement('div');
+        tick.className = 'timeline-tick';
+        tick.style.left = leftPosition + 'px';
+        timeline.appendChild(tick);
+
+        // Label (YYYY-MM)
+        const label = document.createElement('div');
+        label.className = 'timeline-label';
+        label.style.left = leftPosition + 'px';
+        label.textContent = `${year}-${String(month).padStart(2, '0')}`;
+        timeline.appendChild(label);
+
+        // Event block (placed above axis)
+        const timelineItem = document.createElement('div');
+        timelineItem.className = 'timeline-item';
+        timelineItem.dataset.index = index;
+        timelineItem.style.left = (leftPosition - blockWidth / 2) + 'px';
+
+        const shortDesc = item.description
+            ? (item.description.length > 100 ? item.description.substring(0, 100) + '...' : item.description)
+            : '';
+
+        timelineItem.innerHTML = `
             <div class="timeline-block">
                 <div class="timeline-block-title">${item.title || ''}</div>
-                <div class="timeline-block-desc">${(item.description || '').replace(/<[^>]+>/g, '')}</div>
-            </div>`;
-        card.addEventListener('click', () => showEvent(g.index));
-        // hovering a card brings its faint bracket forward
-        card.addEventListener('mouseenter', () => span.classList.add('tl-hover'));
-        card.addEventListener('mouseleave', () => span.classList.remove('tl-hover'));
-        timeline.appendChild(card);
+                <div class="timeline-block-desc">${shortDesc}</div>
+                <div class="timeline-connector"></div>
+                <div class="timeline-point"></div>
+            </div>
+        `;
+
+        timelineItem.addEventListener('click', () => showEvent(index));
+        container.appendChild(timelineItem);
     });
 
-    renderedWidth = wrapper.clientWidth;
-    timelineDirty = false;
+    setupTouchGestures();
 }
 
-// Dashed guides from the active item's start/end down to the axis, with exact dates
-function drawGuides(index) {
-    const timeline = document.querySelector('#journey .timeline');
-    if (!timeline || !geometry) return;
-    timeline.querySelectorAll('.tl-guide, .tl-date').forEach(el => el.remove());
-    const g = geometry[index];
-    if (!g) return;
-
-    const marks = [];
-    g.segs.forEach(seg => {
-        marks.push({ x: g.point ? seg.x0 : seg.x0, text: formatMonth(seg.s) });
-        if (!g.point) {
-            marks.push({ x: seg.x1, text: seg.ongoing ? (window.translations?.journey?.present || 'present') : formatMonth(seg.e - 1) });
-        }
-    });
-
-    let lastRight = -Infinity;
-    marks.forEach(mk => {
-        const guide = document.createElement('div');
-        guide.className = 'tl-guide';
-        guide.style.left = mk.x + 'px';
-        guide.style.top = g.legTop + 'px';
-        guide.style.height = (geometry.axisY - g.legTop) + 'px';
-        timeline.appendChild(guide);
-
-        const chip = document.createElement('div');
-        chip.className = 'tl-date';
-        chip.textContent = mk.text;
-        chip.style.top = (geometry.axisY + 28) + 'px';
-        timeline.appendChild(chip);
-        // keep neighbouring date chips from overlapping
-        const w = chip.offsetWidth;
-        let left = mk.x - w / 2;
-        if (left < lastRight + 4) left = lastRight + 4;
-        chip.style.left = left + 'px';
-        lastRight = left + w;
-    });
-}
-
-function showEvent(index, instant = false) {
-    const items = window.timelineData;
-    if (!items.length || index < 0 || index >= items.length) return;
-
+function showEvent(index) {
+    if (!Array.isArray(window.timelineData) || timelineData.length === 0) return;
+    if (index < 0 || index >= timelineData.length) return;
+    
     currentIdx = index;
-    const event = items[index];
+    const event = timelineData[index];
 
-    document.querySelectorAll('#journey .timeline-item, #journey .tl-span, #journey .tl-link').forEach(el => {
-        const active = Number(el.dataset.index) === index;
-        el.classList.toggle('timeline-active', active);
-        if (el.tagName === 'BUTTON') el.setAttribute('aria-pressed', String(active));
+    document.querySelectorAll('.timeline-item').forEach((item, i) => {
+        item.classList.toggle('timeline-active', i === index);
     });
-    drawGuides(index);
 
-    document.getElementById('timeline-left-content').innerHTML = `
+    const leftContent = document.getElementById('timeline-left-content');
+    leftContent.innerHTML = `
         <div class="fade-in">
             ${event.media ? `<img src="${event.media}" alt="${event.title}" class="timeline-event-media">` : ''}
         </div>
     `;
 
-    document.getElementById('timeline-right-content').innerHTML = `
+    const rightContent = document.getElementById('timeline-right-content');
+    rightContent.innerHTML = `
         <div class="timeline-slide-in">
             <div class="timeline-event-year">${event.date_full}</div>
-            <h3 class="timeline-event-title">${event.title}</h3>
+            <h1 class="timeline-event-title">${event.title}</h1>
             <p class="timeline-event-description">${event.description}</p>
+
             <div class="timeline-event-tags">
-                ${(event.tags || []).map(tag => `<span class="timeline-tag">${tag}</span>`).join('')}
+                ${event.tags.map(tag => `<span class="timeline-tag">${tag}</span>`).join('')}
             </div>
         </div>
     `;
 
-    // Data is ordered newest-first: "newer" moves towards index 0
     document.getElementById('timeline-next-btn').disabled = index === 0;
-    document.getElementById('timeline-prev-btn').disabled = index === items.length - 1;
+    document.getElementById('timeline-prev-btn').disabled = index === timelineData.length - 1;
 
-    autoScrollToActiveItem(instant);
+    // Call improved auto-scroll function
+    autoScrollToActiveItem();
 }
 
-function autoScrollToActiveItem(instant = false) {
-    const wrapper = document.querySelector('#journey .timeline-wrapper');
-    const g = geometry && geometry[currentIdx];
-    if (!wrapper || !g) return;
-    const center = g.cardX + CARD.width / 2;
-    const maxScrollLeft = Math.max(0, wrapper.scrollWidth - wrapper.clientWidth);
-    const target = Math.min(maxScrollLeft, Math.max(0, center - wrapper.clientWidth / 2));
-    wrapper.scrollTo({ left: target, behavior: instant ? 'auto' : 'smooth' });
-}
-
-// Render (or re-render) only when the strip is actually visible
-function refreshTimeline() {
-    if (!journeyVisible()) return;
-    const wrapper = document.querySelector('#journey .timeline-wrapper');
-    if (timelineDirty || wrapper.clientWidth !== renderedWidth) {
-        renderTimeline();
+// IMPROVED AUTO-SCROLL FUNCTION
+function autoScrollToActiveItem() {
+    const activeItem = document.querySelector('.timeline-item.timeline-active');
+    const wrapper = document.querySelector('.timeline-wrapper');
+    
+    if (!activeItem || !wrapper) {
+        console.warn('Cannot find active item or timeline wrapper');
+        return;
     }
-    bindControls();
-    showEvent(Math.min(currentIdx, window.timelineData.length - 1), true);
+
+    const wrapperWidth = wrapper.clientWidth;
+    const timeline = wrapper.querySelector('.timeline');
+    const timelineWidth = timeline ? timeline.scrollWidth : 0;
+    
+    // Position of active item relative to timeline
+    const itemLeft = activeItem.offsetLeft;
+    const itemWidth = activeItem.offsetWidth;
+    const itemCenter = itemLeft + (itemWidth / 2);
+    
+    // Calculate target scroll position (center the item)
+    let targetScrollLeft = itemCenter - (wrapperWidth / 2);
+    
+    // Maximum scroll position (cannot scroll beyond content)
+    const maxScrollLeft = Math.max(0, timelineWidth - wrapperWidth);
+    
+    // Apply constraints:
+    // - for extreme items scroll maximally to edge
+    // - cannot extend axis range
+    if (targetScrollLeft < 0) {
+        targetScrollLeft = 0; // Maximum to left edge
+    } else if (targetScrollLeft > maxScrollLeft) {
+        targetScrollLeft = maxScrollLeft; // Maximum to right edge
+    }
+    
+    // Smooth scroll to calculated position
+    wrapper.scrollTo({ 
+        left: targetScrollLeft, 
+        behavior: 'smooth' 
+    });
 }
 
-function bindControls() {
-    if (controlsBound) return;
-    controlsBound = true;
+// OLD FUNCTION - KEPT FOR BACKWARD COMPATIBILITY
+function scrollToActiveItem() {
+    // Redirect to new improved function
+    autoScrollToActiveItem();
+}
 
-    document.getElementById('timeline-next-btn')?.addEventListener('click', () => {
-        if (currentIdx > 0) showEvent(currentIdx - 1);
-    });
-    document.getElementById('timeline-prev-btn')?.addEventListener('click', () => {
-        if (currentIdx < window.timelineData.length - 1) showEvent(currentIdx + 1);
-    });
+let __touchGesturesBound = false;
+let __controlsBound = false;
 
-    // Arrow keys only while Journey is open
-    document.addEventListener('keydown', (e) => {
-        if (window.activeSection !== 'journey') return;
-        if (e.key === 'ArrowLeft' && currentIdx < window.timelineData.length - 1) showEvent(currentIdx + 1);
-        else if (e.key === 'ArrowRight' && currentIdx > 0) showEvent(currentIdx - 1);
-    });
+function setupTouchGestures() {
+    const wrapper = document.querySelector('.timeline-wrapper');
+    if (!wrapper) return;
+    if (__touchGesturesBound) return;  // <- prevent duplicates
+    __touchGesturesBound = true;
 
-    // Swipe on the content area switches events (the strip itself scrolls natively)
-    const content = document.querySelector('#journey .timeline-main-content');
-    let startX = 0, startY = 0;
-    content?.addEventListener('touchstart', (e) => {
+    let startX = 0;
+    let startTime = 0;
+    let isScrolling = false;
+    let startScrollLeft = 0;
+
+    wrapper.addEventListener('touchstart', (e) => {
         startX = e.touches[0].clientX;
-        startY = e.touches[0].clientY;
+        startTime = Date.now();
+        isScrolling = false;
+        startScrollLeft = wrapper.scrollLeft;
     }, { passive: true });
-    content?.addEventListener('touchend', (e) => {
-        const dx = e.changedTouches[0].clientX - startX;
-        const dy = e.changedTouches[0].clientY - startY;
-        if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
-        if (dx < 0 && currentIdx > 0) showEvent(currentIdx - 1);
-        else if (dx > 0 && currentIdx < window.timelineData.length - 1) showEvent(currentIdx + 1);
+
+    // Consider it "scrolling" only if scrollLeft actually changes
+    wrapper.addEventListener('touchmove', () => {
+        if (Math.abs(wrapper.scrollLeft - startScrollLeft) > 5) {
+            isScrolling = true;
+        }
+    }, { passive: true });
+
+    wrapper.addEventListener('touchend', (e) => {
+        if (isScrolling) return;
+        const endX = e.changedTouches[0].clientX;
+        const endTime = Date.now();
+        const deltaX = startX - endX;
+        const deltaTime = endTime - startTime;
+        if (Math.abs(deltaX) > 50 && deltaTime < 200) {
+            if (deltaX > 0 && currentIdx < timelineData.length - 1) {
+                showEvent(currentIdx + 1);
+            } else if (deltaX < 0 && currentIdx > 0) {
+                showEvent(currentIdx - 1);
+            }
+        }
     }, { passive: true });
 }
 
-document.addEventListener('langchange', (e) => {
-    window.timelineData = e.detail.translations.timelineData || [];
-    timelineDirty = true;
-    refreshTimeline();
+function setupEventListeners() {
+    if (__controlsBound) return;  // <- prevent duplicates
+    __controlsBound = true;
+
+    const nextBtn = document.getElementById('timeline-next-btn');
+    const prevBtn = document.getElementById('timeline-prev-btn');
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            if (currentIdx > 0) showEvent(currentIdx - 1);
+        });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            if (currentIdx < timelineData.length - 1) showEvent(currentIdx + 1);
+        });
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' && currentIdx > 0) showEvent(currentIdx - 1);
+        else if (e.key === 'ArrowRight' && currentIdx < timelineData.length - 1) showEvent(currentIdx + 1);
+    });
+
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            const container = document.getElementById('timeline-items');
+            if (container) container.innerHTML = '';
+            renderTimeline();
+            showEvent(currentIdx);
+        }, 250);
+    });
+}
+async function tryInitTimeline() {
+    if (__timelineInitialized) return false;
+
+    const journey = document.getElementById('journey');
+    if (!journey) return false;
+
+    const wrapper = journey.querySelector('.timeline-wrapper');
+    const container = journey.querySelector('#timeline-items');
+    const timelineEl = journey.querySelector('.timeline');
+
+    if (!wrapper || !container || !timelineEl) return false;
+
+    // If wrapper exists but is invisible / has width 0 -> wait for ResizeObserver
+    if (wrapper.clientWidth === 0) {
+        const ro = new ResizeObserver(() => {
+            if (wrapper.clientWidth > 0) {
+                ro.disconnect();
+                init();
+                __timelineInitialized = true;
+            }
+        });
+        ro.observe(wrapper);
+        return true;
+    }
+
+    // Everything ready -> initialize
+    await init();
+    __timelineInitialized = true;
+    return true;
+}
+
+// Watch for currentLang changes (multiple methods)
+let lastKnownLang = currentLang;
+
+function watchLanguageChanges() {
+    if (window.currentLang && window.currentLang !== lastKnownLang) {
+        lastKnownLang = window.currentLang;
+        currentLang = window.currentLang;
+        setLanguage(currentLang);
+    }
+}
+
+// Method 1: Check for language changes every 500ms
+setInterval(watchLanguageChanges, 500);
+
+// Method 2: Override the global changeLang function if it exists
+const originalChangeLang = window.changeLang;
+window.changeLang = function(newLang) {
+    // Call original function if it exists
+    if (originalChangeLang && typeof originalChangeLang === 'function') {
+        originalChangeLang(newLang);
+    }
+    
+    // Update timeline language
+    if (newLang !== currentLang) {
+        setLanguage(newLang);
+    }
+};
+
+// Method 3: Listen for custom events
+document.addEventListener('languageChange', (event) => {
+    if (event.detail && event.detail.language) {
+        setLanguage(event.detail.language);
+    }
 });
 
-document.addEventListener('sectionchange', (e) => {
-    if (e.detail.id === 'journey') requestAnimationFrame(refreshTimeline);
+// Method 4: Listen for clicks on language switcher buttons
+document.addEventListener('click', (event) => {
+    if (event.target.classList.contains('lang-switcher-switch')) {
+        const newLang = event.target.dataset.lang;
+        if (newLang && newLang !== currentLang) {
+            setLanguage(newLang);
+        }
+    }
 });
 
-let timelineResizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(timelineResizeTimeout);
-    timelineResizeTimeout = setTimeout(refreshTimeline, 200);
+document.addEventListener('DOMContentLoaded', async () => {
+    if (await tryInitTimeline()) return;
+
+    // DOM observer (triggers when #journey or its content is added)
+    const mo = new MutationObserver(async (mutations, observer) => {
+        if (await tryInitTimeline()) observer.disconnect();
+    });
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    // Fallback — after 10s try once more (without loops)
+    setTimeout(async () => {
+        if (!__timelineInitialized) await tryInitTimeline();
+    }, 10000);
 });
+
+// Expose setLanguage function globally for external use
+window.setTimelineLanguage = setLanguage;

@@ -1,20 +1,19 @@
 {
     "profile": {
-        "title": "BI, Fabric & Power Platform\nDeveloper & Consultant",
+        "title": "Data Analyst",
         "location": "Poland, Nysa"
     },
     "music": {
         "status": "Music",
-        "popup": "Click the button above to play ambient music!",
-        "copied": "Copied"
+        "popup": "Click the button above to play ambient music!"
     },
     "about": {
         "title": "About me",
-        "subtitle": "BI, Fabric & Power Platform developer and consultant with 4 years of experience in data",
+        "subtitle": "Data Analyst with passion and 4 years of experience",
         "greeting": "Hi, I’m Michał — I turn data into decisions.",
-        "p1": "My adventure with data started early — back in middle school I was already designing spreadsheets for my teachers. Over time that curiosity grew into a passion and then into a deliberate career path: from studying IT applications in business, through analytics in an international team at Novartis, to leading implementations of my own.",
-        "p2": "Today I deliver end-to-end Business Intelligence projects for B2B clients — including some of the largest companies on the market. I work across the whole Microsoft data stack: Microsoft Fabric as the data foundation, Power BI at an expert level, and Power Apps (canvas and model-driven) on Dataverse with Power Automate — so that people can act on what the reports show right away. I own the whole cycle: from business workshops and data architecture, through the semantic model and reports, to rollout and handover to the client's team. I also lead a small implementation team — planning the work, splitting tasks and keeping the quality of what we deliver high.",
-        "p3": "Beyond client work, I share what I know as a 1:1 mentor in Power BI, SQL and data modeling. I believe numbers only gain meaning once they become part of a conversation — and the path from raw data to an informed decision is, to me, the heart of working with data."
+        "p1": "My interest in analysis started early — back in middle school I was already designing spreadsheets for teachers to help them make sense of grades and results. What began as a curiosity soon grew into a passion and a deliberate career path. Every stage of my studies and work became an opportunity to deepen my understanding of how data reflects the complexity of reality and how it can help us interpret it.",
+        "p2": "For me, data analysis is more than a set of methods — it’s a way of thinking. It’s not only about identifying patterns but also about explaining them in a way that makes sense to others. Numbers only gain meaning once they become part of a conversation — when they provide perspective, support decisions, and open up new opportunities. That’s why I focus on connecting the analytical side with the human factor and the context in which data exists.",
+        "p3": "In my portfolio, you’ll find projects that put this philosophy into practice. Each of them shows that analysis doesn’t end with tables and charts, but finds its purpose in real decisions and changes that affect people and processes. That transformation — from raw information to informed action — is, to me, the ultimate goal of working with data."
     },
     "story": {
         "title": "The Beginning",
@@ -29,7 +28,7 @@
         {
             "image": "static/gallery/flowers.webp",
             "title": "Creating & Growing",
-            "description": "Countless hours spent coding, exploring data, and solving problems taught me that challenges are opportunities to learn. Each project has sharpened my skills and deepened my understanding of the analytical process."
+            "description": "Countless hours spent coding, exploring data, and solving problems taught me that challenges are opportunities to learn. Each project has sharpened my skills and deepened my understanding — of the analytical process."
         },
         {
             "image": "static/gallery/netgraph.webp",
@@ -44,53 +43,34 @@
     ],
     "journey": {
         "title": "Journey",
-        "subtitle": "Professional and educational path I have taken",
-        "loading": "Loading…",
-        "present": "present"
+        "subtitle": "Professional and educational path I have taken"
     },
     "timelineData": [
         {
             "id": 1,
             "date": 2026.5,
             "date_full": "Aug 2025 - Present",
-            "title": "Developer & Consultant: BI, Fabric, Power Platform — Clickless / Odczaruj Power BI",
-            "description": "I lead end-to-end BI projects for B2B clients — from the largest corporations to small businesses — working with Paweł Czapiewski at Odczaruj Power BI and Clickless. I own the whole cycle: requirements workshops, data architecture in Microsoft Fabric, semantic models and Power BI reports, and Power Apps (canvas and model-driven) on Dataverse with Power Automate. I also run 1:1 mentoring and support courses, helping analysts master Power BI, SQL and data modeling. I also lead a small implementation team: I plan the work, distribute tasks and own the quality of the delivered solutions.",
+            "title": "BI Developer — Odczaruj Power BI / Clikless",
+            "description": "I work as a BI Developer leading end-to-end projects with B2B clients ranging from corporations to small businesses, collaborating with Paweł Czapiewski at Odczaruj Power BI. My primary tech stack includes the complete Power BI environment (Fabric, Power Apps), supplemented by SQL, R, and occasional Python. I also provide mentoring and support for courses, helping teams master business intelligence tools and practices.",
             "tags": [
-                "Power BI",
-                "Team Lead",
-                "Power Platform",
-                "Fabric",
-                "B2B"
+            "BI Developer",
+            "Power BI",
+            "B2B"
             ],
-            "media": "static/clickless.webp",
-            "label": "Clickless / Odczaruj Power BI",
-            "periods": [
-                {
-                    "start": "2025-08",
-                    "end": null
-                }
-            ]
+            "media": "static/odczaruj.webp"
         },
         {
             "id": 2,
             "date": 2025.65,
-            "date_full": "Jan 2025 - Jul 2025",
-            "title": "Freelance BI & Microsoft PL-300 Certification",
-            "description": "After leaving Novartis I worked as a freelance BI developer, delivering Power BI projects for clients — from the data model to the reports. In parallel I prepared for certification and in July 2025 earned Microsoft Certified: Data Analyst Associate (PL-300), validating my skills in preparing, modeling, visualizing, analyzing and securing data in Power BI. <br><br> <a style='color:#007bff' target='blank' href='https://learn.microsoft.com/api/credentials/share/en-us/MichaKrawczuk-2645/142518F38A7994A?sharingId=9C2497028F072997'>See certificate</a>",
+            "date_full": "Jul 2025",
+            "title": "Microsoft Certified: Data Analyst Associate (PL-300)",
+            "description": "I earned the Microsoft Certified: Data Analyst Associate (PL-300) certification, demonstrating proficiency in preparing, modeling, visualizing, analyzing, and securing data using Power BI. The certificate proves I design effective dashboards and translate business requirements into actionable insights that support business decisions. <br><br> <a style='color:#007bff' target='blank' href='https://learn.microsoft.com/api/credentials/share/en-us/MichaKrawczuk-2645/142518F38A7994A?sharingId=9C2497028F072997'>See certificate</a>",
             "tags": [
-                "freelance",
-                "Power BI",
                 "certification",
-                "Microsoft"
+                "Microsoft",
+                "Power BI"
             ],
-            "media": "static/pl-300.webp",
-            "label": "Freelance · PL-300",
-            "periods": [
-                {
-                    "start": "2025-01",
-                    "end": "2025-07"
-                }
-            ]
+            "media": "static/pl-300.webp"
         },
         {
             "id": 3,
@@ -103,14 +83,7 @@
                 "Novartis",
                 "analytics"
             ],
-            "media": "static/nvs.webp",
-            "label": "Novartis — Data Analyst",
-            "periods": [
-                {
-                    "start": "2023-04",
-                    "end": "2024-12"
-                }
-            ]
+            "media": "static/nvs.webp"
         },
         {
             "id": 4,
@@ -123,14 +96,7 @@
                 "engineer's degree",
                 "R Shiny"
             ],
-            "media": "static/pwr.webp",
-            "label": "Wrocław University of Science and Technology",
-            "periods": [
-                {
-                    "start": "2020-10",
-                    "end": "2024-01"
-                }
-            ]
+            "media": "static/pwr.webp"
         },
         {
             "id": 5,
@@ -143,14 +109,7 @@
                 "Novartis",
                 "data analysis"
             ],
-            "media": "static/nvs.webp",
-            "label": "Novartis — Intern",
-            "periods": [
-                {
-                    "start": "2022-06",
-                    "end": "2023-03"
-                }
-            ]
+            "media": "static/nvs.webp"
         },
         {
             "id": 6,
@@ -163,14 +122,7 @@
                 "DataCamp",
                 "R"
             ],
-            "media": "static/datacamp.webp",
-            "label": "DataCamp",
-            "periods": [
-                {
-                    "start": "2022-01",
-                    "end": "2022-06"
-                }
-            ]
+            "media": "static/datacamp.webp"
         },
         {
             "id": 7,
@@ -183,18 +135,7 @@
                 "Amazon",
                 "operations"
             ],
-            "media": "static/amazon.webp",
-            "label": "Amazon",
-            "periods": [
-                {
-                    "start": "2020-07",
-                    "end": "2020-12"
-                },
-                {
-                    "start": "2021-07",
-                    "end": "2022-01"
-                }
-            ]
+            "media": "static/amazon.webp"
         },
         {
             "id": 8,
@@ -206,81 +147,13 @@
                 "education",
                 "high school"
             ],
-            "media": "static/carolinum.webp",
-            "label": "Carolinum High School",
-            "periods": [
-                {
-                    "start": "2016-10",
-                    "end": "2020-05"
-                }
-            ]
+            "media": "static/carolinum.webp"
         }
     ],
     "projects": {
         "title": "Projects",
-        "subtitle": "The first two projects are selected, anonymized work from my role at Clickless — shown on demo data, with no client information. The third is an internal company tool, shown on demo data. The rest are personal projects. In some cases AI was used only to prepare illustrative graphics; images generated in Adobe Firefly include metadata for transparency.",
+        "subtitle": "A collection of my recent work and personal projects. In some cases AI was used only for preview images. All AI-generated graphics were generated with Adobre Firefly and include metadata to ensure transparency and ethical use.",
         "items": {
-            "clickless-warehouse": {
-                "title": "Digital Warehouse — from Paper to Tablets | Power Platform",
-                "tech": "Power Platform • Tablet app • Clickless",
-                "description": "Warehouse staff used to walk the floor with printed sheets, and data reached the system only after being retyped by hand. Now they work on tablets: the office posts tasks (deliveries, order picking, quality checks), and warehouse staff pick them up in the app and enter data on the spot by scanning items on the shelves. Anonymized work from Clickless, shown on demo data.",
-                "features": [
-                    "No more paper lists — work on tablets",
-                    "Task queue from the office with priorities and due dates",
-                    "Tasks picked up by warehouse staff, statuses in real time",
-                    "Scanning items, locations and batches on the floor",
-                    "Process history and staff involvement"
-                ],
-                "badge": "Clickless · anonymized",
-                "links": [],
-                "image": "static/projects/clickless-warehouse.png",
-                "preview": "static/projects/clickless-warehouse.png"
-            },
-            "clickless-sales": {
-                "title": "Sales & Financial Results Reporting | Power BI",
-                "tech": "Power BI • ERP • Clickless",
-                "description": "A multi-page report fed automatically from the ERP system. Financial results with revenue, costs and profit (including indirect and direct costs), top customers and products, inventory with a gross-profit simulation, and a regional analysis of sales and profit on a map. Anonymized work from Clickless, shown on demo data.",
-                "features": [
-                    "Financial results and margin by customer",
-                    "Top customers and products by turnover and profit",
-                    "Inventory, price history and gross-profit simulation",
-                    "Regional analysis on a map with period comparison",
-                    "Automatic data refresh from the ERP"
-                ],
-                "badge": "Clickless · anonymized",
-                "links": [],
-                "image": "static/projects/clickless-sales-finance.webp",
-                "preview": "static/projects/clickless-sales-collage.webp",
-                "gallery": [
-                    "static/projects/clickless-sales-finance.webp",
-                    "static/projects/clickless-sales-inventory.webp",
-                    "static/projects/clickless-sales-regional.webp"
-                ]
-            },
-            "esquie": {
-                "title": "Esquie — internal time-tracking system",
-                "tech": "Node.js • PostgreSQL (SQL) • Git • Vibe coding",
-                "description": "Problem: the team serves a very diverse set of clients and has specific time-tracking needs, while off-the-shelf tools were expensive and awkward — they forced a rigid way of working that made logging hours a chore. Solution: an app built with a vibe-coding approach (AI-assisted), rolled out step by step — from a calendar for one person to the tool that became the core of how the company works. Tasks are planned in a calendar, completed ones turn into logged hours, and the hours report and workload views show time per project, person and period.",
-                "features": [
-                    "Weekly and monthly calendar with drag & drop and recurring tasks",
-                    "Projects shared across the team with permissions",
-                    "Hours report by project and day, CSV export",
-                    "Burndown and workload views — actual vs planned time, per-person load",
-                    "Node.js/Express backend on PostgreSQL with schema migrations",
-                    "Three-layer backups and a dev environment with a production copy",
-                    "Git repository, testing stage: smoke tests and output comparison with the previous version"
-                ],
-                "badge": "Internal tool",
-                "links": [],
-                "image": "static/projects/esquie-month.webp",
-                "preview": "static/projects/esquie-month.webp",
-                "gallery": [
-                    "static/projects/esquie-month.webp",
-                    "static/projects/esquie-week.webp",
-                    "static/projects/esquie-tasks.webp",
-                    "static/projects/esquie-burn.webp"
-                ]
-            },
             "project0": {
                 "title": "Weather-App | Power BI",
                 "tech": "Power BI • REST API",
@@ -508,8 +381,7 @@
                 "image": "static/projects/airlines.webp",
                 "preview": "static/projects/ai-airlines.webp"
             }
-        },
-        "featuresLabel": "Key Features"
+        }
     },
     "skills": {
         "title": "Skills",
@@ -519,26 +391,22 @@
         "category-distribution": "Category Breakdown",
         "categories": [
             {
-                "name": "Power BI & Microsoft Fabric",
+                "name": "Coding & BI Tools",
                 "skills": [
                     {
+                        "name": "R",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Python",
+                        "mastery": 4
+                    },
+                    {
+                        "name": "T-SQL (analytical)",
+                        "mastery": 4
+                    },
+                    {
                         "name": "Power BI",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "DAX",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Data Modeling",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Power Query (M)",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Performance Optimization",
                         "mastery": 5
                     },
                     {
@@ -546,65 +414,7 @@
                         "mastery": 5
                     },
                     {
-                        "name": "PBIP / TMDL & Git",
-                        "mastery": 4
-                    },
-                    {
-                        "name": "Deneb / SVG Visuals",
-                        "mastery": 4
-                    },
-                    {
                         "name": "Microsoft Fabric",
-                        "mastery": 5
-                    }
-                ]
-            },
-            {
-                "name": "Power Platform",
-                "skills": [
-                    {
-                        "name": "Power Apps Canvas",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Power Apps Model-driven",
-                        "mastery": 4
-                    },
-                    {
-                        "name": "Dataverse",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Power Fx",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Power Automate",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Power Platform ALM",
-                        "mastery": 4
-                    }
-                ]
-            },
-            {
-                "name": "Coding & Other Tools",
-                "skills": [
-                    {
-                        "name": "T-SQL (analytical)",
-                        "mastery": 4
-                    },
-                    {
-                        "name": "R",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Python",
-                        "mastery": 3
-                    },
-                    {
-                        "name": "Excel",
                         "mastery": 5
                     },
                     {
@@ -614,6 +424,18 @@
                     {
                         "name": "Tableau",
                         "mastery": 2
+                    },
+                    {
+                        "name": "Alteryx",
+                        "mastery": 1
+                    },
+                    {
+                        "name": "Excel",
+                        "mastery": 5
+                    },
+                    {
+                        "name": "Power Automate",
+                        "mastery": 4
                     },
                     {
                         "name": "HTML / CSS / JS",
@@ -628,18 +450,6 @@
             {
                 "name": "Hard Skills",
                 "skills": [
-                    {
-                        "name": "Project Leadership",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Requirements Gathering",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "B2B Client Work",
-                        "mastery": 5
-                    },
                     {
                         "name": "Data Analysis",
                         "mastery": 5
@@ -693,12 +503,8 @@
                         "mastery": 3
                     },
                     {
-                        "name": "AI & LLMs in BI Work",
-                        "mastery": 4
-                    },
-                    {
-                        "name": "Agentic AI Workflows",
-                        "mastery": 4
+                        "name": "Working with LLMs",
+                        "mastery": 3
                     },
                     {
                         "name": "Working with APIs",
@@ -729,10 +535,6 @@
             {
                 "name": "Soft Skills",
                 "skills": [
-                    {
-                        "name": "Mentoring",
-                        "mastery": 5
-                    },
                     {
                         "name": "Analytical Thinking",
                         "mastery": 5
@@ -791,14 +593,14 @@
         "r": "Very good knowledge of R, including creating complex dashboards, data modeling, and visualization in commercial projects.",
         "python": "Intermediate knowledge, including data analysis, GUI application design, and automation.",
         "t-sql (analytical)": "Very good knowledge of creating complex queries, aggregations, and code optimization for business analysis.",
-        "power bi": "Expert-level, end-to-end Power BI: semantic model design, advanced DAX, performance tuning, RLS/OLS, calculation groups, field parameters and report design for enterprise B2B clients.",
+        "power bi": "Expert knowledge of designing interactive reports and dashboards, data modeling, DAX optimization, row-level security, and performance tuning in commercial projects.",
         "power bi service": "Expert knowledge of Power BI Service administration: workspaces, deployment pipelines, dataflows, scheduled refresh, gateway management, and sharing/embedding reports at enterprise scale.",
         "microsoft fabric": "Expert knowledge of Microsoft Fabric ecosystem for data analysts: building medallion-architecture environments (Bronze/Silver/Gold), connecting and consolidating heterogeneous data sources via Lakehouses and Warehouses, implementing ML models with Notebooks, and orchestrating end-to-end analytics pipelines.",
         "qliksense": "Intermediate knowledge in creating visualizations and data analysis in QlikSense, based on internal training and certification, as well as collaboration with professional QlikSense developers.",
         "tableau": "Basic knowledge of the tool, enabling the creation of simple dashboards and visualizations.",
         "alteryx": "Familiarity with basic ETL tools, requiring further practice for independent projects.",
         "excel": "Very good knowledge of advanced formulas, VBA usage, pivot tables, Power Query, and data modeling in Power Pivot.",
-        "power automate": "Cloud flows automating business processes: approvals, notifications, Dataverse / SharePoint / SQL integrations and Power BI refresh orchestration.",
+        "power automate": "Good knowledge of creating flows that automate business processes and integrate with Microsoft 365 services, supported by experience in automation projects.",
         "html / css / js": "Intermediate knowledge of web technologies, enabling the creation and modification of websites.",
         "git / github": "Intermediate knowledge of working with repositories, resolving conflicts, and basic team collaboration.",
         "n8n": "Familiarity with basic platform functions and experience in building simple workflows.",
@@ -830,24 +632,7 @@
         "results presentation": "Advanced ability to present results clearly and tailored to the audience.",
         "teamwork": "Very good ability to collaborate and share knowledge within a team.",
         "polish": "Native proficiency in Polish, both spoken and written.",
-        "english": "Very good proficiency in English, both spoken and written, enabling fluent business communication.",
-        "dax": "Advanced DAX: context transition, calculation groups, time intelligence, virtual tables and query-plan-driven optimization with DAX Studio and VertiPaq Analyzer.",
-        "data modeling": "Designing star-schema and composite models that stay fast and maintainable as the business grows — relationships, granularity, aggregations and incremental refresh.",
-        "power query (m)": "Building robust, query-folding-aware transformations in Power Query M, including custom functions and parameterized sources.",
-        "performance optimization": "Diagnosing slow reports and models: VertiPaq Analyzer, DAX Studio server timings, Performance Analyzer, model size reduction and DAX refactoring.",
-        "pbip / tmdl & git": "Source-controlled Power BI projects (PBIP, TMDL, PBIR) with Git, code review and deployment pipelines.",
-        "deneb / svg visuals": "Custom visuals beyond the defaults: Deneb (Vega / Vega-Lite) and SVG measures in DAX for compact, on-brand visualizations.",
-        "power apps canvas": "Building canvas apps that close the loop with reporting — data entry, approvals and writeback, responsive layouts, components and Power Fx logic.",
-        "power apps model-driven": "Model-driven apps on Dataverse: forms, views, business process flows, business rules and security-role-driven experiences.",
-        "dataverse": "Designing Dataverse data models — tables, relationships, choices, business rules, security roles and teams — as the backbone of Power Platform solutions.",
-        "power fx": "Writing clean, delegation-aware Power Fx for canvas apps, including collections, named formulas and reusable components.",
-        "power platform alm": "Solution-based ALM: environments, managed and unmanaged solutions, environment variables, connection references and promotion between DEV/TEST/PROD.",
-        "project leadership": "Leading BI and Power Platform projects end-to-end for B2B clients — scoping, planning, stakeholder communication, delivery and handover.",
-        "requirements gathering": "Running workshops with business owners to turn decisions and processes into requirements, KPIs and a data model.",
-        "b2b client work": "Delivering projects for B2B clients, from the largest corporations to small businesses — adapting scope, language and pace to the organization.",
-        "ai & llms in bi work": "Using LLMs and agents (including MCP servers for Power BI and Fabric) to speed up modeling, DAX refactoring and documentation, while keeping design decisions and quality control in my hands.",
-        "mentoring": "1:1 mentoring in Power BI, SQL and data modeling — individual pace, real-world cases and job-interview preparation.",
-        "agentic ai workflows": "Designing and building agentic AI workflows — multi-step processes where LLM agents use tools (MCP servers, APIs, data sources) to plan and carry out tasks such as model documentation, data quality checks or report generation, with human review at key steps."
+        "english": "Very good proficiency in English, both spoken and written, enabling fluent business communication."
     },
     "popup": {
         "loading": "Loading description...",
@@ -867,91 +652,5 @@
             "itemsCount": "{count} items",
             "metrics": "{current}/{total}"
         }
-    },
-    "nav": {
-        "about": "About",
-        "journey": "Journey",
-        "projects": "Projects",
-        "skills": "Skills",
-        "testimonials": "Testimonials"
-    },
-    "testimonials": {
-        "title": "Testimonials",
-        "subtitle": "What clients I have delivered projects for, and people I have mentored, say.",
-        "clientsLabel": "Clients",
-        "mentoringLabel": "Mentoring",
-        "translated": "translated from Polish",
-        "clients": [
-            {
-                "logos": [
-                    {
-                        "src": "static/logos/diverse.svg",
-                        "alt": "Diverse"
-                    },
-                    {
-                        "src": "static/logos/etos.png",
-                        "alt": "Etos SA"
-                    }
-                ],
-                "quote": [
-                    "For over a year we have been working with the Clickless team on Power BI projects – both implementing solutions and developing our team's skills through training.",
-                    "From the very beginning we have valued the professionalism, partnership approach and great flexibility of the Clickless team. It is a partner that listens carefully to our needs and is open to feedback, while actively proposing solutions and sharing knowledge and hands-on experience.",
-                    "Smooth communication, commitment and the ability to translate our business needs into concrete, useful Power BI solutions deserve special mention. Thanks to this, the cooperation is not limited to delivering projects – it genuinely helps us make better use of data and build competences within the organization.",
-                    "We can wholeheartedly recommend the Clickless team as a professional and committed partner – for Power BI implementations as well as training and development projects."
-                ],
-                "author": "Joanna Lech",
-                "role": "Head of Planning and Analysis",
-                "company": "Diverse / Etos SA",
-                "context": "about working with the Clickless team"
-            },
-            {
-                "highlights": [
-                    "Excellent speed and friendliness",
-                    "Great cooperation",
-                    "Great contact at all hours",
-                    "I'm impressed",
-                    "We got more than we expected",
-                    "This will save us a ton of time",
-                    "Hats off",
-                    "Thank you for the persistence in finding a way to connect to SAP"
-                ],
-                "title": "International manufacturing company",
-                "intro": "What the client's team said after the implementation I led.",
-                "context": "quotes shared by Clickless"
-            }
-        ],
-        "mentoring": [
-            {
-                "quote": "The scope of the material is well thought out and perfectly chosen — after the training you feel ready to handle real responsibilities at work, like optimizing code or solving problems under deadline pressure. He is a professional with huge knowledge and a great teacher at the same time — he presents every hard topic so clearly that even a beginner quickly gets it.",
-                "author": "Katarzyna K."
-            },
-            {
-                "quote": "What I value most is the individual approach, the critical analysis of ideas and concrete support in solving problems. Michał helps you structure a topic and reach the best solution instead of handing out ready-made answers. His very up-to-date knowledge of AI is a big plus too. After the first five hours I decided to continue.",
-                "author": "Sylwia M."
-            },
-            {
-                "quote": "Mentoring with Michał was very valuable. Thanks to the individual approach and practical examples, learning Power BI became much easier and more structured. Michał patiently explains even complex topics, answers questions and adapts the pace to the participant. I strongly recommend this mentoring to anyone who wants to learn Power BI effectively.",
-                "author": "Sylwia W."
-            },
-            {
-                "quote": [
-                    "Mentoring with Michał gave me a lot in terms of hands-on work and a better understanding of the topics I was working on. A big plus for me was that we worked on practical tasks and examples.",
-                    "I especially appreciate the concrete feedback on my work. It helped me notice things I had not spotted before, organize my knowledge and look at some issues from a different perspective. Along the way I also discovered many new tools and possibilities I had not used before. The sessions were relaxed, practical and really gave me a lot. I strongly recommend this mentoring to anyone who wants to broaden their knowledge and learn new things."
-                ],
-                "author": "Sylwia P."
-            },
-            {
-                "quote": "I just had my first interview for a data analyst role and it went brilliantly — both the technical part and the soft skills. They asked me about SQL, then dug into the details and into data modeling — they were very happy with my answers. Our sessions are already paying off.",
-                "author": "Anonymous",
-                "context": "after a job interview"
-            }
-        ]
-    },
-    "consent": {
-        "title": "A quick note about cookies",
-        "text": "I count visits anonymously (no cookies, no personal data) to know how many people stop by. If you agree, I'll also turn on Google Analytics, which shows me which sections people find most interesting. Without consent the site works exactly the same.",
-        "accept": "Sure, go ahead",
-        "decline": "No, thanks",
-        "settings": "Cookie settings"
     }
 }

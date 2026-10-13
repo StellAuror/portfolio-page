@@ -1,6 +1,7 @@
 .lang-switcher {
-  margin-top: auto;
-  padding-top: 1.5rem;
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
   display: flex;
   gap: 0.5rem;
   padding: 0.5rem 0.7rem;
@@ -24,14 +25,14 @@
   border-color: #888;
 }
 
-.lang-switcher-switch:focus-visible {
+.lang-switcher-switch:focus {
   outline: none;
   box-shadow: 0 0 0 2px #666;
 }
 
-.lang-switcher-switch.active {
-  background: #fff;
-  color: #000;
-  border-color: #fff;
+@media (max-width: 1000px) {
+  .lang-switcher {
+    bottom: 60px;
+    left: 0.5rem;
+  }  
 }
-

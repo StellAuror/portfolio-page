@@ -1,57 +1,50 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Michał Krawczuk | BI, Fabric & Power Platform</title>
+    <title>Michał Krawczuk| Resume</title>
     <link rel="icon" href="static/cv.webp">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-    <link rel="stylesheet" href="css/theme.css?v=2026-10-13f">
-    <link rel="stylesheet" href="css/languages.css?v=2026-10-13f">
-    <link rel="stylesheet" href="css/mobile-specific.css?v=2026-10-13f">
-    <link rel="stylesheet" href="css/project-modal.css?v=2026-10-13f">
-    <link rel="stylesheet" href="css/project-tiles.css?v=2026-10-13f">
-    <link rel="stylesheet" href="css/navigation.css?v=2026-10-13f">
-    <link rel="stylesheet" href="css/about-me.css?v=2026-10-13f">
-    <link rel="stylesheet" href="css/story.css?v=2026-10-13f">
-    <link rel="stylesheet" href="css/music.css?v=2026-10-13f">
-    <link rel="stylesheet" href="css/timeline.css?v=2026-10-13f">
-    <link rel="stylesheet" href="css/skills.css?v=2026-10-13f">
-    <link rel="stylesheet" href="css/testimonials.css?v=2026-10-13f">
-    <link rel="stylesheet" href="css/consent.css?v=2026-10-13f">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/languages.css">
+    <link rel="stylesheet" href="css/mobile-specific.css">
+    <link rel="stylesheet" href="css/project-modal.css">
+    <link rel="stylesheet" href="css/project-tiles.css">
+    <link rel="stylesheet" href="css/navigation.css">
+    <link rel="stylesheet" href="css/about-me.css">
+    <link rel="stylesheet" href="css/story.css">
+    <link rel="stylesheet" href="css/music.css">
+    <link rel="stylesheet" href="css/timeline.css">
+    <link rel="stylesheet" href="css/skills.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
 <nav>
   <ul class="mobile-toggle">
     <li class="mobile-nav-item" id="mobile-nav-item-toggle">
-    <a class="mobile-nav-toggle" onclick="toggleSidebar(this)" aria-label="Menu">
+    <a class="mobile-nav-toggle" onclick="toggleSidebar(this)">
         <i class="fa fa-bars"></i>
       </a>
     </li>
     <li class="mobile-nav-item">
-      <a href="#about" aria-label="About" class="mobile-nav-link active" onclick="showSection('about', this)">
+      <a href="#about" class="mobile-nav-link active" onclick="showSection('about', this)">
         <i class="fa fa-user"></i>
       </a>
     </li>
     <li class="mobile-nav-item">
-      <a href="#journey" aria-label="Journey" class="mobile-nav-link" onclick="showSection('journey', this)">
+      <a href="#journey" class="mobile-nav-link" onclick="showSection('journey', this)">
         <i class="fa fa-route"></i>
       </a>
     </li>
     <li class="mobile-nav-item">
-      <a href="#projects" aria-label="Projects" class="mobile-nav-link" onclick="showSection('projects', this)">
+      <a href="#projects" class="mobile-nav-link" onclick="showSection('projects', this)">
         <i class="fa fa-folder"></i>
       </a>
     </li>
     <li class="mobile-nav-item">
-      <a href="#skills" aria-label="Skills" class="mobile-nav-link" onclick="showSection('skills', this)">
+      <a href="#skills" class="mobile-nav-link" onclick="showSection('skills', this)">
         <i class="fa fa-cogs"></i>
-      </a>
-    </li>
-    <li class="mobile-nav-item">
-      <a href="#testimonials" class="mobile-nav-link" onclick="showSection('testimonials', this)" aria-label="Testimonials">
-        <i class="fa fa-comments"></i>
       </a>
     </li>
     <li class="mobile-nav-item">
@@ -77,13 +70,13 @@
                     <svg viewBox="0 0 24 24">
                         <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
                     </svg>
-                    <span class="copy-text" role="button" tabindex="0">michalkrawczuk.gen@gmail.com</span>
+                    <span class="copy-text" style="cursor: pointer; user-select: none;">michalkrawczuk.gen@gmail.com</span>
                 </div>
                 <div class="contact-item">
                     <svg viewBox="0 0 24 24">
                         <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
                     </svg>
-                    <span class="copy-text" role="button" tabindex="0">+48 739 984 232</span>
+                    <span class="copy-text" style="cursor: pointer; user-select: none;">+48 739 984 232</span>
                 </div>
                 <div class="contact-item">
                     <svg viewBox="0 0 24 24">
@@ -108,36 +101,32 @@
                         <path d="M6 0h8l4 4v16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm8 1.5V5h3.5L14 1.5zM8 10h8v1H8v-1zm0 3h8v1H8v-1zm0 3h5v1H8v-1z"/>
 
                     </svg>
-                    <a href="static/cv.pdf?v=2026-10d" target="_blank" rel="noopener">Resume</a>
+                    <a href="static/cv.pdf" target="_blank">Resume</a>
                 </div>
             </div>
 
             <nav>
                 <ul class="navigation">
                     <li class="nav-item">
-                        <a href="#about" class="nav-link active" onclick="showSection('about', this)" data-i18n="nav.about">About</a>
+                        <a href="#about" class="nav-link active" onclick="showSection('about', this)">About</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#journey" class="nav-link" onclick="showSection('journey', this)" data-i18n="nav.journey">Journey</a>
+                        <a href="#journey" class="nav-link" onclick="showSection('journey', this)">Journey</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#projects" class="nav-link" onclick="showSection('projects', this)" data-i18n="nav.projects">Projects</a>
+                        <a href="#projects" class="nav-link" onclick="showSection('projects', this)">Projects</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#skills" class="nav-link" onclick="showSection('skills', this)" data-i18n="nav.skills">Skills</a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#testimonials" class="nav-link" onclick="showSection('testimonials', this)" data-i18n="nav.testimonials">Testimonials</a>
+                        <a href="#skills" class="nav-link" onclick="showSection('skills', this)">Skills</a>
                     </li>
                     
 
                 </ul>
             </nav>
             <div class="lang-switcher">
-                <button type="button" class="lang-switcher-switch" data-lang="pl">PL</button>
-                <button type="button" class="lang-switcher-switch" data-lang="en">EN</button>
+                <div class="lang-switcher-switch" onclick="changeLang('pl')" data-lang="pl">PL</div>
+                <div class="lang-switcher-switch" onclick="changeLang('en')" data-lang="en">EN</div>
             </div>
-            <a href="#" class="cookie-settings-link" data-cookie-settings data-i18n="consent.settings">Cookies</a>
         </aside>
 
         <main class="main-content">
@@ -200,18 +189,19 @@
             <section id="fetch-journey"></section>
             <section id="fetch-skills"></section>
             <section id="fetch-projects"></section>
-            <section id="fetch-testimonials"></section>
 
 
     <!-- Music Feature -->
-    <div class="music-credit">
-        Music from Bensound | Roman Senyk | License code: TAN91S0GJRSXFPIU
+    <div style="position: absolute; left: 15px; top: 10px; right: 30px; color: #999; font-size: 12px;">
+        Music from Bensound  | Roman Senyk  | License code: TAN91S0GJRSXFPIU
     </div>
 
     <div class="music-control" onclick="toggleMusic()">
-        <button class="music-toggle" id="musicToggle" aria-label="Play / pause music">▶</button>
+        <button class="music-toggle" id="musicToggle">▶</button>
         <div class="music-info">
-            <span id="musicStatus" data-i18n="music.status">Music</span>
+            <span id="musicStatus">
+                Music
+            </span>
         </div>
         <div class="music-visualizer" id="musicVisualizer" style="display: none;">
             <div class="music-bar"></div>
@@ -221,31 +211,20 @@
         </div>
     </div>
 
-    <div id="ambient-popup" class="ambient-popup" data-i18n="music.popup">Click the button above to play ambient music!</div>
-
-
-    <!-- Cookie consent -->
-    <div class="cookie-consent" id="cookie-consent" role="dialog" aria-live="polite" aria-labelledby="cookie-consent-title" hidden>
-        <p class="cookie-consent-title" id="cookie-consent-title" data-i18n="consent.title">A quick note about cookies</p>
-        <p class="cookie-consent-text" data-i18n="consent.text"></p>
-        <div class="cookie-consent-actions">
-            <button type="button" class="cookie-btn cookie-btn-secondary" id="cookie-decline" data-i18n="consent.decline">No, thanks</button>
-            <button type="button" class="cookie-btn cookie-btn-primary" id="cookie-accept" data-i18n="consent.accept">Sure</button>
-        </div>
+    <div id="ambient-popup" class="ambient-popup">
+    Click the button above to play ambient music!
     </div>
 
+
     <!-- JS Fetching -->
-    <script src = "js/load.js?v=2026-10-13f"></script>
-    <script src = "js/language.js?v=2026-10-13f"></script>
-    <script src = "js/navigation.js?v=2026-10-13f"></script>
-    <script src = "js/projects.js?v=2026-10-13f"></script>
-    <script src = "js/story.js?v=2026-10-13f"></script>
-    <script src = "js/music.js?v=2026-10-13f"></script>
-    <script src = "js/timeline.js?v=2026-10-13f"></script>
-    <script src = "js/skills.js?v=2026-10-13f"></script>
-    <script src = "js/testimonials.js?v=2026-10-13f"></script>
-    <script src = "js/consent.js?v=2026-10-13f"></script>
-    <script src = "js/visits.js?v=2026-10-13f"></script>
+    <script src = "js/load.js"></script>
+    <script src = "js/language.js"></script>
+    <script src = "js/navigation.js"></script>
+    <script src = "js/projects.js"></script>
+    <script src = "js/story.js"></script>
+    <script src = "js/music.js"></script>
+    <script src = "js/timeline.js"></script>
+    <script src = "js/skills.js"></script>
 </body>
 </html>
 

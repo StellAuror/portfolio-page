@@ -1,5 +1,25 @@
-// Language data for the projects grid and modal (provided by language.js)
+// Global variables
+window.currentLang = window.currentLang || "en";
 let currentLanguageData = {};
+
+// Load language data
+async function loadLanguageData(lang) {
+    try {
+        const response = await fetch(`languages/${lang}.json`);
+        if (!response.ok) {
+            throw new Error(`Failed to load language file: ${lang}.json`);
+        }
+        currentLanguageData = await response.json();
+        return currentLanguageData;
+    } catch (error) {
+        console.error('Error loading language data:', error);
+        // Fallback to English if current language fails
+        if (lang !== 'en') {
+            return await loadLanguageData('en');
+        }
+        return {};
+    }
+}
 
 // Create project tile HTML
 function createProjectTile(projectId, project) {
@@ -35,7 +55,6 @@ function createProjectTile(projectId, project) {
         <div class="project-tile" onclick="openProjectModal('${projectId}')">
             ${imageContent}
             <div class="project-tile-content">
-                ${project.badge ? `<span class="project-tile-badge">${project.badge}</span>` : ''}
                 <h3 class="project-tile-title">${project.title}</h3>
                 <p class="project-tile-tech">${project.tech}</p>
                 <p class="project-tile-description">${project.description}</p>
@@ -65,6 +84,23 @@ function renderProjectsGrid() {
             setTimeout(() => tile.classList.remove('hover'), 1500);
         });
     });
+}
+
+// Update text content based on language
+function updateTextContent() {
+    const elementsToUpdate = document.querySelectorAll('[data-lang]');
+    elementsToUpdate.forEach(element => {
+        const key = element.getAttribute('data-lang');
+        const text = getNestedValue(currentLanguageData, key);
+        if (text) {
+            element.textContent = text;
+        }
+    });
+}
+
+// Helper function to get nested object values
+function getNestedValue(obj, path) {
+    return path.split('.').reduce((current, key) => current?.[key], obj);
 }
 
 // Get project image (handles both actual images and emojis)
@@ -143,12 +179,7 @@ function openProjectModal(projectId) {
     modalImage.innerHTML = '';
     modalImage.className = 'modal-image';
 
-    const gallery = Array.isArray(project.gallery) && project.gallery.length > 1 ? project.gallery : null;
-
-    switch (gallery ? 'gallery' : projectImageData.type) {
-        case 'gallery':
-            renderModalGallery(modalImage, gallery, project.title);
-            break;
+    switch (projectImageData.type) {
         case 'image':
             // Handle actual image
             modalImage.style.backgroundImage = `url('${projectImageData.content}')`;
@@ -171,48 +202,14 @@ function openProjectModal(projectId) {
     // Click outside to close
     modal.addEventListener('click', handleModalClick);
     
-    // Escape closes the modal
+    // Press any key to close
     document.addEventListener('keydown', handleKeyPress);
-}
-
-// Gallery inside the modal: one screenshot at a time with arrows, dots and keyboard
-let galleryKeyHandler = null;
-
-function renderModalGallery(container, images, title) {
-    let index = 0;
-    container.classList.add('has-gallery');
-    container.innerHTML = `
-        <img class="modal-gallery-img" alt="">
-        <button type="button" class="modal-gallery-nav prev" aria-label="Previous">‹</button>
-        <button type="button" class="modal-gallery-nav next" aria-label="Next">›</button>
-        <div class="modal-gallery-dots">${images.map(() => '<span></span>').join('')}</div>`;
-    const img = container.querySelector('.modal-gallery-img');
-    const dots = [...container.querySelectorAll('.modal-gallery-dots span')];
-    const show = i => {
-        index = (i + images.length) % images.length;
-        img.src = images[index];
-        img.alt = `${title} (${index + 1}/${images.length})`;
-        dots.forEach((d, k) => d.classList.toggle('active', k === index));
-    };
-    container.querySelector('.prev').addEventListener('click', e => { e.stopPropagation(); show(index - 1); });
-    container.querySelector('.next').addEventListener('click', e => { e.stopPropagation(); show(index + 1); });
-    dots.forEach((d, k) => d.addEventListener('click', e => { e.stopPropagation(); show(k); }));
-    galleryKeyHandler = e => {
-        if (e.key === 'ArrowLeft') show(index - 1);
-        else if (e.key === 'ArrowRight') show(index + 1);
-    };
-    document.addEventListener('keydown', galleryKeyHandler);
-    show(0);
 }
 
 // Close project modal
 function closeProjectModal() {
     const modal = document.getElementById('projectModal');
     modal.classList.remove('active');
-    if (galleryKeyHandler) {
-        document.removeEventListener('keydown', galleryKeyHandler);
-        galleryKeyHandler = null;
-    }
     
     // Remove event listeners to prevent memory leaks
     modal.removeEventListener('click', handleModalClick);
@@ -222,7 +219,7 @@ function closeProjectModal() {
 // Handle modal click events (close on outside click)
 function handleModalClick(event) {
     const modal = document.getElementById('projectModal');
-    const modalContent = modal.querySelector('.modal');
+    const modalContent = modal.querySelector('.modal-content, .project-modal-content');
     
     // If clicking outside the modal content, close the modal
     if (event.target === modal || (modalContent && !modalContent.contains(event.target))) {
@@ -230,16 +227,43 @@ function handleModalClick(event) {
     }
 }
 
-// Handle keyboard events (close on Escape)
+// Handle keyboard events (close on any key press)
 function handleKeyPress(event) {
     const modal = document.getElementById('projectModal');
-    if (event.key === 'Escape' && modal && modal.classList.contains('active')) {
+    
+    // If modal is open and any key is pressed, close it
+    if (modal && modal.classList.contains('active')) {
         closeProjectModal();
+        event.preventDefault(); // Prevent default key behavior
     }
 }
 
-// Re-render whenever the language changes
-document.addEventListener('langchange', (e) => {
-    currentLanguageData = e.detail.translations;
+// Initialize language system
+async function initializeLanguage(lang = window.currentLang) {
+    window.currentLang = lang;
+    await loadLanguageData(lang);
+    updateTextContent();
     renderProjectsGrid();
+}
+
+// Language switcher event listener
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize with current language
+    initializeLanguage();
+    
+    // Store the original changeLang function if it exists
+    const originalChangeLang = window.changeLang;
+    
+    // Create a new changeLang function that calls both the original and our language update
+    window.changeLang = function(lang) {
+        // Call the original changeLang function first (for your CSS/UI)
+        if (originalChangeLang && typeof originalChangeLang === 'function') {
+            originalChangeLang(lang);
+        }
+        
+        // Then update our projects content
+        if (lang && lang !== window.currentLang) {
+            initializeLanguage(lang);
+        }
+    };
 });

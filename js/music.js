@@ -19,7 +19,7 @@ function toggleMusic() {
             el.style.display = 'none';
         });
     } else {
-        audio.play().catch(() => {});
+        audio.play();
         elements.forEach(el => {
             el.textContent = "⏸";
         }); 
@@ -32,41 +32,28 @@ function toggleMusic() {
 }
 
 
-// Copy contact details with a small inline confirmation instead of alert()
-function copyContact(el) {
-    const text = el.dataset.value || el.textContent.trim();
-    el.dataset.value = text;
-    navigator.clipboard?.writeText(text).then(() => {
-        el.textContent = window.translations?.music?.copied || 'Copied';
-        el.classList.add('copied');
-        setTimeout(() => {
-            el.textContent = text;
-            el.classList.remove('copied');
-        }, 1400);
-    }).catch(() => {});
-}
-
 document.querySelectorAll('.copy-text').forEach(el => {
-    el.addEventListener('click', () => copyContact(el));
-    el.addEventListener('keydown', e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            copyContact(el);
-        }
+    el.addEventListener('click', () => {
+        const text = el.textContent.trim();
+        navigator.clipboard.writeText(text).then(() => {
+            alert(`Copied "${text}" to clipboard`);
+        });
     });
 });
 
-// Ambient music hint — shown once per visit
 const popup = document.getElementById("ambient-popup");
-let popupSeen = false;
-try { popupSeen = sessionStorage.getItem('ambientPopupSeen') === '1'; } catch (e) { /* ignore */ }
 
-if (popup && !popupSeen) {
-    setTimeout(() => { if (!isPlaying) popup.style.display = "flex"; }, 1500);
-    setTimeout(() => { popup.style.display = "none"; }, 9000);
-    try { sessionStorage.setItem('ambientPopupSeen', '1'); } catch (e) { /* ignore */ }
+
+function playAmbientFromPopup() {
+    audio.play();
+    toggleBtn.innerText = "Pause Music";
+    popup.style.display = "none";
 }
 
-document.querySelector('.music-control')?.addEventListener('click', () => {
-    if (popup) popup.style.display = 'none';
-});
+setTimeout(() => {
+    popup.style.display = "flex";
+}, 1500);
+
+setTimeout(() => {
+    popup.style.display = "none";
+}, 9000);

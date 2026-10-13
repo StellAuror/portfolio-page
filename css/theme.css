@@ -65,27 +65,3 @@ body {
     scrollbar-width: thin;
     scrollbar-color: #333333 #000000;
 }
-/* Sidebar: content flows top-down, language switch sits at the bottom
-   without overlapping navigation on short screens */
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    scrollbar-width: none;
-}
-
-.sidebar::-webkit-scrollbar {
-    display: none;
-}
-
-/* Mobile browsers: use the dynamic viewport so the address bar doesn't hide content */
-@supports (height: 100dvh) {
-    .container,
-    .sidebar {
-        height: 100dvh;
-    }
-}
-
-.sidebar {
-    flex: none;
-}
