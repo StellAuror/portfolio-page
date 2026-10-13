@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relacje i propagacja filtrów</title>
+    <link rel="stylesheet" href="../viz/kit.css">
+    <style>
+        /* ---------- Schemat modelu ---------- */
+        .model {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 92px minmax(0, 1.2fr);
+            align-items: center;
+        }
+        .dims { grid-column: 1; grid-row: 1; display: flex; flex-direction: column; gap: 14px; }
+        .fact-col { grid-column: 3; grid-row: 1; }
+        .links { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; z-index: 0; }
+
+        .tbl {
+            position: relative;
+            z-index: 1;
+            background: var(--bg);
+            border: 1px solid var(--line-strong);
+            border-radius: var(--radius);
+            padding: 9px 10px 6px;
+        }
+        .tbl.fact { border-width: 1.5px; border-color: var(--text-2); }
+        .tbl-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+        .tbl-name { font-weight: 700; font-size: 14.5px; }
+        .tbl-tag { font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--text-3); white-space: nowrap; }
+
+        .tbl .vz-table { font-size: 13px; }
+        .tbl .vz-table th { text-transform: none; letter-spacing: 0; font-size: 11.5px; padding: 4px 8px; }
+        .tbl .vz-table td { padding: 3px 8px; }
+        .tbl .vz-table th.calc-col { color: var(--ctx-row); white-space: normal; line-height: 1.2; min-width: 64px; }
+        .tbl .vz-table td.calc-col { color: var(--ctx-row); font-weight: 600; }
+
+        .vz-table tr.count td { background: var(--surface-2); }
+        .vz-table tr.count td:first-child { box-shadow: inset 3px 0 0 var(--text-2); }
+
+        .clickable tbody tr { cursor: pointer; }
+        .clickable tbody tr:hover td { outline: 1px solid var(--line-strong); outline-offset: -1px; }
+
+        /* filtr „dociera” po relacji: wiersze zapalają się z opóźnieniem */
+        .arrive td { animation: vzArrive .6s var(--ease) .5s backwards; }
+        .arrive-out td { animation: vzFade .6s var(--ease) .5s backwards; }
+        @keyframes vzArrive { from { background: transparent; box-shadow: none; } }
+        @keyframes vzFade { from { opacity: 1; } }
+
+        /* fragmentator na wymiarze */
+        .slicer { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-bottom: 7px; }
+        .slicer-lbl { font-size: 11.5px; color: var(--text-3); margin-right: 2px; }
+        .pill {
+            border: 1px solid var(--line-strong);
+            background: var(--bg);
+            border-radius: 999px;
+            padding: 1px 10px;
+            font-size: 12.5px;
+            line-height: 1.6;
+            transition: background .15s, border-color .15s, color .15s;
+        }
+        .pill:hover { border-color: var(--ctx-visual); }
+        .pill[aria-pressed="true"] { background: var(--ctx-visual); border-color: var(--ctx-visual); color: #fff; }
+        .pill:disabled { opacity: .4; cursor: not-allowed; }
+        .pill:disabled:hover { border-color: var(--line-strong); }
+        .no-slicers .slicer { display: none; }
+
+        /* linie relacji */
+        .lk { fill: none; stroke: var(--line-strong); stroke-width: 2; transition: stroke .3s; }
+        .lk.visual, .lk.calc, .lk.row { stroke-width: 2.5; stroke-dasharray: 7 6; animation: vzFlow .9s linear infinite; }
+        .lk.visual { stroke: var(--ctx-visual); }
+        .lk.calc { stroke: var(--ctx-calc); }
+        .lk.row { stroke: var(--ctx-row); }
+        .lk.rev { animation-direction: reverse; }
+        .lk.blocked { stroke: var(--ctx-off); stroke-dasharray: 3 5; }
+        .lk.faded { opacity: .45; }
+        @keyframes vzFlow { to { stroke-dashoffset: -26; } }
+        .card-txt { font: 700 13px var(--sans); fill: var(--text-2); }
+        .block-badge circle { fill: #fff; stroke: var(--bad); stroke-width: 2; }
+        .block-badge path { stroke: var(--bad); stroke-width: 2.4; stroke-linecap: round; }
+
+        /* ---------- Wizualizacja (tabela w raporcie) ---------- */
+        .vis-wrap .vz-matrix td.cell { min-width: 90px; }
+        .vis-note { font-size: 13px; color: var(--text-2); margin-top: 10px; }
+        .big-res { font-size: 26px; font-weight: 700; margin: 4px 0 2px; }
+        .big-res.blank { color: var(--text-3); font-style: italic; font-weight: 500; font-size: 20px; }
+
+        /* ---------- Kroki ---------- */
+        .combine { display: flex; flex-direction: column; gap: 8px; }
+        .combine-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+        .combine-row .field {
+            width: 100%;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        .vz-chip { white-space: normal; flex-wrap: wrap; row-gap: 0; }
+        .vz-chip > span { white-space: nowrap; }
+        .step-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+        .step-head .vz-label { margin: 0; }
+        #stepNav { display: none; }
+        .manual #stepNav { display: flex; }
+        .manual #playBtn { display: none; }
+        .section-gap { margin-bottom: 20px; }
+
+        @media (max-width: 820px) {
+            .model { grid-template-columns: 34px minmax(0, 1fr); align-items: start; row-gap: 20px; }
+            .dims { grid-column: 2; grid-row: 1; }
+            .fact-col { grid-column: 2; grid-row: 2; }
+            .lane { display: none; }
+            .tbl .vz-table { font-size: 12.5px; }
+            .tbl .vz-table th { padding: 4px 5px; }
+            .tbl .vz-table td { padding: 3px 5px; }
+        }
+    </style>
+</head>
+<body>
+<div class="vz-app">
+    <header class="vz-head">
+        <div class="vz-kicker">DAX · Model danych</div>
+        <h1 class="vz-title">Relacje i propagacja filtrów</h1>
+        <p class="vz-lead">Filtr ustawiony na wymiarze płynie wzdłuż strzałki relacji do tabeli faktów. Wybierz wartość we fragmentatorze nad tabelą wymiaru i zobacz, które wiersze Sprzedaz się zapalają, a dokąd filtr nie dociera.</p>
+    </header>
+
+    <div id="tabs"></div>
+    <div class="vz-code" id="code"></div>
+
+    <section class="vz-card section-gap">
+        <div class="vz-label">Model · schemat gwiazdy</div>
+        <div class="model" id="model">
+            <svg class="links" id="links" aria-hidden="true"></svg>
+            <div class="dims" id="dims"></div>
+            <div class="lane"></div>
+            <div class="fact-col"><div class="tbl fact" id="t-Sprzedaz"></div></div>
+        </div>
+        <div class="vz-legend">
+            <span style="color: var(--ctx-visual)"><i style="background: var(--ctx-visual-soft)"></i>filtr z wizualizacji i jego droga</span>
+            <span style="color: var(--ctx-calc)"><i style="background: var(--ctx-calc-soft)"></i>filtr dodany przez CALCULATE / CROSSFILTER</span>
+            <span style="color: var(--ctx-row)"><i style="background: var(--ctx-row-soft)"></i>kontekst wiersza</span>
+            <span style="color: var(--text-2)"><i style="background: var(--surface-2)"></i>wiersze liczone bez filtra</span>
+            <span style="color: var(--bad)"><i style="background: #fff; border-radius: 50%"></i>filtr nie płynie pod prąd</span>
+        </div>
+    </section>
+
+    <div class="vz-grid">
+        <div>
+            <section class="vz-card">
+                <div class="vz-label" id="visLabel">Wizualizacja · tabela</div>
+                <div id="vis"></div>
+            </section>
+            <div class="vz-takeaway" id="takeaway"></div>
+        </div>
+
+        <section class="vz-card" id="explain">
+            <div class="step-head">
+                <div class="vz-label">Co się dzieje</div>
+                <div class="vz-bar">
+                    <button type="button" class="vz-btn" id="playBtn">▶ Krok po kroku</button>
+                    <div class="vz-bar" id="stepNav">
+                        <button type="button" class="vz-btn" id="prevBtn">←</button>
+                        <span class="vz-hint" id="stepInfo"></span>
+                        <button type="button" class="vz-btn primary" id="nextBtn">Dalej →</button>
+                    </div>
+                </div>
+            </div>
+            <div class="vz-steps" id="steps"></div>
+        </section>
+    </div>
+</div>
+
+<script src="../viz/kit.js"></script>
+<script>
+    // ---------- Dane: mały model gwiazdy ----------
+    const PRODUKTY = [
+        { ProduktId: 'P1', Produkt: 'Rower miejski', Kategoria: 'Rowery' },
+        { ProduktId: 'P2', Produkt: 'Rower górski', Kategoria: 'Rowery' },
+        { ProduktId: 'P3', Produkt: 'Kask Lite', Kategoria: 'Kaski' },
+        { ProduktId: 'P4', Produkt: 'Kask Pro', Kategoria: 'Kaski' },
+        { ProduktId: 'P5', Produkt: 'Kurtka', Kategoria: 'Odzież' },
+        { ProduktId: 'P6', Produkt: 'Rękawice', Kategoria: 'Odzież' },
+    ];
+    const KLIENCI = [
+        { KlientId: 'K1', Klient: 'Anna' },
+        { KlientId: 'K2', Klient: 'Bartek' },
+        { KlientId: 'K3', Klient: 'Celina' },
+    ];
+    const KALENDARZ = [
+        { Miesiac: '2026-01', Nazwa: 'Styczeń' },
+        { Miesiac: '2026-02', Nazwa: 'Luty' },
+        { Miesiac: '2026-03', Nazwa: 'Marzec' },
+    ];
+    const SPRZEDAZ = [
+        { Nr: 1, Miesiac: '2026-01', ProduktId: 'P1', KlientId: 'K1', Kwota: 1200 },
+        { Nr: 2, Miesiac: '2026-01', ProduktId: 'P3', KlientId: 'K2', Kwota: 150 },
+        { Nr: 3, Miesiac: '2026-01', ProduktId: 'P5', KlientId: 'K1', Kwota: 300 },
+        { Nr: 4, Miesiac: '2026-02', ProduktId: 'P2', KlientId: 'K3', Kwota: 1500 },
+        { Nr: 5, Miesiac: '2026-02', ProduktId: 'P1', KlientId: 'K2', Kwota: 1100 },
+        { Nr: 6, Miesiac: '2026-02', ProduktId: 'P4', KlientId: 'K1', Kwota: 220 },
+        { Nr: 7, Miesiac: '2026-03', ProduktId: 'P3', KlientId: 'K1', Kwota: 130 },
+        { Nr: 8, Miesiac: '2026-03', ProduktId: 'P2', KlientId: 'K2', Kwota: 1400 },
+        { Nr: 9, Miesiac: '2026-03', ProduktId: 'P5', KlientId: 'K3', Kwota: 280 },
+        { Nr: 10, Miesiac: '2026-03', ProduktId: 'P4', KlientId: 'K3', Kwota: 200 },
+    ];
+
+    // Wymiary: klucz relacji (ta sama nazwa kolumny w Sprzedaz) i kolumna fragmentatora
+    const DIMS = [
+        { id: 'Produkty', rows: PRODUKTY, key: 'ProduktId', slicer: 'Kategoria',
+          cols: [{ key: 'ProduktId' }, { key: 'Produkt' }, { key: 'Kategoria' }] },
+        { id: 'Klienci', rows: KLIENCI, key: 'KlientId', slicer: 'Klient',
+          cols: [{ key: 'KlientId' }, { key: 'Klient' }] },
+        { id: 'Kalendarz', rows: KALENDARZ, key: 'Miesiac', slicer: 'Nazwa',
+          cols: [{ key: 'Miesiac', label: 'Miesiąc' }, { key: 'Nazwa' }] },
+    ];
+    const DIM = Object.fromEntries(DIMS.map(d => [d.id, d]));
+    const keyLabel = k => (k === 'Miesiac' ? 'Miesiąc' : k);
+    const prodName = id => PRODUKTY.find(p => p.ProduktId === id).Produkt;
+
+    // ---------- Scenariusze ----------
+    const SCENARIOS = {
+        prop: {
+            label: 'Filtr płynie 1 → *',
+            measure: 'Sprzedaż',
+            code: 'Sprzedaż = SUM(Sprzedaz[Kwota])\n-- relacje: Produkty 1 → * Sprzedaz, Klienci 1 → * Sprzedaz, Kalendarz 1 → * Sprzedaz',
+            slicers: ['Produkty', 'Klienci', 'Kalendarz'],
+            takeaway: 'Filtr ustawiony na wymiarze płynie wzdłuż strzałki relacji: od strony „1” do strony „*”. Sprzedaz nie ma kolumny Kategoria, a mimo to się filtruje, bo filtr dociera przez klucz ProduktId. Filtry z kilku wymiarów spotykają się w tabeli faktów jako przecięcie (&amp;).',
+        },
+        single: {
+            label: 'Pod prąd: nie płynie',
+            measure: 'Liczba produktów',
+            code: 'Liczba produktów = COUNTROWS({{off|Produkty}})\n-- relacja Produkty[ProduktId] 1 → * Sprzedaz[ProduktId], kierunek: Pojedynczy',
+            slicers: ['Klienci', 'Kalendarz'],
+            takeaway: 'Relacja jednokierunkowa działa jak ulica jednokierunkowa. Filtr na Klientach dojeżdża do Sprzedaz, ale dalej, <b>pod prąd</b> do Produktów, już nie płynie. COUNTROWS(Produkty) widzi wszystkie 6 produktów, więc każdy klient w tabeli ma ten sam wynik.',
+        },
+        both: {
+            label: 'CROSSFILTER(…, Both)',
+            measure: 'Produkty sprzedane',
+            code: 'Produkty sprzedane =\nCALCULATE(\n    COUNTROWS(Produkty),\n    {{calc|CROSSFILTER(Sprzedaz[ProduktId], Produkty[ProduktId], Both)}}\n)',
+            slicers: ['Klienci', 'Kalendarz'],
+            takeaway: 'CROSSFILTER(…, Both) otwiera ruch w obie strony, ale tylko w tej jednej mierze. Filtr wraca ze Sprzedaz do Produktów, więc liczymy tylko produkty kupione przez klienta. Relacja dwukierunkowa w modelu daje ten sam efekt, tyle że zawsze i dla każdej miary, dlatego bezpieczniej włączać ją lokalnie. Prostsza alternatywa: DISTINCTCOUNT(Sprzedaz[ProduktId]). Różni się tylko w sumie bez filtrów, bo pomija produkty bez sprzedaży (5 zamiast 6).',
+        },
+        related: {
+            label: 'RELATED',
+            code: '-- kolumna obliczeniowa w tabeli Sprzedaz\nKategoria = {{row|RELATED(Produkty[Kategoria])}}',
+            slicers: [],
+            takeaway: 'RELATED działa w kontekście wiersza po stronie „*” i sięga po <b>jedną</b> wartość ze strony „1”. To WYSZUKAJ.PIONOWO bez podawania klucza: relacja sama wie, który wiersz Produktów pasuje. Każdy wiersz Sprzedaz ma dokładnie jeden produkt, dlatego wynik jest zawsze jedną wartością.',
+        },
+        relatedtable: {
+            label: 'RELATEDTABLE',
+            code: '-- kolumna obliczeniowa w tabeli Produkty\nSprzedaż produktu = SUMX({{row|RELATEDTABLE(Sprzedaz)}}, Sprzedaz[Kwota])',
+            slicers: [],
+            takeaway: 'RELATEDTABLE idzie w drugą stronę: z jednego wiersza wymiaru zwraca <b>wszystkie</b> pasujące wiersze faktów. To przejście kontekstu (działa jak CALCULATETABLE): bieżący wiersz Produktów staje się filtrem, który płynie po relacji. Produkt bez sprzedaży dostaje pustą tabelę i wynik (puste).',
+        },
+    };
+    const FILTER_SC = ['prop', 'single', 'both'];
+
+    const state = {
+        sc: 'prop',
+        f: { Produkty: 'Rowery', Klienci: null, Kalendarz: null },
+        factRow: 3,
+        prod: 'P1',
+        manual: false,
+    };
+    let stepper = null;
+
+    // ---------- Silnik propagacji ----------
+    // f: { wymiar: wartość fragmentatora | null }, sc: scenariusz
+    function compute(f, sc) {
+        const dim = {};
+        DIMS.forEach(d => {
+            const v = f[d.id];
+            const pass = v ? d.rows.filter(r => r[d.slicer] === v) : d.rows;
+            dim[d.id] = { filtered: !!v, value: v, pass, keys: pass.map(r => r[d.key]) };
+        });
+        const anyDimFilter = DIMS.some(d => dim[d.id].filtered);
+        // filtry z wymiarów płyną 1 → * i przecinają się w Sprzedaz
+        const fact = SPRZEDAZ.filter(r => DIMS.every(d => dim[d.id].keys.includes(r[d.key])));
+        // Sprzedaz jest filtrowana tylko wtedy, gdy coś do niej dociera (tu: Klienci lub Kalendarz)
+        const factFiltered = dim.Klienci.filtered || dim.Kalendarz.filtered;
+        const soldKeys = [...new Set(fact.map(r => r.ProduktId))].sort();
+        let prodVisible = dim.Produkty.pass;
+        if (sc === 'both' && factFiltered) prodVisible = PRODUKTY.filter(p => soldKeys.includes(p.ProduktId));
+        let value = null;
+        if (sc === 'prop') value = fact.length ? VZ.sum(fact, 'Kwota') : null;
+        if (sc === 'single' || sc === 'both') value = prodVisible.length || null;
+        return { dim, anyDimFilter, fact, factFiltered, soldKeys, prodVisible, value };
+    }
+
+    const relatedCat = r => PRODUKTY.find(p => p.ProduktId === r.ProduktId).Kategoria;
+    const relTable = id => SPRZEDAZ.filter(r => r.ProduktId === id);
+    const relSum = id => { const t = relTable(id); return t.length ? VZ.sum(t, 'Kwota') : null; };
+
+    // ---------- Schemat ----------
+    function tableInto(el, opts, animate) {
+        VZ.table(el, opts);
+        const trs = el.querySelectorAll('tbody tr');
+        trs.forEach((tr, i) => {
+            tr.dataset.i = i;
+            if (!animate) return;
+            if (tr.classList.contains('is-in')) tr.classList.add('arrive');
+            if (tr.classList.contains('is-out')) tr.classList.add('arrive-out');
+        });
+    }
+
+    function renderModel(animate) {
+        const sc = state.sc;
+        const isFilter = FILTER_SC.includes(sc);
+        const c = isFilter ? compute(state.f, sc) : null;
+        const sel = SCENARIOS[sc].slicers;
+
+        // wymiary
+        const dimsEl = document.getElementById('dims');
+        dimsEl.classList.toggle('no-slicers', !isFilter);
+        dimsEl.innerHTML = DIMS.map(d => {
+            const vals = VZ.distinct(d.rows, d.slicer);
+            const on = sel.includes(d.id);
+            const pills = vals.map(v => `<button type="button" class="pill" data-dim="${d.id}" data-v="${VZ.esc(v)}" aria-pressed="${state.f[d.id] === v}" ${on ? '' : 'disabled title="W tym scenariuszu filtrujemy klienta lub miesiąc"'}>${VZ.esc(v)}</button>`).join('');
+            return `<div class="tbl dim" id="t-${d.id}">
+                <div class="tbl-head"><span class="tbl-name">${d.id}</span><span class="tbl-tag">wymiar · strona 1</span></div>
+                <div class="slicer"><span class="slicer-lbl">${d.slicer}:</span>${pills}</div>
+                <div class="tb"></div></div>`;
+        }).join('');
+
+        DIMS.forEach(d => {
+            const el = document.querySelector(`#t-${d.id} .tb`);
+            let cols = d.cols;
+            let st = () => '';
+            if (isFilter) {
+                const info = c.dim[d.id];
+                if (d.id === 'Produkty') {
+                    if (sc === 'prop') st = r => (info.filtered ? (info.keys.includes(r.ProduktId) ? 'in' : 'out') : '');
+                    if (sc === 'single') st = () => 'count';
+                    if (sc === 'both') st = r => (c.factFiltered ? (c.prodVisible.includes(r) ? 'in calc' : 'out') : 'count');
+                } else {
+                    st = r => (info.filtered ? (info.keys.includes(r[d.key]) ? 'in' : 'out') : '');
+                }
+            } else if (sc === 'related' && d.id === 'Produkty') {
+                const cur = SPRZEDAZ.find(r => r.Nr === state.factRow);
+                st = r => (r.ProduktId === cur.ProduktId ? 'in row' : 'out');
+            } else if (sc === 'relatedtable' && d.id === 'Produkty') {
+                cols = [...d.cols, { key: 'Sprzedaz', label: 'Sprzedaż produktu', num: true, format: (v, r) => VZ.fmt(relSum(r.ProduktId)), calc: true }];
+                st = r => (r.ProduktId === state.prod ? 'current' : '');
+            }
+            tableInto(el, { columns: cols, rows: d.rows, state: st }, animate);
+            markCalcCol(el, cols);
+            if (sc === 'relatedtable' && d.id === 'Produkty') {
+                el.classList.add('clickable');
+                el.querySelectorAll('tbody tr').forEach(tr => tr.addEventListener('click', () => {
+                    state.prod = PRODUKTY[+tr.dataset.i].ProduktId; render(true);
+                }));
+            }
+        });
+
+        // fakt
+        const factEl = document.getElementById('t-Sprzedaz');
+        factEl.innerHTML = `<div class="tbl-head"><span class="tbl-name">Sprzedaz</span><span class="tbl-tag">fakt · strona *</span></div><div class="tb"></div>`;
+        const tb = factEl.querySelector('.tb');
+        let fcols = [{ key: 'Nr', label: '#', num: true }, { key: 'Miesiac', label: 'Miesiąc' }, { key: 'ProduktId' }, { key: 'KlientId' }, { key: 'Kwota', num: true }];
+        let fst = () => '';
+        if (isFilter) {
+            fst = r => (c.anyDimFilter ? (c.fact.includes(r) ? 'in' : 'out') : (sc === 'prop' ? 'count' : ''));
+        } else if (sc === 'related') {
+            fcols = [...fcols, { key: 'Kat', label: 'Kategoria', format: (v, r) => VZ.esc(relatedCat(r)), calc: true }];
+            fst = r => (r.Nr === state.factRow ? 'current' : '');
+        } else if (sc === 'relatedtable') {
+            fst = r => (r.ProduktId === state.prod ? 'in row' : 'out');
+        }
+        tableInto(tb, { columns: fcols, rows: SPRZEDAZ, state: fst }, animate);
+        markCalcCol(tb, fcols);
+        if (sc === 'related') {
+            tb.classList.add('clickable');
+            tb.querySelectorAll('tbody tr').forEach(tr => tr.addEventListener('click', () => {
+                state.factRow = SPRZEDAZ[+tr.dataset.i].Nr; render(true);
+            }));
+        }
+
+        dimsEl.querySelectorAll('.pill').forEach(b => b.addEventListener('click', () => {
+            const d = b.dataset.dim, v = b.dataset.v;
+            state.f[d] = state.f[d] === v ? null : v;
+            render(true);
+        }));
+
+        requestAnimationFrame(() => drawLinks(c));
+    }
+
+    function markCalcCol(el, cols) {
+        cols.forEach((col, i) => {
+            if (!col.calc) return;
+            el.querySelectorAll(`tr > :nth-child(${i + 1})`).forEach(cell => cell.classList.add('calc-col'));
+        });
+    }
+
+    // Linie relacji: kolor = kto płynie, kierunek kropki = dokąd
+    function linkState(d, c) {
+        const sc = state.sc;
+        if (sc === 'related') return d === 'Produkty' ? { cls: 'row', rev: true } : { cls: 'faded' };
+        if (sc === 'relatedtable') return d === 'Produkty' ? { cls: 'row' } : { cls: 'faded' };
+        const info = c.dim[d];
+        if (d === 'Produkty' && sc === 'single') return c.factFiltered ? { cls: 'blocked', blocked: true } : { cls: '' };
+        if (d === 'Produkty' && sc === 'both') return c.factFiltered ? { cls: 'calc', rev: true, both: true } : { cls: '', both: true };
+        return info.filtered ? { cls: 'visual' } : { cls: '' };
+    }
+
+    const COLOR = { '': 'var(--line-strong)', faded: 'var(--line-strong)', blocked: 'var(--ctx-off)', visual: 'var(--ctx-visual)', calc: 'var(--ctx-calc)', row: 'var(--ctx-row)' };
+
+    function drawLinks(c) {
+        const model = document.getElementById('model');
+        const svg = document.getElementById('links');
+        const mr = model.getBoundingClientRect();
+        const fr = document.getElementById('t-Sprzedaz').getBoundingClientRect();
+        const mobile = window.matchMedia('(max-width: 820px)').matches;
+        svg.setAttribute('width', mr.width);
+        svg.setAttribute('height', mr.height);
+        svg.setAttribute('viewBox', `0 0 ${mr.width} ${mr.height}`);
+
+        const markers = Object.entries({ g: 'var(--line-strong)', o: 'var(--ctx-off)', b: 'var(--ctx-visual)', c: 'var(--ctx-calc)', r: 'var(--ctx-row)' })
+            .map(([id, col]) => `<marker id="m-${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:${col}"/></marker>`).join('');
+        const mk = { '': 'g', faded: 'g', blocked: 'o', visual: 'b', calc: 'c', row: 'r' };
+
+        let out = `<defs>${markers}</defs>`;
+        const badges = [];
+        DIMS.forEach((d, i) => {
+            const r = document.getElementById('t-' + d.id).getBoundingClientRect();
+            let p, labels = '';
+            if (!mobile) {
+                const x1 = r.right - mr.left, y1 = r.top - mr.top + r.height / 2;
+                const x2 = fr.left - mr.left - 2, y2 = fr.top - mr.top + fr.height * (0.3 + 0.2 * i);
+                const dx = (x2 - x1) / 2;
+                p = `M${x1},${y1} C${x1 + dx},${y1} ${x2 - dx},${y2} ${x2},${y2}`;
+                labels = `<text class="card-txt" x="${x1 + 6}" y="${y1 - 7}">1</text><text class="card-txt" x="${x2 - 16}" y="${y2 - 8}">*</text>`;
+            } else {
+                const x1 = r.left - mr.left, y1 = r.top - mr.top + 20;
+                const gx = 5 + i * 10;
+                const x2 = fr.left - mr.left - 2, y2 = fr.top - mr.top + 18 + (2 - i) * 13;
+                p = `M${x1},${y1} H${gx} V${y2} H${x2}`;
+            }
+            const ls = linkState(d.id, c);
+            const m = mk[ls.cls];
+            out += `<path class="lk ${ls.cls} ${ls.rev ? 'rev' : ''}" d="${p}" marker-end="url(#m-${m})" ${ls.both ? `marker-start="url(#m-${m})"` : ''} data-dim="${d.id}"/>` + labels;
+            if (['visual', 'calc', 'row'].includes(ls.cls)) {
+                const kp = ls.rev ? 'keyPoints="1;0" keyTimes="0;1" calcMode="linear"' : '';
+                out += `<circle r="5" style="fill:${COLOR[ls.cls]}"><animateMotion dur="1.5s" repeatCount="indefinite" path="${p}" ${kp}/></circle>`;
+            }
+            if (ls.blocked) badges.push(d.id);
+        });
+        svg.innerHTML = out;
+        badges.forEach(id => {
+            const path = svg.querySelector(`path[data-dim="${id}"]`);
+            const pt = path.getPointAtLength(path.getTotalLength() * (mobile ? 0.12 : 0.5));
+            svg.insertAdjacentHTML('beforeend', `<g class="block-badge" transform="translate(${pt.x},${pt.y})"><title>Filtr nie płynie ze Sprzedaz do Produktów</title><circle r="10"/><path d="M-4,-4 L4,4 M4,-4 L-4,4"/></g>`);
+        });
+    }
+
+    // ---------- Wizualizacja po lewej ----------
+    function renderVis() {
+        const sc = state.sc;
+        const el = document.getElementById('vis');
+        const label = document.getElementById('visLabel');
+        if (FILTER_SC.includes(sc)) {
+            label.textContent = 'Wizualizacja · tabela z Klient';
+            const name = SCENARIOS[sc].measure;
+            const rows = [...KLIENCI.map(k => k.Klient), null];
+            const body = rows.map(k => {
+                const v = compute({ ...state.f, Klienci: k }, sc).value;
+                const selected = state.f.Klienci === k;
+                return `<tr class="${k === null ? 'total-row' : ''}"><th class="${k === null ? 'total' : ''} ${selected && k ? 'is-hdr-on' : ''}">${k === null ? 'Suma' : VZ.esc(k)}</th>` +
+                    `<td class="cell ${k === null ? 'total' : ''} ${v === null ? 'blank' : ''} ${selected ? 'is-selected' : ''}" data-k="${k || ''}" tabindex="0">${v === null ? '(puste)' : VZ.fmt(v)}</td></tr>`;
+            }).join('');
+            const others = ['Produkty', 'Kalendarz'].filter(d => state.f[d]).map(d => VZ.chip(DIM[d].slicer, state.f[d], 'visual')).join('');
+            el.innerHTML = `<div class="vis-wrap vz-table-wrap"><table class="vz-matrix"><thead><tr><th class="corner">Klient</th><th>${VZ.esc(name)}</th></tr></thead><tbody>${body}</tbody></table></div>
+                <div class="vis-note">${others ? 'Fragmentatory działające na całą tabelę: ' + others : 'Pozostałe fragmentatory: brak.'}</div>`;
+            el.querySelectorAll('td.cell').forEach(td => {
+                const pick = () => { state.f.Klienci = td.dataset.k || null; render(true); };
+                td.addEventListener('click', pick);
+                td.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+            });
+        } else if (sc === 'related') {
+            const r = SPRZEDAZ.find(x => x.Nr === state.factRow);
+            label.textContent = 'Kolumna Sprzedaz[Kategoria]';
+            el.innerHTML = `<div class="vz-hint">Wiersz #${r.Nr} tabeli Sprzedaz (${r.ProduktId})</div>
+                <div class="big-res vz-pop" style="color:var(--ctx-row)">${VZ.esc(relatedCat(r))}</div>
+                <div class="vis-note">Kliknięcie innego wiersza Sprzedaz na schemacie pokazuje jego wartość.</div>`;
+        } else {
+            const p = PRODUKTY.find(x => x.ProduktId === state.prod);
+            const v = relSum(p.ProduktId);
+            label.textContent = 'Kolumna Produkty[Sprzedaż produktu]';
+            el.innerHTML = `<div class="vz-hint">Wiersz ${p.ProduktId} tabeli Produkty (${VZ.esc(p.Produkt)})</div>
+                <div class="big-res vz-pop ${v === null ? 'blank' : ''}" style="${v === null ? '' : 'color:var(--ctx-row)'}">${VZ.fmt(v)}</div>
+                <div class="vis-note">Kliknięcie innego produktu na schemacie pokazuje jego wartość. Rękawice (P6) nie mają sprzedaży.</div>`;
+        }
+    }
+
+    // ---------- Kroki ----------
+    const step = (n, color, title, body) => `
+        <div class="vz-step">
+            <div class="vz-step-title"><span class="vz-num" style="background:${color}">${n}</span>${title}</div>
+            ${body}
+        </div>`;
+    const row = (field, html) => `<div class="combine-row"><span class="field">${field}</span>${html}</div>`;
+    const result = (lbl, v) => `<div class="vz-result"><span class="lbl">${lbl}</span><span class="val ${v === null ? 'blank' : ''}">${VZ.fmt(v)}</span></div>`;
+
+    function filterSteps() {
+        const sc = state.sc;
+        const c = compute(state.f, sc);
+        const filtered = DIMS.filter(d => c.dim[d.id].filtered);
+        const visChips = filtered.length
+            ? filtered.map(d => VZ.chip(`${d.id}[${d.slicer}]`, c.dim[d.id].value, 'visual')).join('')
+            : VZ.chip('', 'brak filtrów: komórka „Suma”', 'none');
+
+        const flowRows = DIMS.filter(d => sc === 'prop' || d.id !== 'Produkty').map(d => {
+            const info = c.dim[d.id];
+            const k = keyLabel(d.key);
+            const html = info.filtered
+                ? VZ.chip(`${d.id}[${k}]`, info.keys, 'visual') + VZ.op('→', 'arrow') + VZ.chip(`Sprzedaz[${k}]`, info.keys, 'visual')
+                : VZ.chip('', 'brak filtra, nic nie płynie', 'none');
+            return row(`${d.id} → Sprzedaz`, html);
+        }).join('');
+
+        const parts = filtered.map(d => VZ.chip(`Sprzedaz[${keyLabel(d.key)}]`, c.dim[d.id].keys, 'visual'));
+        const meet = parts.length > 1 ? parts.join(VZ.op('&')) : (parts[0] || VZ.chip('', 'bez filtra: wszystkie wiersze', 'none'));
+        const factLine = `<div class="vz-chips">${meet}</div><div class="vz-step-note">W Sprzedaz zostaje <b>${c.fact.length} z ${SPRZEDAZ.length}</b> wierszy.</div>`;
+
+        let html = step(1, 'var(--ctx-visual)', 'Kontekst z wizualizacji i fragmentatorów', `<div class="vz-chips">${visChips}</div>`);
+        html += step(2, 'var(--ctx-visual)', 'Filtr płynie po relacjach 1 → *', `<div class="combine">${flowRows}</div>`);
+
+        if (sc === 'prop') {
+            html += step(3, 'var(--ctx-and)', 'Filtry spotykają się w Sprzedaz', factLine + result('Sprzedaż = SUM(Sprzedaz[Kwota])', c.value));
+            return html;
+        }
+        html += step(3, 'var(--ctx-and)', 'Co zostaje w Sprzedaz', factLine);
+        const sold = c.soldKeys;
+        if (sc === 'single') {
+            const back = c.factFiltered
+                ? VZ.chip('Sprzedaz[ProduktId]', sold, 'off', 'nie płynie') + `<div class="vz-step-note">Relacja ma kierunek <b>Pojedynczy</b>: filtruje tylko od Produktów do Sprzedaz. Informacja, które produkty kupiono, zostaje w Sprzedaz.</div>`
+                : VZ.chip('', 'Sprzedaz nie jest filtrowana, nie ma czego przenosić', 'none');
+            html += step(4, 'var(--ctx-off)', 'Sprzedaz → Produkty (pod prąd)', `<div class="vz-chips">${back}</div>`);
+            html += step(5, 'var(--text)', 'COUNTROWS(Produkty)', `<div class="vz-chips">${VZ.chip('Produkty', 'wszystkie wiersze', 'none', 'bez filtra')}</div>` + result('Liczba produktów', c.value));
+        } else {
+            const back = c.factFiltered
+                ? VZ.chip('Sprzedaz[ProduktId]', sold, 'visual') + VZ.op('→', 'arrow') + VZ.chip('Produkty[ProduktId]', sold, 'calc', 'CROSSFILTER') +
+                  `<div class="vz-step-note">Na czas tej miary relacja działa w obie strony, więc filtr wraca do Produktów: ${sold.map(prodName).join(', ')}.</div>`
+                : VZ.chip('', 'Sprzedaz nie jest filtrowana, nic nie wraca', 'none') + `<div class="vz-step-note">Kierunek Both przenosi tylko istniejący filtr. W komórce „Suma” bez fragmentatorów Produkty zostają bez filtra.</div>`;
+            html += step(4, 'var(--ctx-calc)', 'Sprzedaz → Produkty dzięki CROSSFILTER', `<div class="vz-chips">${back}</div>`);
+            html += step(5, 'var(--text)', 'COUNTROWS(Produkty)', `<div class="vz-chips">${c.factFiltered ? VZ.chip('Produkty', `${c.prodVisible.length} z ${PRODUKTY.length}`, 'calc') : VZ.chip('Produkty', 'wszystkie wiersze', 'none', 'bez filtra')}</div>` + result('Produkty sprzedane', c.value));
+        }
+        return html;
+    }
+
+    function relatedSteps() {
+        const r = SPRZEDAZ.find(x => x.Nr === state.factRow);
+        const p = PRODUKTY.find(x => x.ProduktId === r.ProduktId);
+        return step(1, 'var(--ctx-row)', `Kontekst wiersza · Sprzedaz #${r.Nr}`,
+                `<div class="vz-chips">${VZ.chip('ProduktId', r.ProduktId, 'row', 'bieżący wiersz')}</div><div class="vz-step-note">Kolumna obliczeniowa liczy się osobno dla każdego wiersza Sprzedaz. Nie ma tu kontekstu filtra, jest tylko „ten wiersz”.</div>`) +
+            step(2, 'var(--ctx-row)', 'RELATED idzie po relacji do strony „1”',
+                `<div class="vz-chips">${VZ.chip('Sprzedaz[ProduktId]', r.ProduktId, 'row')}${VZ.op('→', 'arrow')}${VZ.chip('Produkty[ProduktId]', r.ProduktId, 'row')}</div><div class="vz-step-note">Po stronie „1” klucz jest unikalny, więc trafia dokładnie w jeden wiersz: <b>${VZ.esc(p.Produkt)}</b>.</div>`) +
+            step(3, 'var(--text)', 'Wartość z tego wiersza',
+                `<div class="vz-chips">${VZ.chip('Produkty[Kategoria]', p.Kategoria, 'row')}</div>` +
+                `<div class="vz-result"><span class="lbl">Sprzedaz[Kategoria] w wierszu #${r.Nr}</span><span class="val">${VZ.esc(p.Kategoria)}</span></div>`);
+    }
+
+    function relatedTableSteps() {
+        const p = PRODUKTY.find(x => x.ProduktId === state.prod);
+        const t = relTable(p.ProduktId);
+        const v = relSum(p.ProduktId);
+        const nrs = t.map(x => '#' + x.Nr);
+        return step(1, 'var(--ctx-row)', `Kontekst wiersza · Produkty ${p.ProduktId}`,
+                `<div class="vz-chips">${VZ.chip('ProduktId', p.ProduktId, 'row', 'bieżący wiersz')}</div><div class="vz-step-note">Kolumna obliczeniowa liczy się osobno dla każdego produktu.</div>`) +
+            step(2, 'var(--ctx-calc)', 'Przejście kontekstu: wiersz staje się filtrem',
+                `<div class="vz-chips">${VZ.chip('ProduktId', p.ProduktId, 'row')}${VZ.op('→', 'arrow')}${VZ.chip('Produkty[ProduktId]', p.ProduktId, 'calc', 'filtr')}</div><div class="vz-step-note">RELATEDTABLE(Sprzedaz) działa jak CALCULATETABLE(Sprzedaz): zamienia kontekst wiersza na kontekst filtra.</div>`) +
+            step(3, 'var(--ctx-row)', 'Filtr płynie po relacji 1 → *',
+                `<div class="vz-chips">${t.length ? VZ.chip('Sprzedaz', nrs, 'row', `${t.length} z ${SPRZEDAZ.length}`) : VZ.chip('Sprzedaz', [], 'empty', 'brak sprzedaży')}</div>`) +
+            step(4, 'var(--text)', 'SUMX po zwróconych wierszach', result(`Sprzedaż produktu (${VZ.esc(p.Produkt)})`, v));
+    }
+
+    function renderSteps() {
+        const sc = state.sc;
+        document.getElementById('steps').innerHTML =
+            FILTER_SC.includes(sc) ? filterSteps() : sc === 'related' ? relatedSteps() : relatedTableSteps();
+    }
+
+    // ---------- Render ----------
+    function render(animate) {
+        const s = SCENARIOS[state.sc];
+        document.getElementById('code').innerHTML = VZ.code(s.code);
+        document.getElementById('takeaway').innerHTML = s.takeaway;
+        renderModel(animate);
+        renderVis();
+        renderSteps();
+        const steps = document.getElementById('steps');
+        if (state.manual) {
+            stepper = VZ.stepper(steps, updateStepNav);
+            stepper.start();
+        } else if (animate) {
+            VZ.reveal(steps);
+        }
+    }
+
+    function updateStepNav(i, n) {
+        document.getElementById('stepInfo').textContent = `Krok ${i + 1} z ${n}`;
+        document.getElementById('prevBtn').disabled = i <= 0;
+        document.getElementById('nextBtn').textContent = i >= n - 1 ? 'Pokaż wszystko' : 'Dalej →';
+    }
+
+    document.getElementById('playBtn').addEventListener('click', () => {
+        state.manual = true;
+        document.getElementById('explain').classList.add('manual');
+        render(false);
+    });
+    document.getElementById('prevBtn').addEventListener('click', () => stepper.prev());
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        if (stepper.index >= stepper.count - 1) {
+            state.manual = false;
+            document.getElementById('explain').classList.remove('manual');
+            stepper.showAll();
+        } else {
+            stepper.next();
+        }
+    });
+
+    function selectScenario(id) {
+        state.sc = id;
+        if (id === 'single' || id === 'both') {
+            state.f.Produkty = null; // kategoria nie jest tu potrzebna
+            if (!state.f.Klienci && !state.f.Kalendarz) state.f.Klienci = 'Anna';
+        }
+        render(true);
+    }
+
+    VZ.tabs(document.getElementById('tabs'),
+        Object.entries(SCENARIOS).map(([id, s]) => ({ id, label: s.label })),
+        selectScenario, state.sc);
+
+    let rz;
+    window.addEventListener('resize', () => { cancelAnimationFrame(rz); rz = requestAnimationFrame(() => drawLinks(FILTER_SC.includes(state.sc) ? compute(state.f, state.sc) : null)); });
+
+    render(true);
+</script>
+</body>
+</html>

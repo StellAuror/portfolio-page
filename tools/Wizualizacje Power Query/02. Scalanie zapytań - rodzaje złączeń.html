@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scalanie zapytań i złączenia</title>
+    <link rel="stylesheet" href="../viz/kit.css">
+    <style>
+        /* źródła: lewa tabela · diagram · prawa tabela */
+        .src-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 210px minmax(0, 1fr);
+            gap: 16px;
+            align-items: start;
+        }
+        .src-title { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+        .src-title .dot { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+        .venn { display: block; width: 100%; max-width: 210px; margin: 0 auto; }
+        .venn text { font-family: var(--sans); }
+        .venn .region { transition: fill-opacity .35s var(--ease); }
+        .venn-cap { text-align: center; font-size: 12.5px; color: var(--text-2); margin-top: 4px; }
+        .venn-cap b { color: var(--text); }
+
+        .jt td.key { font-weight: 600; }
+        .jt tr.m-both td { background: var(--ctx-and-soft); }
+        .jt tr.m-both td:first-child { box-shadow: inset 3px 0 0 var(--ctx-and); }
+        .jt tr.m-left td { background: var(--ctx-visual-soft); }
+        .jt tr.m-left td:first-child { box-shadow: inset 3px 0 0 var(--ctx-visual); }
+        .jt tr.m-right td { background: var(--ctx-calc-soft); }
+        .jt tr.m-right td:first-child { box-shadow: inset 3px 0 0 var(--ctx-calc); }
+        .jt tr.gone td { opacity: .3; background: none; box-shadow: none !important; text-decoration: line-through; }
+        .jt td .hits {
+            display: inline-block;
+            margin-left: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 999px;
+            padding: 0 7px;
+            line-height: 18px;
+            background: var(--surface-2);
+            color: var(--text-2);
+            text-decoration: none;
+        }
+        .jt td .hits.multi { background: var(--ctx-and); color: #fff; }
+        .jt td .hits.zero { background: #fdeaea; color: var(--bad); }
+
+        /* wynik */
+        .res-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+        .res-head .vz-label { margin: 0; }
+        .stage.vz-tabs { margin: 0; gap: 6px; }
+        .stage .vz-tab { padding: 4px 11px; font-size: 13px; font-family: var(--mono); }
+        .rt th.l { color: var(--ctx-visual); }
+        .rt th.r { color: var(--ctx-calc); }
+        .rt td.l { background: var(--ctx-visual-soft); }
+        .rt td.r { background: var(--ctx-calc-soft); }
+        .rt td.nul { background: var(--surface); }
+        .rt td .null { color: var(--text-3); font-style: italic; }
+        .rt tr.dup td:first-child { box-shadow: inset 3px 0 0 var(--ctx-and); }
+        .rt td.rn { color: var(--text-3); font-size: 12px; width: 1%; text-align: right; background: none; }
+        .rt td .dupx {
+            display: inline-block; margin-left: 6px; font-size: 10.5px; font-weight: 700; border-radius: 999px;
+            padding: 0 6px; line-height: 17px; background: var(--ctx-and); color: #fff;
+        }
+        .rt tbody tr { animation: vzPop .3s var(--ease) both; }
+        .nest {
+            display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap;
+            font-size: 12.5px; white-space: normal;
+        }
+        .nest .tb {
+            font-family: var(--mono); font-size: 11.5px; font-weight: 700; color: var(--ctx-calc);
+            border: 1.5px solid var(--ctx-calc); border-radius: 4px; padding: 0 5px; background: var(--bg);
+        }
+        .nest .tb.zero { color: var(--text-3); border-color: var(--line-strong); }
+        .nest .in { color: var(--text-2); }
+        .res-foot { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 13px; color: var(--text-2); }
+        .res-foot b { color: var(--text); font-variant-numeric: tabular-nums; }
+        .res-foot .warn { color: var(--ctx-and); font-weight: 600; }
+
+        .match-list { display: grid; grid-template-columns: auto auto minmax(0, 1fr); gap: 4px 10px; align-items: center; font-size: 13.5px; }
+        .match-list .id { font-weight: 700; }
+        .match-list .arrow { color: var(--text-3); }
+        .keep { display: grid; gap: 6px; font-size: 13.5px; }
+        .keep div { display: flex; align-items: center; gap: 8px; }
+        .keep .ic { flex: none; width: 22px; height: 22px; border-radius: 50%; display: inline-grid; place-items: center; font-weight: 800; font-size: 12px; color: #fff; }
+        .keep .no { opacity: .55; }
+        .keep .no .ic { background: var(--ctx-off) !important; }
+        .keep .no span:last-child { text-decoration: line-through; }
+        .vz-takeaway code, .vz-step-note code { font-family: var(--mono); font-size: 12.5px; background: rgba(0,0,0,.05); border-radius: 4px; padding: 0 4px; }
+
+        .tab-pl { opacity: .65; font-weight: 400; }
+        @media (max-width: 520px) { .tab-pl { display: none; } }
+        @media (max-width: 820px) {
+            .src-grid { grid-template-columns: minmax(0, 1fr); }
+            .src-grid .venn-box { order: -1; }
+        }
+    </style>
+</head>
+<body>
+<div class="vz-app">
+    <header class="vz-head">
+        <div class="vz-kicker">Power Query · Scalanie zapytań</div>
+        <h1 class="vz-title">Rodzaje złączeń: JoinKind</h1>
+        <p class="vz-lead">Te same dwie tabele, sześć rodzajów złączenia. Widać, które wiersze się spotkały, które zostały bez pary i skąd w wyniku biorą się null oraz zdublowane wiersze.</p>
+    </header>
+
+    <div id="tabs"></div>
+    <div class="vz-code" id="code"></div>
+
+    <section class="vz-card">
+        <div class="src-grid">
+            <div>
+                <div class="src-title"><span class="dot" style="background:var(--ctx-visual)"></span>Zamówienia <span class="vz-hint">· lewa (pierwsza) tabela</span></div>
+                <div id="left"></div>
+            </div>
+            <div class="venn-box">
+                <div id="venn"></div>
+                <div class="venn-cap" id="vennCap"></div>
+            </div>
+            <div>
+                <div class="src-title"><span class="dot" style="background:var(--ctx-calc)"></span>Klienci <span class="vz-hint">· prawa (druga) tabela</span></div>
+                <div id="right"></div>
+            </div>
+        </div>
+        <div class="vz-legend">
+            <span style="color:var(--ctx-and)"><i style="background:var(--ctx-and-soft)"></i>klucz jest w obu tabelach</span>
+            <span style="color:var(--ctx-visual)"><i style="background:var(--ctx-visual-soft)"></i>tylko w Zamówieniach</span>
+            <span style="color:var(--ctx-calc)"><i style="background:var(--ctx-calc-soft)"></i>tylko w Klientach</span>
+            <span style="color:var(--text-3)"><i style="background:var(--bg)"></i>przekreślony = nie trafia do wyniku</span>
+        </div>
+    </section>
+
+    <section class="vz-card" style="margin-top:16px">
+        <div class="res-head">
+            <div class="vz-label">Wynik scalenia</div>
+            <div id="stage"></div>
+        </div>
+        <div id="result"></div>
+        <div class="res-foot" id="resFoot"></div>
+    </section>
+
+    <div class="vz-grid" style="margin-top:16px">
+        <section class="vz-card">
+            <div class="vz-label">Jak powstaje wynik</div>
+            <div class="vz-steps" id="steps"></div>
+        </section>
+        <div>
+            <div class="vz-takeaway" id="takeaway" style="margin-top:0"></div>
+        </div>
+    </div>
+</div>
+
+<script src="../viz/kit.js"></script>
+<script>
+    // ================= Dane =================
+    const LEFT_NAME = 'Zamówienia', RIGHT_NAME = 'Klienci', KEY = 'IdKlienta';
+    const LEFT = [
+        { IdZam: 'Z1', IdKlienta: 'K1', Kwota: 300 },
+        { IdZam: 'Z2', IdKlienta: 'K2', Kwota: 150 },
+        { IdZam: 'Z3', IdKlienta: 'K1', Kwota: 420 },
+        { IdZam: 'Z4', IdKlienta: 'K5', Kwota: 90 },
+    ];
+    // K2 występuje dwa razy (dwa adresy jednego klienta), K3 nie ma zamówień, K5 z zamówień nie istnieje
+    const RIGHT = [
+        { IdKlienta: 'K1', Nazwa: 'Nowak', Miasto: 'Kraków' },
+        { IdKlienta: 'K2', Nazwa: 'Kowalska', Miasto: 'Gdańsk' },
+        { IdKlienta: 'K2', Nazwa: 'Kowalska', Miasto: 'Sopot' },
+        { IdKlienta: 'K3', Nazwa: 'Zając', Miasto: 'Poznań' },
+    ];
+    const LCOLS = ['IdZam', 'IdKlienta', 'Kwota'];
+    const RCOLS = ['IdKlienta', 'Nazwa', 'Miasto'];
+    const NEW_COL = RIGHT_NAME;
+    const EXP_NAMES = RCOLS.map(c => `${NEW_COL}.${c}`);
+
+    // ================= Rodzaje złączeń =================
+    // keep: [pary pasujące, tylko lewa, tylko prawa]
+    const KINDS = {
+        LeftOuter: {
+            label: 'LeftOuter', pl: 'lewe zewnętrzne', keep: [true, true, false],
+            takeaway: s => `To domyślne złączenie w Power Query. <b>Każde zamówienie zostaje</b>, a gdy klienta brak (Z4 → K5), kolumny z Klientów mają <b>null</b>. Uwaga na duplikat: K2 ma dwa wiersze w Klientach, więc Z2 pojawia się dwa razy, a suma Kwoty rośnie z ${VZ.fmt(s.srcSum)} do <b>${VZ.fmt(s.sum)}</b>.`,
+        },
+        RightOuter: {
+            label: 'RightOuter', pl: 'prawe zewnętrzne', keep: [true, false, true],
+            takeaway: () => 'Odwrotność LeftOuter: <b>każdy klient zostaje</b>. Zając (K3) nie ma zamówień, więc kolumny z Zamówień mają <b>null</b>. Zamówienie Z4 znika, bo jego klucz K5 nie istnieje w Klientach.',
+        },
+        FullOuter: {
+            label: 'FullOuter', pl: 'pełne zewnętrzne', keep: [true, true, true],
+            takeaway: () => 'Zostaje <b>wszystko z obu stron</b>. Pary się łączą, a wiersz bez pary dostaje null po drugiej stronie: Z4 po prawej, Zając (K3) po lewej. Dobre do porównania dwóch list i znalezienia różnic.',
+        },
+        Inner: {
+            label: 'Inner', pl: 'wewnętrzne', keep: [true, false, false],
+            takeaway: () => 'Zostają <b>tylko pary</b>. Z4 (K5) i Zając (K3) wypadają bez śladu, więc w wyniku nie ma żadnego null. Ale Z2 dalej jest dwa razy: złączenie niczego nie sumuje, tylko <b>powiela wiersz po lewej dla każdego dopasowania</b>.',
+        },
+        LeftAnti: {
+            label: 'LeftAnti', pl: 'lewe anty', keep: [false, true, false],
+            takeaway: () => 'Zostają <b>zamówienia bez klienta</b>. To najszybszy sposób na znalezienie „sierot”, czyli błędnych kluczy. Kolumny z Klientów są zawsze null, więc zwykle w ogóle się ich nie rozwija.',
+        },
+        RightAnti: {
+            label: 'RightAnti', pl: 'prawe anty', keep: [false, false, true],
+            takeaway: () => 'Zostają <b>klienci bez zamówień</b>. Pułapka: Table.NestedJoin zawsze zwraca kolumny <b>lewej</b> tabeli, więc tu IdZam, IdKlienta i Kwota to same null. Dane klienta siedzą w zagnieżdżonej kolumnie Klienci i widać je dopiero po rozwinięciu.',
+        },
+    };
+
+    // ================= Silnik: Table.NestedJoin + Table.ExpandTableColumn =================
+    const matchesOf = l => RIGHT.filter(r => r[KEY] === l[KEY]);
+    const leftKeys = new Set(LEFT.map(l => l[KEY]));
+
+    // Table.NestedJoin: wiersz = { left: rekord lewej albo null, nested: lista wierszy prawej }
+    function nestedJoin(kind) {
+        const [both, onlyL, onlyR] = KINDS[kind].keep;
+        const out = [];
+        LEFT.forEach(l => {
+            const m = matchesOf(l);
+            if (m.length ? both : onlyL) out.push({ left: l, nested: m });
+        });
+        if (onlyR) {
+            // wiersze prawej bez pary: kolumny lewej = null, zagnieżdżona tabela = wiersze prawej z tym kluczem
+            const seen = new Set();
+            RIGHT.forEach(r => {
+                if (leftKeys.has(r[KEY]) || seen.has(r[KEY])) return;
+                seen.add(r[KEY]);
+                out.push({ left: null, nested: RIGHT.filter(x => x[KEY] === r[KEY]) });
+            });
+        }
+        return out;
+    }
+
+    // Table.ExpandTableColumn: każdy wiersz zagnieżdżonej tabeli = osobny wiersz; pusta tabela = jeden wiersz z null
+    function expand(nested) {
+        const out = [];
+        nested.forEach(n => {
+            if (!n.nested.length) out.push({ left: n.left, right: null, k: 1, of: 1 });
+            else n.nested.forEach((r, i) => out.push({ left: n.left, right: r, k: i + 1, of: n.nested.length }));
+        });
+        return out;
+    }
+
+    // ================= Rysowanie =================
+    const state = { kind: 'LeftOuter', stage: 'expand' };
+    const nullHtml = '<span class="null">null</span>';
+    const fmt = v => (v === null || v === undefined ? nullHtml : typeof v === 'number' ? VZ.fmt(v) : VZ.esc(v));
+    const plForm = (n, one, few, many) => (n === 1 ? one : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? few : many);
+    const plRows = n => `${n} ${plForm(n, 'wiersz', 'wiersze', 'wierszy')}`;
+
+    function renderCode() {
+        const k = state.kind;
+        const exp = state.stage === 'expand';
+        const src = [
+            'let',
+            `    Źródło = ${exp ? 'Table.NestedJoin' : '{{and|Table.NestedJoin}}'}(${LEFT_NAME}, {{{visual|"${KEY}"}}}, ${RIGHT_NAME}, {{{calc|"${KEY}"}}}, "${NEW_COL}", {{and|JoinKind.${k}}}),`,
+            `    #"Rozwinięty element ${NEW_COL}" = ${exp ? '{{and|Table.ExpandTableColumn}}' : 'Table.ExpandTableColumn'}(Źródło, "${NEW_COL}", {${RCOLS.map(c => `"${c}"`).join(', ')}}, {${EXP_NAMES.map(c => `"${c}"`).join(', ')}})`,
+            'in',
+            `    #"Rozwinięty element ${NEW_COL}"`,
+        ].join('\n');
+        document.getElementById('code').innerHTML = VZ.code(src);
+    }
+
+    function venn(kind) {
+        const [both, onlyL, onlyR] = KINDS[kind].keep;
+        const lOnly = [...new Set(LEFT.filter(l => !matchesOf(l).length).map(l => l[KEY]))];
+        const mid = [...new Set(LEFT.filter(l => matchesOf(l).length).map(l => l[KEY]))];
+        const rOnly = [...new Set(RIGHT.filter(r => !leftKeys.has(r[KEY])).map(r => r[KEY]))];
+        const on = v => (v ? 1 : 0);
+        const txt = (x, y, arr, show) => `<text x="${x}" y="${y}" text-anchor="middle" font-size="12.5" font-weight="700" fill="${show ? 'var(--text)' : 'var(--text-3)'}" ${show ? '' : 'text-decoration="line-through"'}>${arr.map((a, i) => `<tspan x="${x}" dy="${i ? 15 : 0}">${a}</tspan>`).join('')}</text>`;
+        return `<svg class="venn" viewBox="0 0 210 150" role="img" aria-label="Diagram złączenia JoinKind.${kind}">
+            <defs>
+                <clipPath id="clipR"><circle cx="128" cy="80" r="58"/></clipPath>
+                <mask id="notR"><rect width="210" height="150" fill="#fff"/><circle cx="128" cy="80" r="58" fill="#000"/></mask>
+                <mask id="notL"><rect width="210" height="150" fill="#fff"/><circle cx="82" cy="80" r="58" fill="#000"/></mask>
+            </defs>
+            <circle class="region" cx="82" cy="80" r="58" fill="var(--ctx-visual)" fill-opacity="${on(onlyL) * .32}" mask="url(#notR)"/>
+            <circle class="region" cx="128" cy="80" r="58" fill="var(--ctx-calc)" fill-opacity="${on(onlyR) * .32}" mask="url(#notL)"/>
+            <circle class="region" cx="82" cy="80" r="58" fill="var(--ctx-and)" fill-opacity="${on(both) * .36}" clip-path="url(#clipR)"/>
+            <circle cx="82" cy="80" r="58" fill="none" stroke="var(--ctx-visual)" stroke-width="2"/>
+            <circle cx="128" cy="80" r="58" fill="none" stroke="var(--ctx-calc)" stroke-width="2"/>
+            <text x="58" y="13" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--ctx-visual)">${LEFT_NAME}</text>
+            <text x="152" y="13" text-anchor="middle" font-size="11.5" font-weight="700" fill="var(--ctx-calc)">${RIGHT_NAME}</text>
+            ${txt(52, 84, lOnly, onlyL)}
+            ${txt(105, 77, mid, both)}
+            ${txt(158, 84, rOnly, onlyR)}
+        </svg>`;
+    }
+
+    function renderSources() {
+        const [both, onlyL, onlyR] = KINDS[state.kind].keep;
+        const leftRow = l => {
+            const n = matchesOf(l).length;
+            const kept = n ? both : onlyL;
+            return { cls: (n ? 'm-both' : 'm-left') + (kept ? '' : ' gone'), n };
+        };
+        const lHtml = LEFT.map(l => {
+            const { cls, n } = leftRow(l);
+            const hits = `<span class="hits ${n > 1 ? 'multi' : n === 0 ? 'zero' : ''}">${n > 1 ? '×' + n + ' dopasowania' : n === 1 ? '1 dopasowanie' : 'brak pary'}</span>`;
+            return `<tr class="${cls}"><td>${l.IdZam}</td><td class="key">${l.IdKlienta}${hits}</td><td class="num">${VZ.fmt(l.Kwota)}</td></tr>`;
+        }).join('');
+        const rHtml = RIGHT.map(r => {
+            const matched = leftKeys.has(r[KEY]);
+            const kept = matched ? both : onlyR;
+            const dupKey = RIGHT.filter(x => x[KEY] === r[KEY]).length > 1;
+            const tag = !matched ? '<span class="hits zero">brak zamówień</span>' : dupKey ? '<span class="hits multi">duplikat klucza</span>' : '';
+            return `<tr class="${matched ? 'm-both' : 'm-right'}${kept ? '' : ' gone'}"><td class="key">${r.IdKlienta}${tag}</td><td>${VZ.esc(r.Nazwa)}</td><td>${VZ.esc(r.Miasto)}</td></tr>`;
+        }).join('');
+        const tbl = (cols, body) => `<div class="vz-table-wrap"><table class="vz-table jt"><thead><tr>${cols.map(c => `<th class="${c === 'Kwota' ? 'num' : ''}">${c}</th>`).join('')}</tr></thead><tbody>${body}</tbody></table></div>`;
+        document.getElementById('left').innerHTML = tbl(LCOLS, lHtml);
+        document.getElementById('right').innerHTML = tbl(RCOLS, rHtml);
+        document.getElementById('venn').innerHTML = venn(state.kind);
+        document.getElementById('vennCap').innerHTML = `<b>JoinKind.${state.kind}</b> · ${KINDS[state.kind].pl}`;
+    }
+
+    function renderResult() {
+        const nested = nestedJoin(state.kind);
+        const rows = expand(nested);
+        const res = document.getElementById('result');
+        let head, body;
+        if (state.stage === 'nested') {
+            head = '<th></th>' + LCOLS.map(c => `<th class="l ${c === 'Kwota' ? 'num' : ''}">${c}</th>`).join('') + `<th class="r">${NEW_COL}</th>`;
+            body = nested.map((n, i) => {
+                const lc = LCOLS.map(c => `<td class="${n.left ? 'l' : 'nul'} ${c === 'Kwota' ? 'num' : ''}">${fmt(n.left ? n.left[c] : null)}</td>`).join('');
+                const inside = n.nested.length
+                    ? `<span class="in">${n.nested.map(r => `${r.IdKlienta} ${VZ.esc(r.Nazwa)}, ${VZ.esc(r.Miasto)}`).join(' · ')}</span>`
+                    : '<span class="in">(pusta tabela)</span>';
+                return `<tr class="${n.nested.length > 1 ? 'dup' : ''}" style="animation-delay:${i * 40}ms"><td class="rn">${i + 1}</td>${lc}<td class="r"><span class="nest"><span class="tb ${n.nested.length ? '' : 'zero'}">Table · ${plRows(n.nested.length)}</span>${inside}</span></td></tr>`;
+            }).join('');
+        } else {
+            head = '<th></th>' + LCOLS.map(c => `<th class="l ${c === 'Kwota' ? 'num' : ''}">${c}</th>`).join('') + EXP_NAMES.map(c => `<th class="r">${c}</th>`).join('');
+            body = rows.map((x, i) => {
+                const lc = LCOLS.map((c, j) => {
+                    const dup = j === 0 && x.of > 1 ? `<span class="dupx">${x.k}/${x.of}</span>` : '';
+                    return `<td class="${x.left ? 'l' : 'nul'} ${c === 'Kwota' ? 'num' : ''}">${fmt(x.left ? x.left[c] : null)}${dup}</td>`;
+                }).join('');
+                const rc = RCOLS.map(c => `<td class="${x.right ? 'r' : 'nul'}">${fmt(x.right ? x.right[c] : null)}</td>`).join('');
+                return `<tr class="${x.of > 1 ? 'dup' : ''}" style="animation-delay:${i * 40}ms"><td class="rn">${i + 1}</td>${lc}${rc}</tr>`;
+            }).join('');
+        }
+        res.innerHTML = `<div class="vz-table-wrap"><table class="vz-table rt"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+
+        const sum = rows.reduce((s, x) => s + (x.left ? x.left.Kwota : 0), 0);
+        const srcSum = VZ.sum(LEFT, 'Kwota');
+        const nulls = rows.filter(x => !x.left || !x.right).length;
+        const dups = rows.filter(x => x.of > 1).length;
+        const foot = [
+            `Wiersze: <b>${state.stage === 'nested' ? nested.length : rows.length}</b> (w Zamówieniach: ${LEFT.length})`,
+            state.stage === 'expand' ? `Suma Kwota: <b>${VZ.fmt(sum)}</b> (w Zamówieniach: ${VZ.fmt(srcSum)})` : '',
+            state.stage === 'expand' && dups ? `<span class="warn">${dups} wiersze z jednego zamówienia (Z2), bo K2 ma 2 dopasowania</span>` : '',
+            state.stage === 'expand' && nulls ? `Wiersze z null: <b>${nulls}</b>` : '',
+            state.stage === 'nested' ? 'Po prawej jeszcze nie ma kolumn klienta, jest jedna kolumna z zagnieżdżoną tabelą w każdym wierszu.' : '',
+        ].filter(Boolean);
+        document.getElementById('resFoot').innerHTML = foot.map(f => `<span>${f}</span>`).join('');
+        return { rows, nested, sum, srcSum };
+    }
+
+    function renderSteps(r) {
+        const k = KINDS[state.kind];
+        const [both, onlyL, onlyR] = k.keep;
+        const matchList = LEFT.map(l => {
+            const m = matchesOf(l);
+            const chip = m.length > 1
+                ? VZ.chip('', `${plRows(m.length)} → ${l.IdZam} powielone ×${m.length}`, 'and')
+                : m.length ? VZ.chip('', '1 wiersz', 'and') : VZ.chip('', 'brak pary', 'visual');
+            return `<span class="id">${l.IdZam}</span><span>${l.IdKlienta} <span class="arrow">→</span></span><span>${chip}</span>`;
+        }).join('');
+        const orphans = RIGHT.filter(r => !leftKeys.has(r[KEY]));
+        const rule = (ok, color, text) => `<div class="${ok ? '' : 'no'}"><span class="ic" style="background:${color}">${ok ? '✓' : '✕'}</span><span>${text}</span></div>`;
+
+        const expl = [];
+        if (both) expl.push(`${LEFT.filter(l => matchesOf(l).length).map(l => `${l.IdZam}: ${matchesOf(l).length}`).join(' + ')} (pary)`);
+        if (onlyL) expl.push(`${LEFT.filter(l => !matchesOf(l).length).length} (tylko lewa)`);
+        if (onlyR) expl.push(`${orphans.length} (tylko prawa)`);
+
+        document.getElementById('steps').innerHTML = `
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num">1</span>Klucz scalania</div>
+                <div class="vz-chips">${VZ.chip(LEFT_NAME, KEY, 'visual')}${VZ.op('=', 'arrow')}${VZ.chip(RIGHT_NAME, KEY, 'calc')}</div>
+                <div class="vz-step-note">Power Query porównuje wartości klucza wiersz po wierszu. Nazwy kolumn mogą się różnić, liczy się kolejność na obu listach kluczy.</div>
+            </div>
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-and)">2</span>Ile wierszy Klientów pasuje do każdego zamówienia</div>
+                <div class="match-list">${matchList}</div>
+                <div class="vz-step-note">Bez pary po stronie Klientów: ${orphans.map(o => `<b>${o.IdKlienta} ${VZ.esc(o.Nazwa)}</b>`).join(', ')} (nie ma zamówień).</div>
+            </div>
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-calc)">3</span>Co zostawia JoinKind.${state.kind}</div>
+                <div class="keep">
+                    ${rule(both, 'var(--ctx-and)', 'pary: zamówienie + każdy pasujący klient')}
+                    ${rule(onlyL, 'var(--ctx-visual)', 'zamówienia bez pary (kolumny Klientów = null)')}
+                    ${rule(onlyR, 'var(--ctx-calc)', 'klienci bez pary (kolumny Zamówień = null)')}
+                </div>
+            </div>
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--text)">4</span>Wynik po rozwinięciu</div>
+                <div class="vz-step-note" style="margin-top:0">${expl.join(' + ')}</div>
+                <div class="vz-result">
+                    <span class="lbl">Liczba wierszy</span>
+                    <span class="val">${r.rows.length}</span>
+                </div>
+            </div>`;
+        VZ.reveal(document.getElementById('steps'));
+        document.getElementById('takeaway').innerHTML = k.takeaway(r);
+    }
+
+    function render() {
+        renderCode();
+        renderSources();
+        const r = renderResult();
+        renderSteps(r);
+    }
+
+    VZ.tabs(document.getElementById('tabs'),
+        Object.entries(KINDS).map(([id, k]) => ({ id, label: `${k.label} <span class="tab-pl">· ${k.pl}</span>` })),
+        id => { state.kind = id; render(); }, state.kind);
+
+    VZ.tabs(document.getElementById('stage'), [
+        { id: 'nested', label: '1. Table.NestedJoin' },
+        { id: 'expand', label: '2. Table.ExpandTableColumn' },
+    ], id => { state.stage = id; render(); }, state.stage);
+    document.getElementById('stage').classList.add('stage');
+
+    render();
+</script>
+</body>
+</html>

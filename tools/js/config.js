@@ -33,7 +33,13 @@ export const TAG_CONFIG = {
     'Specyfikacja': { dot: 'folder', label: 'Specyfikacja' },
     'Wariant': { dot: 'prototype', label: 'Wariant' },
     'Dark Mode': { dot: 'design', label: 'Dark Mode' },
-    'Content': { dot: 'folder', label: 'Content' }
+    'Content': { dot: 'folder', label: 'Content' },
+    'Wizualizacja': { dot: 'quiz', label: 'Wizualizacja' },
+    'Kontekst': { dot: 'dax', label: 'Kontekst' },
+    'Model': { dot: 'tutorial', label: 'Model' },
+    'Czas': { dot: 'html', label: 'Czas' },
+    'Power Query': { dot: 'prototype', label: 'Power Query' },
+    'M': { dot: 'prototype', label: 'M' }
 };
 
 // Icons

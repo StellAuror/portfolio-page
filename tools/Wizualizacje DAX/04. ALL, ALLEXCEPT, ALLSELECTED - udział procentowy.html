@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Udział procentowy: ALL, ALLEXCEPT, ALLSELECTED</title>
+    <link rel="stylesheet" href="../viz/kit.css">
+    <style>
+        .combine { display: flex; flex-direction: column; gap: 8px; }
+        .combine-row { display: grid; grid-template-columns: 104px minmax(0, 1fr); align-items: center; gap: 6px; }
+        .combine-row > .vz-chips { min-height: 0; }
+        @media (max-width: 480px) { .vz-chip { white-space: normal; flex-wrap: wrap; row-gap: 0; border-radius: 14px; } .combine-row { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+        .combine-row .field {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        .step-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+        .step-head .vz-label { margin: 0; }
+        #stepNav { display: none; }
+        .manual #stepNav { display: flex; }
+        .manual #playBtn { display: none; }
+
+        /* Fragmentator (slicer) w stylu Power BI */
+        .slicer {
+            border: 1px solid var(--line);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            padding: 10px 12px;
+            margin-bottom: 14px;
+        }
+        .slicer-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+        .slicer-title { font-size: 12.5px; font-weight: 600; color: var(--text-2); }
+        .slicer-items { display: flex; flex-wrap: wrap; gap: 6px 14px; }
+        .slicer-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            border: none;
+            background: none;
+            font-size: 14px;
+            padding: 3px 2px;
+            color: var(--text);
+        }
+        .slicer-item .box {
+            width: 16px;
+            height: 16px;
+            border-radius: 3px;
+            border: 1.5px solid var(--line-strong);
+            background: var(--bg);
+            display: inline-grid;
+            place-items: center;
+            font-size: 11px;
+            line-height: 1;
+            color: #fff;
+            transition: background .15s, border-color .15s;
+        }
+        .slicer-item[aria-pressed="true"] .box { background: var(--ctx-visual); border-color: var(--ctx-visual); }
+        .slicer-item[aria-pressed="false"] { color: var(--text-3); }
+        .slicer-item:focus-visible { outline: 2px solid var(--ctx-visual); outline-offset: 2px; border-radius: 4px; }
+
+        /* Macierz z udziałem % */
+        .vz-matrix td.cell .sub { display: block; font-size: 11px; color: var(--text-3); font-weight: 400; line-height: 1.1; }
+        .vz-matrix td.cell.is-selected .sub { color: var(--ctx-visual); }
+
+        /* Tabela wierszy: licznik / mianownik */
+        .rows-tbl td.mark, .rows-tbl th.mark { text-align: center; width: 1%; }
+        .rows-tbl .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
+        .rows-tbl .dot.num { background: var(--ctx-visual); }
+        .rows-tbl .dot.den { background: var(--ctx-calc); }
+        .rows-tbl tr.den td { background: var(--ctx-calc-soft); }
+        .rows-tbl tr.den td:first-child { box-shadow: inset 3px 0 0 var(--ctx-calc); }
+        .rows-tbl tr.den.num td { background: #fde8c8; font-weight: 600; }
+        .rows-tbl tr.num:not(.den) td { background: var(--ctx-visual-soft); }
+        .rows-tbl tr.none td { opacity: .3; }
+        .rows-tbl tfoot td { font-weight: 700; border-top: 2px solid var(--text); border-bottom: none; }
+
+        /* Ułamek i pasek */
+        .frac { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; align-items: center; font-variant-numeric: tabular-nums; }
+        .frac .k { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+        .frac .k.num { color: var(--ctx-visual); }
+        .frac .k.den { color: var(--ctx-calc); }
+        .bar { position: relative; height: 22px; border-radius: 5px; background: var(--ctx-calc-soft); border: 1.5px solid var(--ctx-calc); overflow: hidden; }
+        .bar > i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ctx-visual); transition: width .5s var(--ease); }
+        .bar > span { position: absolute; right: 8px; top: 0; line-height: 19px; font-size: 12.5px; font-weight: 600; color: var(--ctx-calc); }
+        .bar.n > span { left: 8px; right: auto; color: #fff; }
+        .bar.n { background: var(--surface); border-color: transparent; }
+        .eq { font-size: 15px; margin-top: 4px; color: var(--text-2); font-variant-numeric: tabular-nums; }
+        .eq b { color: var(--text); }
+
+        @media (max-width: 480px) {
+            .vz-card { padding: 12px; }
+            .vz-step { padding: 10px 10px; }
+            .vz-table { font-size: 12.5px; }
+            .vz-table th, .vz-table td { padding: 4px 5px; }
+            .vz-matrix { font-size: 12.5px; }
+            .vz-matrix th, .vz-matrix td { padding: 7px 4px; }
+            .vz-matrix th.corner { font-size: 10.5px; }
+        }
+        @media (max-width: 400px) {
+            .vz-card { padding: 10px; }
+            .vz-matrix { font-size: 12px; }
+            .vz-matrix th, .vz-matrix td { padding: 7px 3px; }
+            .vz-matrix .vz-swatch { margin-right: 3px; }
+        }
+    </style>
+</head>
+<body>
+<div class="vz-app">
+    <header class="vz-head">
+        <div class="vz-kicker">DAX · Udział procentowy</div>
+        <h1 class="vz-title">ALL, ALLEXCEPT, ALLSELECTED: skąd bierze się mianownik</h1>
+        <p class="vz-lead">Udział % to [Sprzedaż] w komórce podzielona przez [Sprzedaż] z mniejszą liczbą filtrów. Każda funkcja zdejmuje inne filtry, a fragmentator też jest filtrem. Kliknij komórkę, odznacz kolor we fragmentatorze i przełączaj formuły.</p>
+    </header>
+
+    <div id="tabs"></div>
+    <div class="vz-code" id="code"></div>
+
+    <div class="vz-grid">
+        <div>
+            <section class="vz-card">
+                <div class="vz-label">Raport · fragmentator i macierz</div>
+                <div class="slicer">
+                    <div class="slicer-head">
+                        <span class="slicer-title">Fragmentator · Kolor</span>
+                        <span class="vz-hint" id="slicerHint"></span>
+                    </div>
+                    <div class="slicer-items" id="slicer"></div>
+                </div>
+                <div id="matrix"></div>
+                <div class="vz-legend">
+                    <span style="color: var(--ctx-visual)"><i style="background: var(--ctx-visual-soft)"></i>wybrana komórka</span>
+                    <span id="legendSub" style="color: var(--text-3)">mała liczba = [Sprzedaż] w komórce</span>
+                </div>
+            </section>
+            <div class="vz-takeaway" id="takeaway"></div>
+        </div>
+
+        <section class="vz-card" id="explain">
+            <div class="step-head">
+                <div class="vz-label">Co się dzieje w komórce</div>
+                <div class="vz-bar">
+                    <button type="button" class="vz-btn" id="playBtn">▶ Krok po kroku</button>
+                    <div class="vz-bar" id="stepNav">
+                        <button type="button" class="vz-btn" id="prevBtn">←</button>
+                        <span class="vz-hint" id="stepInfo"></span>
+                        <button type="button" class="vz-btn primary" id="nextBtn">Dalej →</button>
+                    </div>
+                </div>
+            </div>
+            <div class="vz-steps" id="steps"></div>
+        </section>
+    </div>
+</div>
+
+<script src="../viz/kit.js"></script>
+<script>
+    const ROWS = VZ.sales;
+    const CATS = ['Rowery', 'Kaski', 'Odzież'];
+    const COLS = ['Czerwony', 'Niebieski', 'Czarny'];
+
+    // Kontekst komórki ma trzy źródła filtrów. Każda formuła mówi, które z nich zostają w mianowniku.
+    //   slicer: filtr Koloru z fragmentatora (spoza wizualizacji)
+    //   row:    Kategoria z wiersza macierzy
+    //   col:    Kolor z kolumny macierzy
+    const FORMULAS = {
+        base: {
+            label: 'Sama miara',
+            fn: null,
+            code: 'Sprzedaż = SUM(Sprzedaz[Kwota])',
+        },
+        all: {
+            label: 'ALL',
+            fn: 'ALL(Sprzedaz)',
+            code: '% całości =\nDIVIDE(\n    {{visual|[Sprzedaż]}},\n    CALCULATE([Sprzedaż], {{off|ALL(Sprzedaz)}})\n)',
+            keep: { slicer: false, row: false, col: false },
+            what: 'ALL(Sprzedaz) zdejmuje wszystkie filtry z tabeli Sprzedaz. Nie odróżnia filtrów wizualizacji od fragmentatora — usuwa wszystkie.',
+        },
+        remcat: {
+            label: 'REMOVEFILTERS(Kategoria)',
+            fn: 'REMOVEFILTERS(Sprzedaz[Kategoria])',
+            code: '% w kolorze =\nDIVIDE(\n    {{visual|[Sprzedaż]}},\n    CALCULATE([Sprzedaż], {{off|REMOVEFILTERS(Sprzedaz[Kategoria])}})\n)',
+            keep: { slicer: true, row: false, col: true },
+            what: 'REMOVEFILTERS(Sprzedaz[Kategoria]) zdejmuje filtr tylko z jednej kolumny. Wszystko, co filtruje Kolor (kolumna macierzy i fragmentator), zostaje.',
+        },
+        allexcept: {
+            label: 'ALLEXCEPT',
+            fn: 'ALLEXCEPT(Sprzedaz, Sprzedaz[Kategoria])',
+            code: '% w kategorii =\nDIVIDE(\n    {{visual|[Sprzedaż]}},\n    CALCULATE([Sprzedaż], {{off|ALLEXCEPT(Sprzedaz, Sprzedaz[Kategoria])}})\n)',
+            keep: { slicer: false, row: true, col: false },
+            what: 'ALLEXCEPT zdejmuje filtry ze wszystkich kolumn Sprzedaz poza Kategorią. Fragmentator filtruje Kolor, więc też znika.',
+        },
+        allsel: {
+            label: 'ALLSELECTED',
+            fn: 'ALLSELECTED(Sprzedaz)',
+            code: '% widocznego =\nDIVIDE(\n    {{visual|[Sprzedaż]}},\n    CALCULATE([Sprzedaż], {{off|ALLSELECTED(Sprzedaz)}})\n)',
+            keep: { slicer: true, row: false, col: false },
+            what: 'ALLSELECTED(Sprzedaz) zdejmuje filtry nałożone przez samą wizualizację (wiersz i kolumnę), a zostawia te, które przyszły spoza niej: fragmentator, filtry strony i raportu.',
+        },
+        allselcol: {
+            label: 'ALLSELECTED(Kolor)',
+            fn: 'ALLSELECTED(Sprzedaz[Kolor])',
+            code: '% w kategorii (wybrane kolory) =\nDIVIDE(\n    {{visual|[Sprzedaż]}},\n    CALCULATE([Sprzedaż], {{off|ALLSELECTED(Sprzedaz[Kolor])}})\n)',
+            keep: { slicer: true, row: true, col: false },
+            what: 'ALLSELECTED(Sprzedaz[Kolor]) działa tylko na kolumnie Kolor: zdejmuje kolor z kolumny macierzy i wraca do wyboru z fragmentatora. Kategoria z wiersza zostaje.',
+        },
+    };
+
+    const state = { formula: 'all', sel: { r: 'Rowery', c: 'Niebieski' }, slicer: ['Czerwony', 'Niebieski'], manual: false };
+    let stepper = null;
+
+    const pf = new Intl.NumberFormat('pl-PL', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const fmtPct = v => (v === null ? '(puste)' : pf.format(v));
+
+    // Pusty wybór we fragmentatorze = brak filtra (tak działa Power BI)
+    const slicerActive = () => state.slicer.length > 0;
+    const visibleCols = () => COLS.filter(c => !slicerActive() || state.slicer.includes(c));
+
+    // Kontekst filtra komórki = fragmentator & wiersz & kolumna
+    function cellCtx(sel, src = { slicer: true, row: true, col: true }) {
+        const ctx = {};
+        if (src.slicer && slicerActive()) ctx.Kolor = [...state.slicer];
+        if (src.row && sel.r) ctx.Kategoria = [sel.r];
+        if (src.col && sel.c) ctx.Kolor = ctx.Kolor ? VZ.intersect(ctx.Kolor, [sel.c]) : [sel.c];
+        return ctx;
+    }
+
+    function calc(fid, sel) {
+        const num = VZ.sumIn(ROWS, cellCtx(sel), 'Kwota');
+        if (fid === 'base') return { num, den: null, pct: null, value: num };
+        const denCtx = cellCtx(sel, FORMULAS[fid].keep);
+        const den = VZ.sumIn(ROWS, denCtx, 'Kwota');
+        // DIVIDE: BLANK w liczniku lub zero/BLANK w mianowniku -> BLANK
+        const pct = num === null || !den ? null : num / den;
+        return { num, den, pct, denCtx, value: pct };
+    }
+
+    function renderSlicer() {
+        const el = document.getElementById('slicer');
+        el.innerHTML = COLS.map(c => {
+            const on = state.slicer.includes(c);
+            return `<button type="button" class="slicer-item" data-c="${c}" aria-pressed="${on}"><span class="box">${on ? '✓' : ''}</span>${VZ.swatch(c)}${c}</button>`;
+        }).join('');
+        document.getElementById('slicerHint').textContent = slicerActive()
+            ? (state.slicer.length === COLS.length ? 'zaznaczone wszystkie' : `zaznaczone: ${state.slicer.length} z ${COLS.length}`)
+            : 'nic nie zaznaczono = brak filtra';
+    }
+
+    document.getElementById('slicer').addEventListener('click', e => {
+        const b = e.target.closest('.slicer-item');
+        if (!b) return;
+        const c = b.dataset.c;
+        state.slicer = state.slicer.includes(c) ? state.slicer.filter(x => x !== c) : COLS.filter(x => x === c || state.slicer.includes(x));
+        // Kolumna wybranej komórki mogła zniknąć z macierzy
+        if (state.sel.c && !visibleCols().includes(state.sel.c)) state.sel = { r: state.sel.r, c: null };
+        render(true);
+    });
+
+    function renderMatrix() {
+        const f = state.formula;
+        const cols = [...visibleCols(), null];
+        const rows = [...CATS, null];
+        const isSel = (r, c) => state.sel.r === r && state.sel.c === c;
+        const cell = (r, c) => {
+            const res = calc(f, { r, c });
+            const main = f === 'base' ? VZ.fmt(res.value) : fmtPct(res.value);
+            const sub = f === 'base' ? '' : `<span class="sub">${VZ.fmt(res.num)}</span>`;
+            const cls = ['cell', res.value === null ? 'blank' : '', isSel(r, c) ? 'is-selected' : '', r === null || c === null ? 'total' : ''].join(' ');
+            return `<td class="${cls}" data-r="${r === null ? '' : r}" data-c="${c === null ? '' : c}" tabindex="0">${main}${sub}</td>`;
+        };
+        const head = `<tr><th class="corner">Kategoria ↓<br>Kolor →</th>` +
+            cols.map(c => `<th class="${c === null ? 'total' : ''} ${state.sel.c === c && c !== null ? 'is-hdr-on' : ''}">${c === null ? 'Suma' : VZ.swatch(c) + c}</th>`).join('') + '</tr>';
+        const body = rows.map(r =>
+            `<tr class="${r === null ? 'total-row' : ''}"><th class="${r === null ? 'total' : ''} ${state.sel.r === r && r !== null ? 'is-hdr-on' : ''}">${r === null ? 'Suma' : r}</th>` +
+            cols.map(c => cell(r, c)).join('') + '</tr>').join('');
+        const el = document.getElementById('matrix');
+        el.innerHTML = `<div class="vz-table-wrap"><table class="vz-matrix"><thead>${head}</thead><tbody>${body}</tbody></table></div>`;
+        const pick = td => { state.sel = { r: td.dataset.r || null, c: td.dataset.c || null }; render(true); };
+        el.querySelectorAll('td.cell').forEach(td => {
+            td.addEventListener('click', () => pick(td));
+            td.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(td); } });
+        });
+        document.getElementById('legendSub').style.visibility = f === 'base' ? 'hidden' : 'visible';
+    }
+
+    // Trzy źródła filtrów komórki jako chipy z etykietą pochodzenia
+    function sourceChips(sel, keep) {
+        const tagFor = (k, base) => (keep ? (keep[k] ? 'zostaje' : 'usunięty') : base);
+        const kind = k => (keep && !keep[k] ? 'off' : 'visual');
+        const slicer = slicerActive()
+            ? VZ.chip('Kolor', state.slicer, kind('slicer'), tagFor('slicer', 'z fragmentatora'))
+            : VZ.chip('Kolor', 'wszystkie', 'none', 'nic nie zaznaczono');
+        const row = sel.r
+            ? VZ.chip('Kategoria', sel.r, kind('row'), tagFor('row', 'z wiersza'))
+            : VZ.chip('Kategoria', 'wszystkie', 'none', 'wiersz Suma');
+        const col = sel.c
+            ? VZ.chip('Kolor', sel.c, kind('col'), tagFor('col', 'z kolumny'))
+            : VZ.chip('Kolor', 'wszystkie', 'none', 'kolumna Suma');
+        return [['Fragmentator', slicer], ['Wiersz', row], ['Kolumna', col]];
+    }
+
+    const combine = lines => '<div class="combine">' + lines.map(([n, h]) => `<div class="combine-row"><span class="field">${n}</span><div class="vz-chips">${h}</div></div>`).join('') + '</div>';
+
+    // Wynikowy kontekst (po scaleniu Koloru z fragmentatora i kolumny)
+    function ctxChips(ctx, kind) {
+        const parts = [];
+        if (ctx.Kategoria) parts.push(VZ.chip('Kategoria', ctx.Kategoria, kind));
+        if (ctx.Kolor) parts.push(VZ.chip('Kolor', ctx.Kolor, kind));
+        return parts.length ? parts.join('') : VZ.chip('', 'brak filtrów — cała tabela Sprzedaz', 'none');
+    }
+
+    function renderSteps() {
+        const fid = state.formula;
+        const f = FORMULAS[fid];
+        const sel = state.sel;
+        const res = calc(fid, sel);
+        const numCtx = cellCtx(sel);
+        const where = [sel.r || 'Suma (wszystkie kategorie)', sel.c || 'Suma (wybrane kolory)'].join(' × ');
+
+        let html = `
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-visual)">1</span>Kontekst filtra komórki · ${VZ.esc(where)}</div>
+                <div class="vz-chips">${sourceChips(sel, null).map(x => x[1]).join('')}</div>
+                <div class="vz-step-note">Fragmentator jest zwykłym filtrem: działa na każdą komórkę macierzy, razem z jej wierszem i kolumną.</div>
+            </div>
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-visual)">2</span>Licznik · [Sprzedaż] w tym kontekście</div>
+                <div class="vz-chips">${ctxChips(numCtx, 'visual')}</div>
+                <div class="vz-result"><span class="lbl">Licznik</span><span class="val ${res.num === null ? 'blank' : ''}">${VZ.fmt(res.num)}</span></div>
+            </div>`;
+
+        if (fid !== 'base') {
+            html += `
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-off)">3</span>Mianownik · ${VZ.esc(f.fn)} zdejmuje filtry</div>
+                ${combine(sourceChips(sel, f.keep))}
+                <div class="vz-step-note">${f.what}</div>
+            </div>
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-calc)">4</span>Mianownik · [Sprzedaż] w kontekście, który został</div>
+                <div class="vz-chips">${ctxChips(res.denCtx, 'calc')}</div>
+                <div class="vz-result"><span class="lbl">Mianownik</span><span class="val ${res.den === null ? 'blank' : ''}">${VZ.fmt(res.den)}</span></div>
+            </div>`;
+        }
+
+        const n = fid === 'base' ? 3 : 5;
+        html += `
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--text)">${n}</span>${fid === 'base' ? 'Wiersze Sprzedaz, które sumuje miara' : 'Wiersze w liczniku i mianowniku'}</div>
+                <div id="facts"></div>
+                ${fid === 'base' ? '' : fracHtml(res)}
+            </div>`;
+
+        document.getElementById('steps').innerHTML = html;
+        renderFacts(fid, numCtx, res);
+    }
+
+    function fracHtml(res) {
+        const w = res.den ? Math.max(0, Math.min(100, (res.num || 0) / res.den * 100)) : 0;
+        return `
+            <div class="vz-result" style="display:block">
+                <div class="frac">
+                    <span class="k num">Licznik</span>
+                    <div class="bar n" style="background:var(--surface)"><i style="width:${w}%"></i><span>${VZ.fmt(res.num)}</span></div>
+                    <span class="k den">Mianownik</span>
+                    <div class="bar"><span>${VZ.fmt(res.den)}</span></div>
+                </div>
+                <div class="vz-result" style="border-top:none;margin-top:4px">
+                    <span class="lbl eq">DIVIDE(<b>${VZ.fmt(res.num)}</b>, <b>${VZ.fmt(res.den)}</b>) =</span>
+                    <span class="val ${res.pct === null ? 'blank' : ''}">${fmtPct(res.pct)}</span>
+                </div>
+            </div>`;
+    }
+
+    function renderFacts(fid, numCtx, res) {
+        const isBase = fid === 'base';
+        const head = `<tr><th>Kategoria</th><th>Kolor</th><th class="num">Kwota</th><th class="mark" title="Licznik">L</th>${isBase ? '' : '<th class="mark" title="Mianownik">M</th>'}</tr>`;
+        let sNum = 0, sDen = 0;
+        const body = ROWS.map(r => {
+            const inN = VZ.rowPasses(r, numCtx);
+            const inD = !isBase && VZ.rowPasses(r, res.denCtx);
+            if (inN) sNum += r.Kwota;
+            if (inD) sDen += r.Kwota;
+            const cls = [inN ? 'num' : '', inD ? 'den' : '', !inN && !inD ? 'none' : ''].join(' ');
+            return `<tr class="${cls}"><td>${r.Kategoria}</td><td>${VZ.swatch(r.Kolor)}${r.Kolor}</td><td class="num">${VZ.fmt(r.Kwota)}</td>` +
+                `<td class="mark">${inN ? '<span class="dot num"></span>' : ''}</td>${isBase ? '' : `<td class="mark">${inD ? '<span class="dot den"></span>' : ''}</td>`}</tr>`;
+        }).join('');
+        const foot = `<tfoot><tr><td colspan="2">${isBase ? 'Suma' : 'Suma L · Suma M'}</td><td class="num" colspan="${isBase ? 1 : 3}">${isBase ? VZ.fmt(sNum || null) : `<span style="color:var(--ctx-visual)">${VZ.fmt(sNum || null)}</span> · <span style="color:var(--ctx-calc)">${VZ.fmt(sDen || null)}</span>`}</td>${isBase ? '<td></td>' : ''}</tr></tfoot>`;
+        const legend = isBase ? '' : `<div class="vz-legend" style="margin:0 0 8px">
+            <span style="color:var(--ctx-visual)"><span class="dot num" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--ctx-visual)"></span>L = w liczniku</span>
+            <span style="color:var(--ctx-calc)"><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--ctx-calc)"></span>M = w mianowniku</span></div>`;
+        document.getElementById('facts').innerHTML = legend +
+            `<div class="vz-table-wrap"><table class="vz-table rows-tbl"><thead>${head}</thead><tbody>${body}</tbody>${foot}</table></div>`;
+    }
+
+    // Wniosek: stały opis + zdanie liczone z aktualnego stanu macierzy
+    function takeaway() {
+        const fid = state.formula;
+        const grand = calc(fid, { r: null, c: null });
+        const cut = slicerActive() && state.slicer.length < COLS.length;
+        const rowTot = state.sel.r ? calc(fid, { r: state.sel.r, c: null }) : null;
+        const colTot = state.sel.c ? calc(fid, { r: null, c: state.sel.c }) : null;
+        switch (fid) {
+            case 'base':
+                return `Fragmentator to zwykły filtr kontekstu: zawęża Kolor dla całej macierzy, a każda komórka dokłada do niego swój wiersz i kolumnę. Dlatego suma całkowita to ${VZ.fmt(grand.value)} — sprzedaż ${cut ? 'tylko zaznaczonych kolorów' : 'wszystkich kolorów'}, a nie zawsze cała tabela.`;
+            case 'all':
+                return `ALL(Sprzedaz) <b>ignoruje także fragmentator</b>. Mianownik to zawsze cała tabela (${VZ.fmt(VZ.sum(ROWS, 'Kwota'))}), więc suma całkowita macierzy pokazuje <b>${fmtPct(grand.pct)}</b>${cut ? ', a nie 100%. Użytkownik zaznaczył kolory i widzi udział w całej firmie, nie w swoim wyborze.' : '. Odznacz kolor we fragmentatorze, a zobaczysz, że ta suma spadnie poniżej 100%.'}`;
+            case 'remcat':
+                return `Zdejmowany jest tylko filtr Kategorii, więc każda komórka to <b>udział w swoim kolorze</b>. Wiersz Suma ma zawsze 100%. Fragmentator zostaje, bo filtruje Kolor, a nie Kategorię${colTot ? ` — kolumna ${state.sel.c}: ${fmtPct(colTot.pct)}` : ''}.`;
+            case 'allexcept':
+                return `ALLEXCEPT zostawia Kategorię i zdejmuje <b>wszystko inne</b> z tabeli Sprzedaz — razem z fragmentatorem. Udział liczy się do całej kategorii, a nie do zaznaczonych kolorów${rowTot ? `: kolumna Suma dla ${state.sel.r} pokazuje <b>${fmtPct(rowTot.pct)}</b>` : ''}${cut ? '. Gdy fragmentator coś wyłącza, wiersze nie sumują się do 100%.' : '. Odznacz kolor we fragmentatorze, a wiersze przestaną sumować się do 100%.'}`;
+            case 'allsel':
+                return `ALLSELECTED <b>zdejmuje filtry wizualizacji, a zostawia fragmentator</b>. Mianownik to dokładnie to, co użytkownik widzi w sumie macierzy (${VZ.fmt(grand.den)}), więc suma całkowita ma zawsze <b>${fmtPct(grand.pct)}</b> — niezależnie od tego, co zaznaczy.`;
+            case 'allselcol':
+                return `Udział w kategorii, ale <b>w obrębie zaznaczonych kolorów</b>: Kolor z kolumny zdjęty, wybór z fragmentatora zostaje, Kategoria zostaje. Porównaj z ALLEXCEPT — ten sam pomysł, ale tu kolumna Suma${rowTot ? ` dla ${state.sel.r}` : ''} ma zawsze <b>${rowTot ? fmtPct(rowTot.pct) : '100%'}</b>.`;
+        }
+    }
+
+    function render(animate) {
+        const f = FORMULAS[state.formula];
+        document.getElementById('code').innerHTML = VZ.code(f.code);
+        renderSlicer();
+        renderMatrix();
+        renderSteps();
+        document.getElementById('takeaway').innerHTML = takeaway();
+        const steps = document.getElementById('steps');
+        if (state.manual) {
+            stepper = VZ.stepper(steps, updateStepNav);
+            stepper.start();
+        } else if (animate) {
+            VZ.reveal(steps);
+        }
+    }
+
+    function updateStepNav(i, n) {
+        document.getElementById('stepInfo').textContent = `Krok ${i + 1} z ${n}`;
+        document.getElementById('prevBtn').disabled = i <= 0;
+        document.getElementById('nextBtn').textContent = i >= n - 1 ? 'Pokaż wszystko' : 'Dalej →';
+    }
+
+    document.getElementById('playBtn').addEventListener('click', () => {
+        state.manual = true;
+        document.getElementById('explain').classList.add('manual');
+        render(false);
+    });
+    document.getElementById('prevBtn').addEventListener('click', () => stepper.prev());
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        if (stepper.index >= stepper.count - 1) {
+            state.manual = false;
+            document.getElementById('explain').classList.remove('manual');
+            stepper.showAll();
+        } else {
+            stepper.next();
+        }
+    });
+
+    VZ.tabs(document.getElementById('tabs'),
+        Object.entries(FORMULAS).map(([id, f]) => ({ id, label: f.label })),
+        id => { state.formula = id; render(true); }, state.formula);
+
+    render(true);
+</script>
+</body>
+</html>

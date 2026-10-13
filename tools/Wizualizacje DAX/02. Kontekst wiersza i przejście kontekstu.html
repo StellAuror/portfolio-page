@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontekst wiersza i przejście kontekstu</title>
+    <link rel="stylesheet" href="../viz/kit.css">
+    <style>
+        .step-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+        .step-head .vz-label { margin: 0; }
+        #stepNav { display: none; }
+        .manual #stepNav { display: flex; }
+        .manual #playBtn { display: none; }
+
+        /* tabela modelu: wiersze są klikalne */
+        .model tbody tr { cursor: pointer; }
+        .model tbody tr:hover td { background: var(--surface); }
+        .model tbody tr:focus-visible { outline: 2px solid var(--ctx-row); outline-offset: -2px; }
+        .model tbody tr.is-current td { background: var(--ctx-row-soft); }
+        .model tbody tr.is-current td:first-child { box-shadow: inset 3px 0 0 var(--ctx-row); }
+        .model tbody tr.is-in.calc td { background: var(--ctx-calc-soft); }
+        .model tbody tr.is-in.calc td:first-child { box-shadow: inset 3px 0 0 var(--ctx-calc); }
+        .model th.newcol { color: var(--ctx-row); }
+        .model td.newcol { font-weight: 600; }
+        .model td.newcol.diff { color: var(--ctx-calc); }
+        .model td.ptr { width: 18px; padding-right: 0; color: var(--ctx-row); font-weight: 700; }
+        .model tfoot td { font-weight: 700; border-top: 2px solid var(--text); border-bottom: none; }
+        .model tfoot td.diff { color: var(--ctx-calc); }
+
+        /* wszystkie wiersze widoczne (brak filtra) */
+        .vz-table tr.is-in.all td { background: var(--surface-2); }
+        .vz-table tr.is-in.all td:first-child { box-shadow: inset 3px 0 0 var(--ctx-off); }
+
+        .trans { display: grid; grid-template-columns: max-content 26px minmax(0, max-content); align-items: center; gap: 8px 4px; }
+        .trans .hdr { font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; }
+        .trans .hdr.r { color: var(--ctx-row); }
+        .trans .hdr.c { color: var(--ctx-calc); }
+        .trans .hdr.o { color: var(--text-3); }
+        .trans .via { text-align: center; }
+        .trans .to { min-width: 0; }
+        /* animacja: zielony chip wiersza zamienia się w filtr */
+        .is-anim .trans .to { animation: vzTurn .5s var(--ease) both; }
+        .is-anim .trans .via { animation: vzFade .3s var(--ease) both; }
+        @keyframes vzTurn { from { opacity: 0; transform: translateX(-14px) scale(.9); } }
+        @keyframes vzFade { from { opacity: 0; } }
+
+        .ctx-line { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+        .ctx-line + .ctx-line { margin-top: 10px; }
+        .ctx-line .field { flex-basis: 100%; font-size: 11px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; }
+
+        .ctx-line .vz-chip { white-space: normal; }
+        @media (max-width: 560px) {
+            .model th, .model td { padding-left: 5px; padding-right: 5px; }
+            .model th.newcol { white-space: normal; line-height: 1.25; max-width: 84px; }
+            .model td.ptr { width: 12px; padding: 0 0 0 4px; }
+            .model .vz-swatch { margin-right: 4px; }
+            .compare { grid-template-columns: 1fr; }
+        }
+        .warn {
+            margin-top: 10px;
+            padding: 8px 10px;
+            border-radius: var(--radius-sm);
+            background: #fdeaea;
+            border-left: 3px solid var(--bad);
+            font-size: 13.5px;
+        }
+        .sumline { font-family: var(--mono); font-size: 13px; line-height: 1.8; word-break: break-word; }
+        .sumline b { color: var(--ctx-calc); }
+        .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .compare > div { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 8px 10px; }
+        .compare .lbl { font-size: 12px; color: var(--text-2); font-family: var(--mono); }
+        .compare .v { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+        .compare .bad { color: var(--bad); }
+        .compare .good { color: var(--ok); }
+    </style>
+</head>
+<body>
+<div class="vz-app">
+    <header class="vz-head">
+        <div class="vz-kicker">DAX · Kontekst wiersza</div>
+        <h1 class="vz-title">Kontekst wiersza i przejście kontekstu</h1>
+        <p class="vz-lead">Kliknij wiersz tabeli Sprzedaz. Po prawej widać, czy bieżący wiersz filtruje dane, czy nie — i jak CALCULATE zamienia go w filtr na każdej kolumnie.</p>
+    </header>
+
+    <div id="tabs"></div>
+    <div class="vz-code" id="code"></div>
+
+    <div class="vz-grid">
+        <div>
+            <section class="vz-card">
+                <div class="vz-label" id="modelLabel">Tabela Sprzedaz · kolumna kalkulowana</div>
+                <div id="model"></div>
+                <div class="vz-legend">
+                    <span style="color: var(--ctx-row)"><i style="background: var(--ctx-row-soft)"></i>bieżący wiersz (kontekst wiersza)</span>
+                    <span id="legendCalc" style="color: var(--ctx-calc)"><i style="background: var(--ctx-calc-soft)"></i>wiersze przepuszczone przez filtr z CALCULATE</span>
+                </div>
+            </section>
+            <div class="vz-takeaway" id="takeaway"></div>
+        </div>
+
+        <section class="vz-card" id="explain">
+            <div class="step-head">
+                <div class="vz-label">Co się dzieje w tym wierszu</div>
+                <div class="vz-bar">
+                    <button type="button" class="vz-btn" id="playBtn">▶ Krok po kroku</button>
+                    <div class="vz-bar" id="stepNav">
+                        <button type="button" class="vz-btn" id="prevBtn">←</button>
+                        <span class="vz-hint" id="stepInfo"></span>
+                        <button type="button" class="vz-btn primary" id="nextBtn">Dalej →</button>
+                    </div>
+                </div>
+            </div>
+            <div class="vz-steps" id="steps"></div>
+        </section>
+    </div>
+</div>
+
+<script src="../viz/kit.js"></script>
+<script>
+    // Tabela bez klucza: wiersze 5 i 6 są identyczne we wszystkich kolumnach.
+    const ROWS = [
+        { Kategoria: 'Rowery', Kolor: 'Czerwony', Kwota: 1200 },
+        { Kategoria: 'Rowery', Kolor: 'Niebieski', Kwota: 800 },
+        { Kategoria: 'Rowery', Kolor: 'Czarny', Kwota: 1500 },
+        { Kategoria: 'Kaski', Kolor: 'Czerwony', Kwota: 150 },
+        { Kategoria: 'Kaski', Kolor: 'Niebieski', Kwota: 220 },
+        { Kategoria: 'Kaski', Kolor: 'Niebieski', Kwota: 220 },
+        { Kategoria: 'Odzież', Kolor: 'Czarny', Kwota: 450 },
+        { Kategoria: 'Odzież', Kolor: 'Czerwony', Kwota: 200 },
+    ];
+    const COLS = ['Kategoria', 'Kolor', 'Kwota'];
+    const TOTAL = VZ.sum(ROWS, 'Kwota');
+
+    // Przejście kontekstu: każda kolumna bieżącego wiersza staje się filtrem
+    const rowFilter = row => Object.fromEntries(COLS.map(c => [c, [row[c]]]));
+
+    // Kontekst filtra, w jakim liczy się SUM dla danego wiersza
+    const ctxFor = (id, row) => (id === 'sum' ? {} : rowFilter(row));
+    const valueFor = (id, row) => VZ.sumIn(ROWS, ctxFor(id, row), 'Kwota');
+
+    const SCEN = {
+        sum: {
+            label: 'SUM w kolumnie',
+            col: 'Kwota razem',
+            code: '-- kolumna kalkulowana w tabeli Sprzedaz\nKwota razem = SUM(Sprzedaz[Kwota])',
+            takeaway: () => `Kontekst wiersza <b>nie filtruje</b>. Kolumna wie, który wiersz jest bieżący, ale SUM patrzy tylko na kontekst filtra, a ten jest pusty. Dlatego każdy wiersz dostaje sumę całej tabeli: ${VZ.fmt(TOTAL)}.`,
+        },
+        calc: {
+            label: 'CALCULATE',
+            col: 'Kwota wiersza',
+            code: '-- kolumna kalkulowana w tabeli Sprzedaz\nKwota wiersza = {{calc|CALCULATE(}}SUM(Sprzedaz[Kwota]){{calc|)}}',
+            takeaway: () => 'CALCULATE zamienia kontekst wiersza w kontekst filtra: każda kolumna bieżącego wiersza staje się filtrem. To <b>przejście kontekstu</b>. Filtr obejmuje <b>wszystkie</b> kolumny, a nie „ten jeden wiersz”, więc dwa identyczne wiersze przechodzą razem i każdy z nich dostaje ich wspólną sumę.',
+        },
+        measure: {
+            label: 'Odwołanie do miary',
+            col: 'Kwota z miary',
+            code: '-- miara: Sprzedaż = SUM(Sprzedaz[Kwota])\nKwota z miary = {{calc|[Sprzedaż]}}   -- czyli CALCULATE(SUM(Sprzedaz[Kwota]))',
+            takeaway: () => 'Odwołanie do miary jest zawsze owinięte w <b>niewidoczny CALCULATE</b>. [Sprzedaż] w kolumnie kalkulowanej działa więc jak CALCULATE(SUM(…)): bieżący wiersz staje się filtrem — razem z pułapką duplikatów.',
+        },
+        sumx: {
+            label: 'Pułapka: SUMX z miarą',
+            col: '[Sprzedaż] w wierszu',
+            code: '-- miara: Sprzedaż = SUM(Sprzedaz[Kwota])\nSuma po wierszach = SUMX({{row|Sprzedaz}}, {{calc|[Sprzedaż]}})',
+            takeaway: () => {
+                const it = ROWS.reduce((s, r) => s + valueFor('sumx', r), 0);
+                return `SUMX ustawia kontekst wiersza, a [Sprzedaż] robi w każdym wierszu przejście kontekstu. Identyczne wiersze widzą się nawzajem, więc liczą się podwójnie: wynik to <b>${VZ.fmt(it)}</b> zamiast ${VZ.fmt(TOTAL)}. W tabeli bez unikalnego klucza pisz SUMX(Sprzedaz, Sprzedaz[Kwota]).`;
+            },
+        },
+    };
+
+    const state = { scen: 'sum', row: 4, manual: false };
+    let stepper = null;
+
+    function th(cols) {
+        return '<thead><tr>' + cols.map(c => `<th class="${c.cls || ''}">${VZ.esc(c.label)}</th>`).join('') + '</tr></thead>';
+    }
+
+    function renderModel() {
+        const id = state.scen;
+        const cur = ROWS[state.row];
+        const ctx = ctxFor(id, cur);
+        const vals = ROWS.map(r => valueFor(id, r));
+        const cols = [
+            { label: '', cls: '' },
+            { label: 'Kategoria' }, { label: 'Kolor' }, { label: 'Kwota', cls: 'num' },
+            { label: SCEN[id].col, cls: 'num newcol' },
+        ];
+        const body = ROWS.map((r, i) => {
+            let cls = '';
+            if (i === state.row) cls = 'is-current';
+            else if (id !== 'sum' && VZ.rowPasses(r, ctx)) cls = 'is-in calc';
+            const diff = id !== 'sum' && vals[i] !== r.Kwota;
+            return `<tr class="${cls}" data-i="${i}" tabindex="0">
+                <td class="ptr">${i === state.row ? '▶' : ''}</td>
+                <td>${VZ.swatch(r.Kategoria)}${VZ.esc(r.Kategoria)}</td>
+                <td>${VZ.swatch(r.Kolor)}${VZ.esc(r.Kolor)}</td>
+                <td class="num">${VZ.fmt(r.Kwota)}</td>
+                <td class="num newcol ${diff ? 'diff' : ''}">${VZ.fmt(vals[i])}</td></tr>`;
+        }).join('');
+        let foot = '';
+        if (id === 'sumx') {
+            const it = vals.reduce((s, v) => s + v, 0);
+            foot = `<tfoot><tr><td></td><td colspan="2">Suma</td><td class="num">${VZ.fmt(TOTAL)}</td><td class="num diff">${VZ.fmt(it)}</td></tr></tfoot>`;
+        }
+        const el = document.getElementById('model');
+        el.innerHTML = `<div class="vz-table-wrap"><table class="vz-table model">${th(cols)}<tbody>${body}</tbody>${foot}</table></div>`;
+        el.querySelectorAll('tbody tr').forEach(tr => {
+            const pick = () => { state.row = +tr.dataset.i; render(true); };
+            tr.addEventListener('click', pick);
+            tr.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+        });
+        document.getElementById('modelLabel').textContent = id === 'sumx'
+            ? 'Tabela Sprzedaz · co SUMX liczy w każdym wierszu'
+            : 'Tabela Sprzedaz · kolumna kalkulowana';
+        document.getElementById('legendCalc').style.visibility = id === 'sum' ? 'hidden' : 'visible';
+    }
+
+    function renderSteps(animate) {
+        const id = state.scen;
+        const cur = ROWS[state.row];
+        const ctx = ctxFor(id, cur);
+        const hit = VZ.filterRows(ROWS, ctx);
+        const value = valueFor(id, cur);
+        const transition = id !== 'sum';
+
+        const rowChips = COLS.map(c => VZ.chip(c, cur[c], 'row')).join('');
+        const where = id === 'sumx' ? 'SUMX, bieżący wiersz' : 'kolumna kalkulowana, bieżący wiersz';
+
+        const fctxBefore = id === 'sumx'
+            ? VZ.chip('', 'brak — miara w karcie bez filtrów', 'none')
+            : VZ.chip('', 'brak — kolumna kalkulowana nie ma filtrów', 'none');
+
+        const step2Title = {
+            sum: 'Czy wiersz filtruje? Nie — brak CALCULATE',
+            calc: 'CALCULATE: przejście kontekstu',
+            measure: 'Miara = ukryty CALCULATE: przejście kontekstu',
+            sumx: 'Miara = ukryty CALCULATE: przejście kontekstu',
+        }[id];
+
+        const lines = COLS.map((c, i) => {
+            const d = `style="animation-delay:${.15 + i * .22}s"`;
+            const right = transition
+                ? VZ.chip(c, cur[c], 'calc')
+                : VZ.chip(c, 'wszystkie', 'none');
+            return `<span>${VZ.chip('', cur[c], 'row')}</span><span class="via" ${d}>${VZ.op('→', 'arrow')}</span><span class="to" ${d}>${right}</span>`;
+        }).join('');
+        const transHead = `<span class="hdr r">Kontekst wiersza</span><span></span><span class="hdr ${transition ? 'c' : 'o'}">${transition ? 'Kontekst filtra' : 'Kontekst filtra: brak'}</span>`;
+
+        const note2 = transition
+            ? 'Kontekst wiersza znika, a w jego miejsce pojawia się filtr na <b>każdej</b> kolumnie tabeli. Filtr nie wskazuje „tego wiersza” — wskazuje wartości.'
+            : 'Kontekst wiersza zna wartości bieżącego wiersza, ale niczego nie filtruje. Bez CALCULATE kontekst filtra zostaje pusty.';
+
+        const extra = hit.length > 1 && transition
+            ? `<div class="warn">Filtr przepuszcza <b>${hit.length} wiersze</b>: bieżący i jego identycznego bliźniaka. Tabela nie ma unikalnego klucza, więc DAX nie potrafi ich odróżnić: ${hit.map(r => VZ.fmt(r.Kwota)).join(' + ')} = ${VZ.fmt(value)}.</div>`
+            : '';
+
+        const sumNote = !transition
+            ? '<div class="vz-step-note">Pusty kontekst filtra = widać wszystkie wiersze tabeli.</div>'
+            : '';
+
+        let step5 = '';
+        if (id === 'sumx') {
+            const vals = ROWS.map(r => valueFor('sumx', r));
+            const it = vals.reduce((s, v) => s + v, 0);
+            const parts = ROWS.map((r, i) => (vals[i] !== r.Kwota ? `<b>${VZ.fmt(vals[i])}</b>` : VZ.fmt(vals[i]))).join(' + ');
+            step5 = `
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-row)">5</span>SUMX dodaje wyniki wszystkich wierszy</div>
+                <div class="sumline">${parts} = ${VZ.fmt(it)}</div>
+                <div class="compare">
+                    <div><div class="lbl">SUMX(Sprzedaz, [Sprzedaż])</div><div class="v bad">${VZ.fmt(it)}</div></div>
+                    <div><div class="lbl">[Sprzedaż]</div><div class="v good">${VZ.fmt(TOTAL)}</div></div>
+                </div>
+            </div>`;
+        }
+
+        document.getElementById('steps').innerHTML = `
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-row)">1</span>Kontekst wiersza · ${where}</div>
+                <div class="ctx-line"><span class="field">Wiersz</span>${rowChips}</div>
+                <div class="ctx-line"><span class="field">Kontekst filtra</span>${fctxBefore}</div>
+            </div>
+            <div class="vz-step ${animate ? 'is-anim' : ''}" id="transStep">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-calc)">2</span>${step2Title}</div>
+                <div class="trans">${transHead}${lines}</div>
+                <div class="vz-step-note">${note2}</div>
+            </div>
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--text)">3</span>Wiersze, które widzi SUM(Sprzedaz[Kwota])</div>
+                <div id="facts"></div>
+                ${sumNote}${extra}
+            </div>
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--text)">4</span>Wynik dla tego wiersza</div>
+                <div class="vz-result" style="border-top:0;margin-top:0;padding-top:0">
+                    <span class="lbl">${VZ.esc(SCEN[id].col)}</span>
+                    <span class="val">${VZ.fmt(value)}</span>
+                </div>
+            </div>${step5}`;
+
+        VZ.table(document.getElementById('facts'), {
+            columns: [{ key: 'Kategoria' }, { key: 'Kolor' }, { key: 'Kwota', num: true }],
+            rows: ROWS,
+            state: r => (transition ? (VZ.rowPasses(r, ctx) ? 'in calc' : 'out') : 'in all'),
+            total: 'Kwota',
+        });
+    }
+
+    function render(animate) {
+        const s = SCEN[state.scen];
+        document.getElementById('code').innerHTML = VZ.code(s.code);
+        document.getElementById('takeaway').innerHTML = s.takeaway();
+        renderModel();
+        renderSteps(animate || state.manual);
+        const steps = document.getElementById('steps');
+        if (state.manual) {
+            stepper = VZ.stepper(steps, updateStepNav);
+            stepper.start();
+        } else if (animate) {
+            VZ.reveal(steps, 260);
+        }
+    }
+
+    function updateStepNav(i, n) {
+        document.getElementById('stepInfo').textContent = `Krok ${i + 1} z ${n}`;
+        document.getElementById('prevBtn').disabled = i <= 0;
+        document.getElementById('nextBtn').textContent = i >= n - 1 ? 'Pokaż wszystko' : 'Dalej →';
+        // animację przejścia odtwarzamy, gdy krok 2 staje się bieżący
+        const t = document.getElementById('transStep');
+        if (t && i === 1) { t.classList.remove('is-anim'); void t.offsetWidth; t.classList.add('is-anim'); }
+    }
+
+    document.getElementById('playBtn').addEventListener('click', () => {
+        state.manual = true;
+        document.getElementById('explain').classList.add('manual');
+        render(false);
+    });
+    document.getElementById('prevBtn').addEventListener('click', () => stepper.prev());
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        if (stepper.index >= stepper.count - 1) {
+            state.manual = false;
+            document.getElementById('explain').classList.remove('manual');
+            stepper.showAll();
+        } else {
+            stepper.next();
+        }
+    });
+
+    VZ.tabs(document.getElementById('tabs'),
+        Object.entries(SCEN).map(([id, s]) => ({ id, label: s.label })),
+        id => { state.scen = id; render(true); }, state.scen);
+
+    render(true);
+</script>
+</body>
+</html>

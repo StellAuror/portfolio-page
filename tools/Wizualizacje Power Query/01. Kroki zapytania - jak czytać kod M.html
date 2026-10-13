@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kroki zapytania w kodzie M</title>
+    <link rel="stylesheet" href="../viz/kit.css">
+    <style>
+        /* ---------- Układ: kroki + podgląd ---------- */
+        .pq-top {
+            display: grid;
+            grid-template-columns: 250px minmax(0, 1fr);
+            gap: 16px;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .pq-top > .vz-card { margin-top: 0; }
+        .pq-applied { padding: 12px; }
+        .pq-applied ol { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+        .pq-applied button.st {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-align: left;
+            border: 1px solid transparent;
+            background: none;
+            border-radius: var(--radius-sm);
+            padding: 6px 8px;
+            font-size: 13.5px;
+            line-height: 1.3;
+            color: var(--text-2);
+            transition: background .15s, border-color .15s, color .15s;
+        }
+        .pq-applied button.st:hover { background: var(--surface); color: var(--text); }
+        .pq-applied button.st .no {
+            flex: none;
+            display: inline-grid;
+            place-items: center;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 600;
+            background: var(--surface-2);
+            color: var(--text-2);
+        }
+        .pq-applied button.st.done { color: var(--text); }
+        .pq-applied button.st.later { color: var(--text-3); }
+        .pq-applied button.st[aria-current="true"] {
+            background: var(--surface);
+            border-color: var(--text-2);
+            color: var(--text);
+            font-weight: 600;
+        }
+        .pq-applied button.st[aria-current="true"] .no { background: var(--text); color: #fff; }
+        .pq-applied .nav { display: flex; gap: 6px; margin-top: 10px; }
+        .pq-applied .nav .vz-btn { flex: 1; justify-content: center; }
+
+        /* ---------- Podgląd danych ---------- */
+        .pq-diff { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; min-height: 30px; align-items: center; }
+        .pq-dims { font-size: 13px; color: var(--text-2); margin-left: auto; white-space: nowrap; }
+
+        .pq-table th { vertical-align: bottom; }
+        .pq-table th .hd { display: inline-flex; align-items: center; gap: 6px; }
+        .pq-table th .old { display: block; font-size: 10.5px; color: var(--text-3); text-decoration: line-through; text-transform: none; letter-spacing: 0; font-weight: 400; }
+        .pq-table th, .pq-table td { padding-left: 8px; padding-right: 8px; }
+        .pq-table th .old .ty { margin: 0 0 3px; }
+        .pq-table td.rn, .pq-table th.rn { color: var(--text-3); text-align: right; width: 1%; padding-right: 6px; font-size: 12px; }
+        .pq-table td.num { text-align: right; }
+        .pq-table td.txt-val { color: var(--text); }
+        .pq-table td .null { color: var(--text-3); font-style: italic; }
+        .pq-table td .empty { color: var(--text-3); }
+        .pq-table td .was { display: block; font-size: 10.5px; line-height: 1.1; color: var(--text-3); text-decoration: line-through; }
+
+        /* ikony typów jak w edytorze Power Query */
+        .ty {
+            display: inline-grid;
+            place-items: center;
+            min-width: 30px;
+            height: 18px;
+            padding: 0 3px;
+            border-radius: 4px;
+            border: 1px solid var(--line-strong);
+            background: var(--bg);
+            font-family: var(--mono);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0;
+            color: var(--text-2);
+            text-transform: none;
+            line-height: 1;
+        }
+        .ty.any { font-size: 8px; line-height: .95; padding-top: 1px; }
+        .ty svg { width: 13px; height: 13px; }
+        .ty.was { opacity: .55; text-decoration: line-through; }
+        .ty.new { border-color: var(--ctx-calc); color: var(--ctx-calc); background: var(--ctx-calc-soft); }
+        .ty-arrow { color: var(--ctx-calc); font-size: 11px; }
+
+        /* diff: kolumny */
+        .pq-table .c-del { opacity: .38; text-decoration: line-through; background: var(--ctx-off-soft); }
+        .pq-table th.c-del { color: var(--text-3); }
+        .pq-table .c-add { background: var(--ctx-row-soft); }
+        .pq-table th.c-add { color: var(--ctx-row); box-shadow: inset 0 -2px 0 var(--ctx-row); }
+        .pq-table td.c-chg { background: var(--ctx-calc-soft); }
+        .pq-table th.c-chg { color: var(--ctx-calc); }
+        .pq-table .c-pred { background: var(--surface); font-family: var(--mono); font-size: 12px; text-transform: none; letter-spacing: 0; border-left: 1px dashed var(--line-strong); }
+        .pq-table th.c-pred { color: var(--ctx-row); }
+        .pq-table td.c-pred .t { color: var(--ctx-row); font-weight: 700; }
+        .pq-table td.c-pred .f { color: var(--bad); font-weight: 700; }
+
+        /* diff: wiersze */
+        .pq-table tr.r-del td:not(.c-pred) { opacity: .35; text-decoration: line-through; }
+        .pq-table tr.r-del td.rn { text-decoration: none; color: var(--bad); opacity: 1; }
+        .pq-table tr.r-hdr td { background: var(--ctx-calc-soft); color: var(--ctx-calc); font-weight: 600; }
+        .pq-table tr.r-hdr td.rn { color: var(--ctx-calc); }
+        .pq-table tr.r-hdr td:first-child { box-shadow: inset 3px 0 0 var(--ctx-calc); }
+
+        .pq-table tbody tr { animation: vzPop .3s var(--ease) both; }
+
+        /* ---------- Kod M z liniami ---------- */
+        .pq-code { padding: 10px 0; white-space: normal; }
+        .pq-code .ln {
+            position: relative;
+            display: grid;
+            grid-template-columns: 28px minmax(0, 1fr);
+            padding: 1px 14px 1px 0;
+            border-left: 3px solid transparent;
+            transition: background .25s, opacity .25s, border-color .25s;
+        }
+        .pq-code .ln .gut { color: var(--text-3); font-size: 11.5px; text-align: right; padding-right: 10px; user-select: none; line-height: 22px; }
+        .pq-code .ln .src { white-space: pre-wrap; word-break: break-word; padding-left: calc(var(--ind, 0) * 1ch); text-indent: 0; }
+        .pq-code .ln.is-cur { background: #fff; border-left-color: var(--text); box-shadow: 0 1px 6px rgba(0,0,0,.06); }
+        .pq-code .ln.is-ref { background: var(--ctx-visual-soft); border-left-color: var(--ctx-visual); }
+        .pq-code .ln.is-later { opacity: .4; }
+        .pq-code .ln.is-ret { background: var(--brand-soft); border-left-color: var(--brand); }
+        .pq-code .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin: 3px 0 4px;
+            border-radius: 999px;
+            padding: 1px 10px;
+            font-family: var(--sans);
+            font-size: 12px;
+            font-weight: 600;
+            white-space: normal;
+            animation: vzPop .3s var(--ease);
+        }
+        .pq-code .badge.ref { background: var(--ctx-visual); color: #fff; }
+        .pq-code .badge.ret { background: var(--brand); color: #fff; }
+        .pq-code .badge.out { background: var(--surface-2); color: var(--text-2); }
+        .vz-code mark.fn { color: var(--brand); font-weight: 600; }
+        .pq-how { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: -6px 0 18px; }
+        .pq-how div { font-size: 13px; color: var(--text-2); background: var(--surface); border-radius: var(--radius-sm); padding: 8px 10px; }
+        .pq-how code { font-family: var(--mono); font-size: 12.5px; color: var(--brand); font-weight: 600; }
+
+        .mono { font-family: var(--mono); font-size: 13px; }
+        .vz-step-note code, .vz-takeaway code { font-family: var(--mono); font-size: 12.5px; background: rgba(0,0,0,.05); border-radius: 4px; padding: 0 4px; }
+        .each-box { display: grid; gap: 6px; margin-top: 8px; font-size: 13px; }
+        .each-box .eq { font-family: var(--mono); font-size: 12.5px; background: var(--ctx-row-soft); border-radius: var(--radius-sm); padding: 6px 8px; color: var(--text); }
+        .each-box .eq b { color: var(--ctx-row); }
+
+        @media (max-width: 820px) {
+            .pq-top { grid-template-columns: minmax(0, 1fr); }
+            .pq-applied ol { flex-direction: row; overflow-x: auto; gap: 6px; padding-bottom: 4px; -webkit-overflow-scrolling: touch; }
+            .pq-applied li { flex: none; }
+            .pq-applied button.st { white-space: nowrap; border-color: var(--line); }
+            .pq-how { grid-template-columns: minmax(0, 1fr); }
+            .pq-code .ln { grid-template-columns: 22px minmax(0, 1fr); padding-right: 8px; }
+            .pq-code .ln .gut { padding-right: 6px; }
+            .pq-dims { margin-left: 0; width: 100%; }
+        }
+        @media (max-width: 520px) {
+            .pq-table { font-size: 12.5px; }
+            .pq-table th, .pq-table td { padding-left: 5px; padding-right: 5px; }
+            .pq-table th { font-size: 10.5px; }
+            .pq-table th .hd { gap: 4px; }
+            .pq-table th .hd { flex-direction: column; align-items: flex-start; gap: 2px; }
+            .pq-table th.num .hd, .pq-table th .hd.r { align-items: flex-end; }
+            .pq-top > .vz-card { padding: 12px 10px; }
+        }
+    </style>
+</head>
+<body>
+<div class="vz-app">
+    <header class="vz-head">
+        <div class="vz-kicker">Power Query · Język M</div>
+        <h1 class="vz-title">Kroki zapytania: jak czytać kod M</h1>
+        <p class="vz-lead">Każdy krok z panelu „Zastosowane kroki” to jedna linia w kodzie M: nazwana zmienna, która bierze wynik poprzedniego kroku i coś z nim robi. Wybierz krok i zobacz, co zmienił w danych i gdzie jest w kodzie.</p>
+    </header>
+
+    <div class="pq-top">
+        <nav class="vz-card pq-applied" aria-label="Zastosowane kroki">
+            <div class="vz-label">Zastosowane kroki</div>
+            <ol id="applied"></ol>
+            <div class="nav">
+                <button type="button" class="vz-btn" id="prevBtn">← Wstecz</button>
+                <button type="button" class="vz-btn primary" id="nextBtn">Dalej →</button>
+            </div>
+        </nav>
+
+        <section class="vz-card">
+            <div class="vz-label" id="previewLabel">Podgląd danych</div>
+            <div class="pq-diff" id="diff"></div>
+            <div id="preview"></div>
+            <div class="vz-legend" id="legend"></div>
+        </section>
+    </div>
+
+    <div class="vz-label">Kod M · Edytor zaawansowany</div>
+    <div class="vz-code pq-code" id="code"></div>
+    <div class="pq-how">
+        <div><code>let</code> otwiera listę kroków. Każdy krok to <b>nazwa = wyrażenie</b>, a kroki rozdziela przecinek.</div>
+        <div>Krok zwykle bierze wynik <b>poprzedniego kroku</b> jako pierwszy argument. Nazwy ze spacją piszemy jako <code>#"…"</code>.</div>
+        <div><code>in</code> mówi, który krok jest wynikiem całego zapytania. Najczęściej to ostatni krok.</div>
+    </div>
+
+    <div class="vz-grid">
+        <section class="vz-card">
+            <div class="vz-label">Co robi ten krok</div>
+            <div class="vz-steps" id="steps"></div>
+        </section>
+        <div>
+            <div class="vz-takeaway" id="takeaway" style="margin-top:0"></div>
+        </div>
+    </div>
+</div>
+
+<script src="../viz/kit.js"></script>
+<script>
+    // ================= Dane: plik CSV, tak jak widzi go Csv.Document =================
+    const CSV_TEXT = [
+        'Data;Klient;Produkt;Kwota;Uwagi',
+        '2024-03-01;Nowak;Rower;1200;',
+        '2024-03-02;Kowalska;Kask;90;promocja',
+        '2024-03-04;Wiśniewski;Rower;800;',
+        '2024-03-05;Nowak;Bidon;35;',
+        '2024-03-07;Zając;Kask;150;',
+        '2024-03-08;Kowalska;Rower;1500;na raty',
+        '2024-03-11;Wiśniewski;Kurtka;450;',
+        '2024-03-12;Zając;Bidon;100;',
+    ].join('\n');
+
+    // ================= Mini-silnik M (tylko to, czego używa zapytanie) =================
+    // Tabela = { columns: [{ name, type }], rows: [{ __id, kolumna: wartość }] }
+    // Typy: 'any' | 'text' | 'int' (Int64.Type) | 'number' | 'date'
+    const M = {};
+    const mdate = iso => ({ __date: iso });
+    const isDate = v => v && typeof v === 'object' && '__date' in v;
+
+    M.CsvDocument = (text, delim) => {
+        const lines = text.split('\n');
+        const n = lines[0].split(delim).length;
+        const columns = Array.from({ length: n }, (_, i) => ({ name: 'Column' + (i + 1), type: 'any' }));
+        const rows = lines.map((line, i) => {
+            const vals = line.split(delim);
+            const r = { __id: i };
+            columns.forEach((c, j) => { r[c.name] = vals[j] ?? ''; });
+            return r;
+        });
+        return { columns, rows };
+    };
+
+    M.PromoteHeaders = t => {
+        const [first, ...rest] = t.rows;
+        const names = t.columns.map(c => String(first[c.name]));
+        const columns = t.columns.map((c, j) => ({ name: names[j], type: c.type }));
+        const rows = rest.map(r => {
+            const o = { __id: r.__id };
+            t.columns.forEach((c, j) => { o[names[j]] = r[c.name]; });
+            return o;
+        });
+        return { columns, rows };
+    };
+
+    const convert = (v, type) => {
+        if (v === null) return null;
+        if (type === 'text') return isDate(v) ? v.__date : String(v);
+        if (type === 'int' || type === 'number') {
+            if (typeof v === 'number') return type === 'int' ? Math.round(v) : v;
+            const s = String(v).trim();
+            if (s === '') return null;
+            const n = Number(s.replace(',', '.'));
+            if (Number.isNaN(n)) return { __error: 'DataFormat.Error' };
+            return type === 'int' ? Math.round(n) : n;
+        }
+        if (type === 'date') {
+            const s = String(v).trim();
+            if (s === '') return null;
+            return /^\d{4}-\d{2}-\d{2}$/.test(s) ? mdate(s) : { __error: 'DataFormat.Error' };
+        }
+        return v;
+    };
+
+    M.TransformColumnTypes = (t, pairs) => {
+        const map = Object.fromEntries(pairs);
+        return {
+            columns: t.columns.map(c => (map[c.name] ? { name: c.name, type: map[c.name] } : c)),
+            rows: t.rows.map(r => {
+                const o = { ...r };
+                for (const [name, type] of pairs) o[name] = convert(r[name], type);
+                return o;
+            }),
+        };
+    };
+
+    M.RemoveColumns = (t, names) => ({
+        columns: t.columns.filter(c => !names.includes(c.name)),
+        rows: t.rows.map(r => { const o = { ...r }; names.forEach(n => delete o[n]); return o; }),
+    });
+
+    // each [Kwota] > 100  ==  (_) => _[Kwota] > 100 ; tu: fn(_) z rekordem bieżącego wiersza
+    M.SelectRows = (t, fn) => ({ columns: t.columns, rows: t.rows.filter(r => fn(r) === true) });
+
+    M.AddColumn = (t, name, fn, type = 'any') => ({
+        columns: [...t.columns, { name, type }],
+        rows: t.rows.map(r => ({ ...r, [name]: fn(r) })),
+    });
+
+    // mnożenie liczb jak w M (double) — tylko bez śmieci zmiennoprzecinkowych w wyświetlaniu
+    const mul = (a, b) => (a === null || b === null ? null : Math.round(a * b * 1e10) / 1e10);
+
+    // ================= Kroki zapytania =================
+    const fn = s => `{{fn|${s}}}`;
+    const STEPS = [
+        {
+            kind: 'source', title: 'Źródło', id: 'Źródło', ref: null,
+            expr: () => `${fn('Csv.Document')}(${fn('File.Contents')}("C:\\Dane\\sprzedaz.csv"), [Delimiter = ";", Encoding = 65001])`,
+            run: () => M.CsvDocument(CSV_TEXT, ';'),
+            what: 'Odczytuje plik CSV. Każda linia pliku to wiersz, każdy średnik to granica kolumny. Power Query nie wie jeszcze, co jest nagłówkiem, więc kolumny nazywają się <b>Column1…Column5</b>, a pierwszy wiersz to zwykłe dane. Typ każdej kolumny: <b>any</b> (ikona ABC/123).',
+            takeaway: 'Każdy krok z panelu to jedna linia w <code>let</code>: <b>nazwa = wyrażenie</b>. Źródło jest pierwsze, więc nie bierze wyniku żadnego innego kroku, tylko czyta plik.',
+        },
+        {
+            kind: 'promote', title: 'Nagłówki o podwyższonym poziomie', id: '#"Nagłówki o podwyższonym poziomie"', ref: 'Źródło',
+            expr: r => `Table.PromoteHeaders(${r}, [PromoteAllScalars = true])`,
+            run: t => M.PromoteHeaders(t),
+            what: '<b>Table.PromoteHeaders</b> zabiera pierwszy wiersz tabeli i robi z jego wartości nazwy kolumn. Tabela ma teraz o jeden wiersz mniej, a kolumny nazywają się Data, Klient, Produkt, Kwota, Uwagi. Typy się nie zmieniają: dalej any.',
+            takeaway: 'Krok niczego nie nadpisuje. <code>Źródło</code> dalej istnieje w niezmienionej postaci, a nowy krok to <b>nowa tabela</b> zbudowana na jego podstawie. Dlatego klik w dowolny wcześniejszy krok pokazuje dane z tamtego momentu.',
+        },
+        {
+            kind: 'types', title: 'Zmieniono typ', id: '#"Zmieniono typ"', ref: '#"Nagłówki o podwyższonym poziomie"',
+            expr: r => `Table.TransformColumnTypes(${r}, {{"Data", type date}, {"Klient", type text}, {"Produkt", type text}, {"Kwota", ${fn('Int64.Type')}}, {"Uwagi", type text}})`,
+            types: [['Data', 'date'], ['Klient', 'text'], ['Produkt', 'text'], ['Kwota', 'int'], ['Uwagi', 'text']],
+            run(t) { return M.TransformColumnTypes(t, this.types); },
+            what: '<b>Table.TransformColumnTypes</b> dostaje listę par <span class="mono">{"kolumna", typ}</span> i konwertuje wartości. Tekst „2024-03-01” staje się datą, tekst „1200” staje się liczbą całkowitą 1200 (liczby wyrównują się do prawej).',
+            takeaway: 'Typy ustawia się <b>po</b> nagłówkach, bo funkcja szuka kolumn po nazwie. Bez tego kroku Kwota to tekst „1200” i porównanie <code>[Kwota] &gt; 100</code> skończyłoby się błędem: M nie porównuje tekstu z liczbą.',
+        },
+        {
+            kind: 'remove', title: 'Usunięto kolumny', id: '#"Usunięto kolumny"', ref: '#"Zmieniono typ"',
+            expr: r => `Table.RemoveColumns(${r}, {"Uwagi"})`,
+            names: ['Uwagi'],
+            run(t) { return M.RemoveColumns(t, this.names); },
+            what: '<b>Table.RemoveColumns</b> dostaje tabelę i listę nazw kolumn do usunięcia. Reszta tabeli zostaje bez zmian: te same wiersze, te same typy.',
+            takeaway: 'Kolumny są wymienione <b>z nazwy</b>. Jeśli w nowym pliku kolumny Uwagi zabraknie, ten krok zwróci błąd. Zabezpieczenie: trzeci argument <code>MissingField.Ignore</code>.',
+        },
+        {
+            kind: 'filter', title: 'Przefiltrowano wiersze', id: '#"Przefiltrowano wiersze"', ref: '#"Usunięto kolumny"',
+            expr: (r, on) => `Table.SelectRows(${r}, ${on ? '{{row|each [Kwota] > 100}}' : 'each [Kwota] > 100'})`,
+            pred: _ => _.Kwota !== null && _.Kwota > 100,
+            predLabel: '[Kwota] > 100',
+            run(t) { return M.SelectRows(t, this.pred); },
+            what: '<b>Table.SelectRows</b> wywołuje funkcję <span class="mono">each [Kwota] &gt; 100</span> raz dla każdego wiersza. Wiersz zostaje tylko wtedy, gdy wynik to <b>true</b>. Kolumna z przerywaną linią w podglądzie pokazuje ten wynik dla każdego wiersza.',
+            each: true,
+            takeaway: '<code>each</code> to skrót od funkcji <code>(_) =&gt; …</code>, gdzie <code>_</code> to <b>bieżący wiersz</b> (rekord), a <code>[Kwota]</code> to skrót od <code>_[Kwota]</code>. Bidon za 100 wypada, bo <code>100 &gt; 100</code> to false.',
+        },
+        {
+            kind: 'add', title: 'Dodano kolumnę niestandardową', id: '#"Dodano kolumnę niestandardową"', ref: '#"Przefiltrowano wiersze"',
+            expr: (r, on) => `Table.AddColumn(${r}, "Brutto", ${on ? '{{row|each [Kwota] * 1.23}}' : 'each [Kwota] * 1.23'})`,
+            run: t => M.AddColumn(t, 'Brutto', _ => mul(_.Kwota, 1.23)),
+            what: '<b>Table.AddColumn</b> dokleja na końcu kolumnę „Brutto”. Wartość liczy ta sama konstrukcja co przy filtrze: <span class="mono">each</span> dla każdego wiersza, <span class="mono">[Kwota]</span> to pole bieżącego wiersza.',
+            each: true,
+            takeaway: 'To ostatni krok, więc to jego nazwę zwraca <code>in</code> i to jest wynik zapytania, który trafi do modelu. Uwaga na typ: nowa kolumna ma typ <b>any</b> (ABC/123), bo funkcja nie dostała typu. Lepiej dopisać czwarty argument: <code>each [Kwota] * 1.23, type number</code>.',
+        },
+    ];
+
+    // Wykonaj zapytanie krok po kroku — każdy krok na wyniku poprzedniego
+    const RESULTS = [];
+    STEPS.forEach((s, i) => RESULTS.push(s.run(i ? RESULTS[i - 1] : null)));
+
+    // ================= Formatowanie =================
+    const TYPE_NAME = { any: 'any (dowolny)', text: 'tekst', int: 'liczba całkowita', number: 'liczba dziesiętna', date: 'data' };
+    const CAL = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="3" width="12" height="11" rx="1.5"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"/></svg>';
+    const typeIcon = (t, cls = '') => {
+        const inner = { any: 'ABC<br>123', text: 'ABC', int: '1²3', number: '1.2', date: CAL }[t];
+        return `<span class="ty ${t} ${cls}" title="Typ: ${TYPE_NAME[t]}">${inner}</span>`;
+    };
+
+    const fmtVal = v => {
+        if (v === null || v === undefined) return '<span class="null">null</span>';
+        if (v && v.__error) return `<span style="color:var(--bad)">Error</span>`;
+        if (isDate(v)) { const [y, m, d] = v.__date.split('-'); return `${d}.${m}.${y}`; }
+        if (typeof v === 'number') return String(v).replace('.', ',');
+        if (v === '') return '<span class="empty"></span>';
+        return VZ.esc(v);
+    };
+    const asText = v => (typeof v === 'string' ? `"${VZ.esc(v)}"` : fmtVal(v));
+
+    const plForm = (n, one, few, many) => (n === 1 ? one : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? few : many);
+    const plRows = n => plForm(n, 'wiersz', 'wiersze', 'wierszy');
+    const plCols = n => plForm(n, 'kolumna', 'kolumny', 'kolumn');
+
+    // ================= Podgląd z różnicą =================
+    function renderPreview(i) {
+        const step = STEPS[i];
+        const cur = RESULTS[i];
+        const prev = i ? RESULTS[i - 1] : null;
+        const curNames = cur.columns.map(c => c.name);
+        const prevById = prev ? Object.fromEntries(prev.rows.map(r => [r.__id, r])) : {};
+        const curIds = new Set(cur.rows.map(r => r.__id));
+
+        // kolumny do pokazania (z historią)
+        let cols;
+        if (!prev) cols = cur.columns.map(c => ({ ...c, st: '' }));
+        else if (step.kind === 'promote') cols = cur.columns.map((c, j) => ({ ...c, st: 'renamed', old: prev.columns[j].name }));
+        else {
+            cols = prev.columns.map(pc => {
+                const cc = cur.columns.find(c => c.name === pc.name);
+                if (!cc) return { ...pc, st: 'del' };
+                if (cc.type !== pc.type) return { ...cc, st: 'chg', oldType: pc.type };
+                return { ...cc, st: '' };
+            });
+            cur.columns.filter(c => !prev.columns.some(p => p.name === c.name)).forEach(c => cols.push({ ...c, st: 'add' }));
+        }
+
+        // wiersze do pokazania
+        let rows;
+        if (step.kind === 'filter') rows = prev.rows.map(r => ({ r, st: curIds.has(r.__id) ? '' : 'del' }));
+        else if (step.kind === 'promote') rows = [{ r: prev.rows[0], st: 'hdr', src: prev }, ...cur.rows.map(r => ({ r, st: '' }))];
+        else rows = cur.rows.map(r => ({ r, st: '' }));
+
+        const colCls = c => ({ del: 'c-del', add: 'c-add', chg: 'c-chg' }[c.st] || '');
+        const head = '<th class="rn"></th>' + cols.map(c => {
+            let icon = typeIcon(c.type, c.st === 'chg' ? 'new' : '');
+            let old = c.st === 'renamed' ? `<span class="old">${VZ.esc(c.old)}</span>` : '';
+            if (c.st === 'chg') old = `<span class="old">było: ${typeIcon(c.oldType, 'was')}</span>`;
+            const tag = c.st === 'del' ? ' · usunięta' : c.st === 'add' ? ' · nowa' : '';
+            return `<th class="${colCls(c)}">${old}<span class="hd">${icon}${VZ.esc(c.name)}${tag}</span></th>`;
+        }).join('') + (step.kind === 'filter' ? `<th class="c-pred">each<br>${VZ.esc(step.predLabel)}</th>` : '');
+
+        let n = 0;
+        const body = rows.map(({ r, st, src }, k) => {
+            const rn = st === 'hdr' ? '↑' : st === 'del' ? '✕' : ++n;
+            const cells = cols.map((c, j) => {
+                let v;
+                if (st === 'hdr') v = r[src.columns[j].name];
+                else v = curIds.has(r.__id) && c.st !== 'del' ? cur.rows.find(x => x.__id === r.__id)[c.name] : (prevById[r.__id] || r)[c.name];
+                let cls = colCls(c);
+                let html = fmtVal(v);
+                if (c.st === 'chg' && st === '') {
+                    const pv = prevById[r.__id][c.name];
+                    if (asText(pv) !== asText(v)) html = `<span class="was">${asText(pv)}</span>${html}`;
+                    else cls = '';
+                }
+                if (typeof v === 'number' || isDate(v)) cls += ' num';
+                return `<td class="${cls}">${html}</td>`;
+            }).join('');
+            let pred = '';
+            if (step.kind === 'filter') {
+                const ok = step.pred(r);
+                pred = `<td class="c-pred">${ok ? '<span class="t">true</span>' : '<span class="f">false</span>'}</td>`;
+            }
+            const cls = { del: 'r-del', hdr: 'r-hdr' }[st] || '';
+            return `<tr class="${cls}" style="animation-delay:${k * 25}ms"><td class="rn">${rn}</td>${cells}${pred}</tr>`;
+        }).join('');
+
+        document.getElementById('preview').innerHTML =
+            `<div class="vz-table-wrap"><table class="vz-table pq-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+        document.getElementById('previewLabel').innerHTML =
+            `<span class="vz-num">${i + 1}</span>Podgląd danych · wynik kroku „${VZ.esc(step.title)}”`;
+
+        // chipy z różnicą
+        const chips = [];
+        if (!prev) chips.push(VZ.chip('', 'nowa tabela z pliku', 'visual'));
+        if (step.kind === 'promote') chips.push(VZ.chip('', '1. wiersz → nazwy kolumn', 'calc'), VZ.chip('', '−1 wiersz danych', 'none'));
+        cols.filter(c => c.st === 'del').forEach(c => chips.push(VZ.chip('', '− kolumna ' + c.name, 'off')));
+        cols.filter(c => c.st === 'add').forEach(c => chips.push(VZ.chip('', '+ kolumna ' + c.name, 'row')));
+        cols.filter(c => c.st === 'chg').forEach(c => chips.push(VZ.chip(c.name, `${c.oldType} → ${TYPE_NAME[c.type]}`, 'calc')));
+        if (step.kind === 'types') {
+            const same = cols.filter(c => c.st === '' ).map(c => c.name);
+            if (same.length) chips.push(VZ.chip('', 'bez zmian: ' + same.join(', '), 'none'));
+        }
+        const dropped = rows.filter(x => x.st === 'del').length;
+        if (dropped) chips.push(VZ.chip('', `− ${dropped} ${plRows(dropped)} (each → false)`, 'empty'));
+        document.getElementById('diff').innerHTML = chips.join('') +
+            `<span class="pq-dims">${cur.rows.length} ${plRows(cur.rows.length)} × ${cur.columns.length} ${plCols(cur.columns.length)}</span>`;
+
+        // legenda tylko z tym, co widać
+        const lg = [];
+        if (step.kind === 'promote') lg.push(['var(--ctx-calc)', 'var(--ctx-calc-soft)', 'wiersz, który stał się nagłówkiem']);
+        if (step.kind === 'types') lg.push(['var(--ctx-calc)', 'var(--ctx-calc-soft)', 'wartość po konwersji (przekreślona: przed)']);
+        if (step.kind === 'remove') lg.push(['var(--ctx-off)', 'var(--ctx-off-soft)', 'kolumna usunięta w tym kroku']);
+        if (step.kind === 'filter') lg.push(['var(--ctx-off)', 'var(--ctx-off-soft)', 'wiersz odrzucony (each zwróciło false)']);
+        if (step.kind === 'add') lg.push(['var(--ctx-row)', 'var(--ctx-row-soft)', 'kolumna dodana w tym kroku']);
+        lg.push(['var(--text-3)', 'var(--bg)', 'ikona = typ kolumny: ABC/123 any, ABC tekst, 1²3 liczba całkowita, kalendarz data']);
+        document.getElementById('legend').innerHTML = lg.map(([c, b, t]) => `<span style="color:${c}"><i style="background:${b}"></i>${t}</span>`).join('');
+    }
+
+    // ================= Kod M =================
+    function renderCode(i) {
+        const step = STEPS[i];
+        const lines = [];
+        lines.push({ src: 'let', ind: 0, cls: '' });
+        STEPS.forEach((s, k) => {
+            const ref = s.ref ? (k === i ? `{{visual|${s.ref}}}` : s.ref) : '';
+            const comma = k < STEPS.length - 1 ? ',' : '';
+            let cls = k === i ? 'is-cur' : k > i ? 'is-later' : '';
+            if (step.ref && s.id === step.ref) cls = 'is-ref';
+            let badge = '';
+            if (k === i && s.ref) badge = `<span class="badge ref">↑ bierze wynik kroku: ${VZ.esc(s.ref)}</span>`;
+            if (k === i && !s.ref) badge = '<span class="badge out">pierwszy krok, czyta plik — nie bierze wyniku innego kroku</span>';
+            if (step.ref && s.id === step.ref) badge = `<span class="badge out">↓ wynik tego kroku idzie do: ${VZ.esc(step.id)}</span>`;
+            lines.push({ src: `${s.id} = ${s.expr(ref, k === i)}${comma}`, ind: 4, cls, badge });
+        });
+        const last = STEPS[STEPS.length - 1];
+        lines.push({ src: 'in', ind: 0, cls: i === STEPS.length - 1 ? 'is-ret' : '' });
+        lines.push({
+            src: last.id, ind: 4, cls: i === STEPS.length - 1 ? 'is-ret' : '',
+            badge: i === STEPS.length - 1 ? '<span class="badge ret">in zwraca ten krok = wynik zapytania</span>' : '',
+        });
+
+        document.getElementById('code').innerHTML = lines.map((l, n) =>
+            `<div class="ln ${l.cls}"><span class="gut">${n + 1}</span><div class="src" style="--ind:${l.ind}">${VZ.code(l.src)}${l.badge ? '<br>' + l.badge : ''}</div></div>`).join('');
+    }
+
+    // ================= Wyjaśnienie =================
+    function renderSteps(i) {
+        const s = STEPS[i];
+        const cur = RESULTS[i];
+        const needsHash = s.id.startsWith('#"');
+        const nameNote = needsHash
+            ? 'Nazwa ma spację, więc w kodzie zapisana jest jako <span class="mono">#"…"</span>. To ta sama nazwa, którą widać w panelu kroków.'
+            : 'Nazwa bez spacji nie potrzebuje zapisu <span class="mono">#"…"</span>.';
+        const input = s.ref
+            ? `<div class="vz-chips">${VZ.chip('wejście', s.ref, 'visual')}${VZ.op('→', 'arrow')}${VZ.chip('wynik', s.id, 'row')}</div>
+               <div class="vz-step-note">Pierwszy argument funkcji to <b>${VZ.esc(s.ref)}</b>, czyli tabela z poprzedniego kroku (${RESULTS[i - 1].rows.length} ${plRows(RESULTS[i - 1].rows.length)} × ${RESULTS[i - 1].columns.length} ${plCols(RESULTS[i - 1].columns.length)}).</div>`
+            : `<div class="vz-chips">${VZ.chip('', 'brak — to pierwszy krok', 'none')}</div>`;
+
+        let eachBox = '';
+        if (s.each) {
+            const sample = RESULTS[i - 1].rows[1];
+            const val = s.kind === 'filter' ? (s.pred(sample) ? 'true' : 'false') : fmtVal(mul(sample.Kwota, 1.23));
+            const body = s.kind === 'filter' ? '_[Kwota] &gt; 100' : '_[Kwota] * 1.23';
+            eachBox = `<div class="each-box">
+                <div class="eq"><b>each</b> [Kwota] ${s.kind === 'filter' ? '&gt; 100' : '* 1.23'} &nbsp;≡&nbsp; (<b>_</b>) =&gt; ${body}</div>
+                <div class="eq">np. dla wiersza ${sample.Produkt}, ${sample.Klient}: <b>_</b>[Kwota] = ${fmtVal(sample.Kwota)} → wynik = <b>${val}</b></div>
+            </div>`;
+        }
+
+        document.getElementById('steps').innerHTML = `
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num">1</span>Nazwa kroku = zmienna</div>
+                <div class="vz-chips">${VZ.chip('', s.id, 'row')}</div>
+                <div class="vz-step-note">${nameNote}</div>
+            </div>
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-visual)">2</span>Na czym pracuje</div>
+                ${input}
+            </div>
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-calc)">3</span>Co robi funkcja</div>
+                <div class="vz-step-note" style="margin-top:0">${s.what}</div>
+                ${eachBox}
+            </div>
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-row)">4</span>Wynik kroku</div>
+                <div class="vz-result" style="margin-top:0;border-top:none;padding-top:0">
+                    <span class="lbl">Tabela „${VZ.esc(s.title)}”</span>
+                    <span class="val">${cur.rows.length} × ${cur.columns.length}</span>
+                </div>
+                <div class="vz-step-note">${i < STEPS.length - 1
+                    ? `Ten wynik weźmie następny krok: <b>${VZ.esc(STEPS[i + 1].id)}</b>.`
+                    : 'Nikt go już nie bierze dalej, za to wskazuje go <b>in</b>: to wynik całego zapytania.'}</div>
+            </div>`;
+        VZ.reveal(document.getElementById('steps'));
+        document.getElementById('takeaway').innerHTML = s.takeaway;
+    }
+
+    // ================= Panel kroków =================
+    let current = 0;
+    const applied = document.getElementById('applied');
+    applied.innerHTML = STEPS.map((s, k) =>
+        `<li><button type="button" class="st" data-i="${k}"><span class="no">${k + 1}</span>${VZ.esc(s.title)}</button></li>`).join('');
+    applied.addEventListener('click', e => {
+        const b = e.target.closest('button.st');
+        if (b) select(+b.dataset.i);
+    });
+
+    function select(i) {
+        current = Math.max(0, Math.min(STEPS.length - 1, i));
+        applied.querySelectorAll('button.st').forEach((b, k) => {
+            b.setAttribute('aria-current', k === current);
+            b.classList.toggle('done', k < current);
+            b.classList.toggle('later', k > current);
+        });
+        const active = applied.querySelector(`button.st[data-i="${current}"]`);
+        if (active && window.matchMedia('(max-width: 820px)').matches) active.scrollIntoView({ block: 'nearest', inline: 'center', behavior: 'smooth' });
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === STEPS.length - 1;
+        renderPreview(current);
+        renderCode(current);
+        renderSteps(current);
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', () => select(current - 1));
+    document.getElementById('nextBtn').addEventListener('click', () => select(current + 1));
+    document.addEventListener('keydown', e => {
+        if (e.target.closest('input, textarea')) return;
+        if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { e.preventDefault(); select(current + 1); }
+        if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') { e.preventDefault(); select(current - 1); }
+    });
+
+    select(0);
+</script>
+</body>
+</html>

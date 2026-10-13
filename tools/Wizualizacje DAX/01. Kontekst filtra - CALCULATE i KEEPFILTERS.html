@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CALCULATE kontra KEEPFILTERS</title>
+    <link rel="stylesheet" href="../viz/kit.css">
+    <style>
+        .combine { display: flex; flex-direction: column; gap: 8px; }
+        .combine-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+        .combine-row .field {
+            min-width: 82px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        .step-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+        .step-head .vz-label { margin: 0; }
+        #stepNav { display: none; }
+        .manual #stepNav { display: flex; }
+        .manual #playBtn { display: none; }
+    </style>
+</head>
+<body>
+<div class="vz-app">
+    <header class="vz-head">
+        <div class="vz-kicker">DAX · Kontekst filtra</div>
+        <h1 class="vz-title">CALCULATE kontra KEEPFILTERS</h1>
+        <p class="vz-lead">Kliknij komórkę macierzy, a potem przełączaj formuły. Po prawej widać, z jakim kontekstem filtra liczy się miara i które wiersze tabeli faktycznie sumuje.</p>
+    </header>
+
+    <div id="tabs"></div>
+    <div class="vz-code" id="code"></div>
+
+    <div class="vz-grid">
+        <div>
+        <section class="vz-card">
+            <div class="vz-label">Wizualizacja · macierz</div>
+            <div id="matrix"></div>
+            <div class="vz-legend">
+                <span style="color: var(--ctx-visual)"><i style="background: var(--ctx-visual-soft)"></i>wybrana komórka = kontekst z wizualizacji</span>
+                <span id="legendChanged" style="color: var(--ctx-calc)"><i style="background: var(--ctx-calc-soft)"></i>wynik inny niż samej miary (przekreślony)</span>
+            </div>
+        </section>
+        <div class="vz-takeaway" id="takeaway"></div>
+        </div>
+
+        <section class="vz-card" id="explain">
+            <div class="step-head">
+                <div class="vz-label">Co się dzieje w komórce</div>
+                <div class="vz-bar">
+                    <button type="button" class="vz-btn" id="playBtn">▶ Krok po kroku</button>
+                    <div class="vz-bar" id="stepNav">
+                        <button type="button" class="vz-btn" id="prevBtn">←</button>
+                        <span class="vz-hint" id="stepInfo"></span>
+                        <button type="button" class="vz-btn primary" id="nextBtn">Dalej →</button>
+                    </div>
+                </div>
+            </div>
+            <div class="vz-steps" id="steps"></div>
+        </section>
+    </div>
+</div>
+
+<script src="../viz/kit.js"></script>
+<script>
+    const ROWS = VZ.sales;
+    const CATS = ['Rowery', 'Kaski', 'Odzież'];
+    const COLS = ['Czerwony', 'Niebieski', 'Czarny'];
+    const TARGET = 'Czerwony';
+
+    // Każda formuła: jak zmienia kontekst z wizualizacji
+    const FORMULAS = {
+        base: {
+            label: 'Sama miara',
+            code: 'Sprzedaż = SUM(Sprzedaz[Kwota])',
+            apply: ctx => ({ ...ctx }),
+            takeaway: 'Miara nie ma własnych filtrów, więc liczy się dokładnie w kontekście komórki: wiersz macierzy filtruje Kategorię, kolumna filtruje Kolor. Wiersz „Suma” nie filtruje koloru, kolumna „Suma” nie filtruje kategorii.',
+        },
+        calc: {
+            label: 'CALCULATE',
+            code: 'Czerwone = CALCULATE([Sprzedaż], {{calc|Sprzedaz[Kolor] = "Czerwony"}})',
+            apply: ctx => ({ ...ctx, Kolor: [TARGET] }),
+            takeaway: 'CALCULATE <b>nadpisuje</b> filtr na kolumnie Kolor. Kolor z kolumny macierzy zostaje wyrzucony i zastąpiony „Czerwony” — dlatego każda kolumna pokazuje sprzedaż czerwonych. Filtr na Kategorii zostaje, bo CALCULATE go nie dotyka.',
+        },
+        keep: {
+            label: 'KEEPFILTERS',
+            code: 'Czerwone (KF) = CALCULATE([Sprzedaż], {{and|KEEPFILTERS(Sprzedaz[Kolor] = "Czerwony")}})',
+            apply: ctx => ({ ...ctx, Kolor: ctx.Kolor ? VZ.intersect(ctx.Kolor, [TARGET]) : [TARGET] }),
+            takeaway: 'KEEPFILTERS niczego nie wyrzuca — <b>dokłada</b> warunek do istniejącego: Kolor = Niebieski <b>&amp;</b> Kolor = Czerwony. Żaden wiersz nie spełnia obu naraz, więc poza kolumną „Czerwony” wynik jest pusty. W kolumnie „Suma” nie było filtra koloru, więc zostaje sam „Czerwony”.',
+        },
+        remove: {
+            label: 'REMOVEFILTERS',
+            code: 'Wszystkie kolory = CALCULATE([Sprzedaż], {{off|REMOVEFILTERS(Sprzedaz[Kolor])}})',
+            apply: ctx => { const c = { ...ctx }; delete c.Kolor; return c; },
+            takeaway: 'REMOVEFILTERS <b>zdejmuje</b> filtr z kolumny Kolor. Komórka wie tylko o Kategorii, więc w całym wierszu macierzy widać tę samą liczbę — sumę kategorii. To podstawa udziałów %: [Sprzedaż] / [Wszystkie kolory].',
+        },
+    };
+
+    const state = { formula: 'base', sel: { r: 'Rowery', c: 'Niebieski' }, manual: false };
+    let stepper = null;
+
+    const visualCtx = sel => {
+        const ctx = {};
+        if (sel.r) ctx.Kategoria = [sel.r];
+        if (sel.c) ctx.Kolor = [sel.c];
+        return ctx;
+    };
+
+    const ctxValue = (formulaId, ctx) => VZ.sumIn(ROWS, FORMULAS[formulaId].apply(ctx), 'Kwota');
+
+    function renderMatrix() {
+        const f = state.formula;
+        VZ.matrix(document.getElementById('matrix'), {
+            rowField: 'Kategoria', colField: 'Kolor', rowValues: CATS, colValues: COLS,
+            value: ctx => ctxValue(f, ctx),
+            base: f === 'base' ? null : ctx => ctxValue('base', ctx),
+            selected: state.sel,
+            onSelect: sel => { state.sel = sel; render(true); },
+        });
+        document.getElementById('legendChanged').style.visibility = f === 'base' ? 'hidden' : 'visible';
+    }
+
+    // Krok 3: jak powstaje nowy kontekst, kolumna po kolumnie
+    function combineHtml(f, vis) {
+        const lines = [];
+        const kat = vis.Kategoria
+            ? VZ.chip('Kategoria', vis.Kategoria, 'visual', f === 'base' ? '' : 'bez zmian')
+            : VZ.chip('Kategoria', 'wszystkie', 'none', 'brak filtra');
+        lines.push(['Kategoria', kat]);
+
+        let kolor;
+        const visChip = vis.Kolor ? VZ.chip('Kolor', vis.Kolor, 'visual') : VZ.chip('Kolor', 'wszystkie', 'none', 'brak filtra');
+        if (f === 'base') {
+            kolor = visChip;
+        } else if (f === 'calc') {
+            kolor = (vis.Kolor ? VZ.chip('Kolor', vis.Kolor, 'off', 'nadpisany') : visChip) +
+                VZ.op('→', 'arrow') + VZ.chip('Kolor', TARGET, 'calc');
+        } else if (f === 'keep') {
+            if (vis.Kolor) {
+                const both = VZ.intersect(vis.Kolor, [TARGET]);
+                kolor = VZ.chip('Kolor', vis.Kolor, 'visual') + VZ.op('&') + VZ.chip('Kolor', TARGET, 'calc') + VZ.op('=', 'arrow') +
+                    (both.length ? VZ.chip('Kolor', both, 'and') : VZ.chip('Kolor', [], 'empty', 'nic nie spełnia obu'));
+            } else {
+                kolor = visChip + VZ.op('&') + VZ.chip('Kolor', TARGET, 'calc') + VZ.op('=', 'arrow') + VZ.chip('Kolor', TARGET, 'and');
+            }
+        } else if (f === 'remove') {
+            kolor = vis.Kolor ? VZ.chip('Kolor', vis.Kolor, 'off', 'usunięty') : VZ.chip('Kolor', 'wszystkie', 'none', 'i tak nie było');
+        }
+        lines.push(['Kolor', kolor]);
+        return '<div class="combine">' + lines.map(([n, h]) => `<div class="combine-row"><span class="field">${n}</span>${h}</div>`).join('') + '</div>';
+    }
+
+    function renderSteps() {
+        const f = state.formula;
+        const vis = visualCtx(state.sel);
+        const fin = FORMULAS[f].apply(vis);
+        const result = VZ.sumIn(ROWS, fin, 'Kwota');
+        const where = [state.sel.r || 'Suma (wszystkie kategorie)', state.sel.c || 'Suma (wszystkie kolory)'].join(' × ');
+
+        const visChips = Object.keys(vis).length
+            ? Object.entries(vis).map(([c, v]) => VZ.chip(c, v, 'visual')).join('')
+            : VZ.chip('', 'brak filtrów — komórka sumy całkowitej', 'none');
+
+        const argChip = {
+            base: VZ.chip('', 'brak — miara nie zmienia kontekstu', 'none'),
+            calc: VZ.chip('Kolor', TARGET, 'calc', 'zastąp'),
+            keep: VZ.chip('Kolor', TARGET, 'calc', 'dołóż (&)'),
+            remove: VZ.chip('Kolor', 'dowolny', 'off', 'zdejmij'),
+        }[f];
+
+        const kind = { base: 'in', calc: 'in calc', keep: 'in and', remove: 'in' }[f];
+
+        document.getElementById('steps').innerHTML = `
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-visual)">1</span>Kontekst z wizualizacji · ${VZ.esc(where)}</div>
+                <div class="vz-chips">${visChips}</div>
+            </div>
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-calc)">2</span>Co robi formuła z filtrem</div>
+                <div class="vz-chips">${argChip}</div>
+            </div>
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-and)">3</span>Nowy kontekst filtra</div>
+                ${combineHtml(f, vis)}
+            </div>
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--text)">4</span>Wiersze Sprzedaz, które przechodzą przez filtr</div>
+                <div id="facts"></div>
+                <div class="vz-result">
+                    <span class="lbl">Wynik w komórce</span>
+                    <span class="val ${result === null ? 'blank' : ''}">${result === null ? '(puste)' : VZ.fmt(result)}</span>
+                </div>
+            </div>`;
+
+        VZ.table(document.getElementById('facts'), {
+            columns: [{ key: 'Kategoria' }, { key: 'Kolor' }, { key: 'Kwota', num: true }],
+            rows: ROWS,
+            state: r => (VZ.rowPasses(r, fin) ? kind : 'out'),
+        });
+    }
+
+    function render(animate) {
+        const f = FORMULAS[state.formula];
+        document.getElementById('code').innerHTML = VZ.code(f.code);
+        document.getElementById('takeaway').innerHTML = f.takeaway;
+        renderMatrix();
+        renderSteps();
+        const steps = document.getElementById('steps');
+        if (state.manual) {
+            stepper = VZ.stepper(steps, updateStepNav);
+            stepper.start();
+        } else if (animate) {
+            VZ.reveal(steps);
+        }
+    }
+
+    function updateStepNav(i, n) {
+        document.getElementById('stepInfo').textContent = `Krok ${i + 1} z ${n}`;
+        document.getElementById('prevBtn').disabled = i <= 0;
+        const next = document.getElementById('nextBtn');
+        next.textContent = i >= n - 1 ? 'Pokaż wszystko' : 'Dalej →';
+    }
+
+    document.getElementById('playBtn').addEventListener('click', () => {
+        state.manual = true;
+        document.getElementById('explain').classList.add('manual');
+        render(false);
+    });
+    document.getElementById('prevBtn').addEventListener('click', () => stepper.prev());
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        if (stepper.index >= stepper.count - 1) {
+            state.manual = false;
+            document.getElementById('explain').classList.remove('manual');
+            stepper.showAll();
+        } else {
+            stepper.next();
+        }
+    });
+
+    VZ.tabs(document.getElementById('tabs'),
+        Object.entries(FORMULAS).map(([id, f]) => ({ id, label: f.label })),
+        id => { state.formula = id; render(true); }, state.formula);
+
+    render(true);
+</script>
+</body>
+</html>

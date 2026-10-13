@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analiza czasowa w DAX</title>
+    <link rel="stylesheet" href="../viz/kit.css">
+    <style>
+        .cal { position: relative; }
+                .year + .year { margin-top: 14px; }
+        .year-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 8px;
+            width: 100%;
+            border: 1px solid var(--line);
+            background: var(--surface);
+            border-radius: var(--radius-sm);
+            padding: 5px 10px;
+            margin-bottom: 6px;
+            text-align: left;
+            font-variant-numeric: tabular-nums;
+            transition: background .2s, border-color .2s, box-shadow .2s;
+        }
+        .year-head:hover { border-color: var(--line-strong); }
+        .year-head .y { font-weight: 700; }
+        .year-head .t { font-size: 12.5px; color: var(--text-2); }
+        .year-head .mv { font-size: 12.5px; font-weight: 700; color: var(--ctx-calc); margin-left: 8px; }
+        .year-head.is-sel { box-shadow: inset 0 0 0 2px var(--ctx-visual); background: var(--ctx-visual-soft); }
+
+        .months { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+        .tile {
+            position: relative;
+            border: 1px solid var(--line);
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 5px 6px 4px;
+            text-align: left;
+            min-height: 62px;
+            font-variant-numeric: tabular-nums;
+            line-height: 1.25;
+            transition: background .35s var(--ease), border-color .35s, box-shadow .2s;
+        }
+        .tile:hover { border-color: var(--line-strong); }
+        .tile .m { display: block; font-size: 11.5px; color: var(--text-3); font-weight: 600; }
+        .tile .v { display: block; font-size: 14px; font-weight: 600; }
+        .tile .mv { display: block; font-size: 12px; font-weight: 700; color: var(--ctx-calc); min-height: 15px; }
+        .tile .mv.blank { color: var(--text-3); font-weight: 500; font-style: italic; }
+        .tile.is-res { background: var(--ctx-calc-soft); border-color: var(--ctx-calc); animation: tileIn .45s var(--ease) backwards; animation-delay: var(--d, 0ms); }
+        .tile.is-sel { box-shadow: inset 0 0 0 2px var(--ctx-visual); }
+        .tile.is-sel:not(.is-res) { background: var(--ctx-visual-soft); }
+        .tile.is-res.is-sel { box-shadow: inset 0 0 0 2px var(--ctx-visual); }
+        @keyframes tileIn { from { background: var(--bg); border-color: var(--line); transform: scale(.94); } }
+
+        .ghosts { position: absolute; inset: 0; pointer-events: none; z-index: 2; }
+        .ghost {
+            position: absolute;
+            display: grid;
+            place-items: center;
+            border: 2px dashed var(--ctx-calc);
+            background: rgba(255, 243, 224, .85);
+            border-radius: var(--radius-sm);
+            font: 700 11.5px var(--sans);
+            color: var(--ctx-calc);
+            transition: transform .75s var(--ease) .12s, opacity .35s ease;
+        }
+        .ghost.out { opacity: 0; transition: transform .75s var(--ease) .12s, opacity .6s ease .3s; }
+        .ghost.done { opacity: 0; }
+        .combine { display: flex; flex-direction: column; gap: 8px; }
+        .combine-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+        .combine-row .field { width: 100%; font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; }
+        .vz-chip { white-space: normal; flex-wrap: wrap; row-gap: 0; }
+        .vz-chip > span { white-space: nowrap; }
+        .step-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+        .step-head .vz-label { margin: 0; }
+        #stepNav { display: none; }
+        .manual #stepNav { display: flex; }
+        .manual #playBtn { display: none; }
+
+        .req { margin-top: 16px; }
+        .req ul { padding-left: 18px; font-size: 13.5px; color: var(--text-2); }
+        .req li + li { margin-top: 4px; }
+
+        @media (max-width: 420px) {
+            .months { gap: 4px; }
+            .tile { padding: 4px 4px 3px; min-height: 58px; }
+            .tile .v { font-size: 13px; }
+            .tile .mv { font-size: 11.5px; }
+        }
+    </style>
+</head>
+<body>
+<div class="vz-app">
+    <header class="vz-head">
+        <div class="vz-kicker">DAX · Analiza czasowa</div>
+        <h1 class="vz-title">DATESYTD, SAMEPERIODLASTYEAR, DATEADD, DATESINPERIOD</h1>
+        <p class="vz-lead">Funkcje analizy czasowej biorą daty widoczne w komórce (niebieska ramka) i zwracają nowy zbiór dat (pomarańczowe kafelki). CALCULATE liczy miarę właśnie w tych datach. Kafelek miesiąca albo nagłówek roku to komórka macierzy Rok × Miesiąc.</p>
+    </header>
+
+    <div id="tabs"></div>
+    <div class="vz-code" id="code"></div>
+
+    <div class="vz-grid">
+        <div>
+            <section class="vz-card">
+                <div class="vz-label">Wizualizacja · macierz Rok × Miesiąc</div>
+                <div class="cal" id="cal">
+                    <div class="ghosts" id="ghosts" aria-hidden="true"></div>
+                    <div id="years"></div>
+                </div>
+                <div class="vz-legend">
+                    <span style="color: var(--ctx-visual)"><i style="background: var(--ctx-visual-soft)"></i>wybrana komórka = daty z wizualizacji</span>
+                    <span style="color: var(--ctx-calc)"><i style="background: var(--ctx-calc-soft)"></i>daty zwrócone przez funkcję</span>
+                    <span style="color: var(--text-2)" id="legendMv"><b style="color: var(--ctx-calc)">123</b>&nbsp;wynik miary w komórce</span>
+                </div>
+            </section>
+            <div class="vz-takeaway" id="takeaway"></div>
+            <section class="vz-card req">
+                <div class="vz-label">Warunek: porządna tabela dat</div>
+                <ul>
+                    <li>Kalendarz ma <b>ciągłe daty</b>: każdy dzień od 1 stycznia pierwszego roku do 31 grudnia ostatniego, bez dziur. Tu: 2024-01-01 – 2025-12-31.</li>
+                    <li>Jest <b>oznaczony jako tabela dat</b> (albo relacja idzie po kolumnie typu Data). Dzięki temu filtr na Kalendarz[Data] zdejmuje filtry z Roku i Miesiąca.</li>
+                    <li>Funkcje dostają kolumnę <b>Kalendarz[Data]</b>, a nie datę z tabeli faktów. Kafelki pokazują miesiące, ale funkcje pracują na dniach.</li>
+                </ul>
+            </section>
+        </div>
+
+        <section class="vz-card" id="explain">
+            <div class="step-head">
+                <div class="vz-label">Co się dzieje w komórce</div>
+                <div class="vz-bar">
+                    <button type="button" class="vz-btn" id="playBtn">▶ Krok po kroku</button>
+                    <div class="vz-bar" id="stepNav">
+                        <button type="button" class="vz-btn" id="prevBtn">←</button>
+                        <span class="vz-hint" id="stepInfo"></span>
+                        <button type="button" class="vz-btn primary" id="nextBtn">Dalej →</button>
+                    </div>
+                </div>
+            </div>
+            <div class="vz-steps" id="steps"></div>
+        </section>
+    </div>
+</div>
+
+<script src="../viz/kit.js"></script>
+<script>
+    // ---------- Dane: sprzedaż miesięczna (tys. zł), tabela Kalendarz 2024-01-01 – 2025-12-31 ----------
+    const YEARS = [2024, 2025];
+    const MSHORT = ['Sty', 'Lut', 'Mar', 'Kwi', 'Maj', 'Cze', 'Lip', 'Sie', 'Wrz', 'Paź', 'Lis', 'Gru'];
+    const MFULL = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'];
+    const SALES = [
+        82, 75, 96, 104, 118, 125, 110, 102, 131, 140, 152, 188,   // 2024
+        95, 88, 112, 120, 134, 142, 128, 119, 150, 161, 175, 210,  // 2025
+    ];
+    const N = SALES.length;                 // miesiące 0..23 w tabeli Kalendarz
+    const yearOf = i => YEARS[0] + Math.floor(i / 12);
+    const monthOf = i => ((i % 12) + 12) % 12;
+    const idx = (y, m) => (y - YEARS[0]) * 12 + m;
+
+    // daty (indeks miesiąca może wyjść poza tabelę, np. -1 = grudzień 2023)
+    const pad = n => String(n).padStart(2, '0');
+    const firstDay = i => `${yearOf(i)}-${pad(monthOf(i) + 1)}-01`;
+    const lastDay = i => { const y = yearOf(i), m = monthOf(i); return `${y}-${pad(m + 1)}-${pad(new Date(y, m + 1, 0).getDate())}`; };
+    const daysIn = i => new Date(yearOf(i), monthOf(i) + 1, 0).getDate();
+    const inTable = i => i >= 0 && i < N;
+    const mLabel = i => `${MFULL[monthOf(i)]} ${yearOf(i)}`;
+
+    // zbiór miesięcy -> ciągłe zakresy dat
+    function ranges(list) {
+        const s = [...list].sort((a, b) => a - b);
+        const out = [];
+        s.forEach(i => {
+            const last = out[out.length - 1];
+            if (last && last.to === i - 1) last.to = i; else out.push({ from: i, to: i });
+        });
+        return out.map(r => {
+            let days = 0;
+            for (let i = r.from; i <= r.to; i++) days += daysIn(i);
+            return { ...r, text: `${firstDay(r.from)} – ${lastDay(r.to)}`, days };
+        });
+    }
+    const dni = n => (n === 1 ? '1 dzień' : `${n} dni`);
+
+    // ---------- Funkcje: widoczne miesiące -> miesiące zwrócone (surowo, także poza tabelą) ----------
+    const FUNCS = {
+        base: {
+            label: 'Sama miara',
+            code: 'Sprzedaż = SUM(Sprzedaz[Kwota])',
+            raw: s => s,
+            desc: () => 'Brak funkcji czasu, filtr zostaje taki, jak w komórce.',
+            takeaway: 'Komórka macierzy filtruje Kalendarz[Rok] i Kalendarz[Miesiąc]. Miara liczy się dokładnie w tych dniach: wybrany kafelek i zsumowane daty to to samo.',
+        },
+        ytd: {
+            label: 'DATESYTD / TOTALYTD',
+            code: 'Sprzedaż YTD =\nCALCULATE([Sprzedaż], {{calc|DATESYTD(Kalendarz[Data])}})\n-- to samo krócej: TOTALYTD([Sprzedaż], Kalendarz[Data])',
+            raw: s => { const m = Math.max(...s); const start = idx(yearOf(m), 0); return Array.from({ length: m - start + 1 }, (_, k) => start + k); },
+            desc: s => `Bierze ostatnią widoczną datę (${lastDay(Math.max(...s))}) i zwraca wszystkie dni od 1 stycznia tego roku do niej.`,
+            takeaway: 'DATESYTD <b>wydłuża</b> filtr wstecz do 1 stycznia: od początku roku do ostatniej widocznej daty. Dlatego w macierzy wartości rosną z miesiąca na miesiąc i zaczynają od nowa w styczniu. TOTALYTD to ten sam wzorzec zapisany jedną funkcją.',
+        },
+        sply: {
+            label: 'SAMEPERIODLASTYEAR',
+            code: 'Sprzedaż rok temu =\nCALCULATE([Sprzedaż], {{calc|SAMEPERIODLASTYEAR(Kalendarz[Data])}})',
+            raw: s => s.map(i => i - 12),
+            shift: '−1 rok',
+            desc: () => 'Przesuwa każdą widoczną datę o rok wstecz. Kształt okresu zostaje, zmienia się tylko rok.',
+            takeaway: 'SAMEPERIODLASTYEAR <b>przesuwa</b> cały zbiór dat o rok wstecz: maj 2025 → maj 2024, cały 2025 → cały 2024. W 2024 wynik jest pusty, bo dni z 2023 nie ma w tabeli Kalendarz, a funkcja zwraca tylko daty, które w niej istnieją.',
+        },
+        dateadd: {
+            label: 'DATEADD -1 MONTH',
+            code: 'Sprzedaż poprz. miesiąc =\nCALCULATE([Sprzedaż], {{calc|DATEADD(Kalendarz[Data], -1, MONTH)}})',
+            raw: s => s.map(i => i - 1),
+            shift: '−1 mies.',
+            desc: () => 'Przesuwa każdą widoczną datę o 1 miesiąc wstecz. Pełny miesiąc daje pełny poprzedni miesiąc (także 29 lutego i 31. dni).',
+            takeaway: 'DATEADD <b>przesuwa</b> zbiór dat o dowolny interwał. Przesuwa się każdy dzień, a nie etykieta: na nagłówku całego roku −1 MONTH daje grudzień poprzedniego roku do listopada, a nie poprzedni rok. Ze stycznia 2024 nie ma dokąd się cofnąć, więc wynik jest pusty.',
+        },
+        dip: {
+            label: 'DATESINPERIOD 3M',
+            code: 'Sprzedaż 3M =\nCALCULATE(\n    [Sprzedaż],\n    {{calc|DATESINPERIOD(Kalendarz[Data], MAX(Kalendarz[Data]), -3, MONTH)}}\n)',
+            raw: s => { const m = Math.max(...s); return [m - 2, m - 1, m]; },
+            desc: s => `Od ostatniej widocznej daty (${lastDay(Math.max(...s))}) odmierza 3 miesiące wstecz, łącznie z bieżącym.`,
+            takeaway: 'DATESINPERIOD buduje <b>kroczące okno</b> od ostatniej widocznej daty: 3 miesiące wstecz. Okno jedzie razem z komórką i bez problemu przekracza granicę roku. Na początku kalendarza jest krótsze, bo wcześniejszych dni po prostu nie ma.',
+        },
+    };
+
+    const state = { fn: 'base', sel: { y: 2025, m: 4 }, manual: false, prevFn: null };
+    let stepper = null;
+
+    const selMonths = sel => (sel.m === null ? Array.from({ length: 12 }, (_, k) => idx(sel.y, k)) : [idx(sel.y, sel.m)]);
+    const evalFn = (fn, months) => {
+        const raw = FUNCS[fn].raw(months);
+        const hit = raw.filter(inTable);
+        return { raw, hit, outside: raw.filter(i => !inTable(i)), value: hit.length ? hit.reduce((s, i) => s + SALES[i], 0) : null };
+    };
+
+    // ---------- Kalendarz ----------
+    function renderCal(animate) {
+        const fn = state.fn;
+        const sel = state.sel;
+        const months = selMonths(sel);
+        const res = evalFn(fn, months);
+        const showMv = fn !== 'base';
+
+        // kolejność zapalania: od wybranej komórki na zewnątrz
+        const anchor = Math.max(...months);
+        const order = [...res.hit].sort((a, b) => Math.abs(a - anchor) - Math.abs(b - anchor));
+        const delay = i => (FUNCS[fn].shift ? 650 + order.indexOf(i) * 15 : order.indexOf(i) * 70);
+
+        document.getElementById('years').innerHTML = YEARS.map(y => {
+            const ym = selMonths({ y, m: null });
+            const yr = evalFn(fn, ym);
+            const isSel = sel.m === null && sel.y === y;
+            const tiles = MSHORT.map((name, m) => {
+                const i = idx(y, m);
+                const mv = evalFn(fn, [i]).value;
+                const cls = ['tile', months.includes(i) ? 'is-sel' : '', res.hit.includes(i) ? 'is-res' : ''].join(' ');
+                const d = animate ? delay(i) : 0;
+                return `<button type="button" class="${cls}" style="--d:${d}ms" data-y="${y}" data-m="${m}" aria-label="${MFULL[m]} ${y}">
+                    <span class="m">${name}</span><span class="v">${VZ.fmt(SALES[i])}</span>
+                    ${showMv ? `<span class="mv ${mv === null ? 'blank' : ''}">${mv === null ? '(puste)' : VZ.fmt(mv)}</span>` : ''}</button>`;
+            }).join('');
+            const total = ym.reduce((s, i) => s + SALES[i], 0);
+            return `<div class="year">
+                <button type="button" class="year-head ${isSel ? 'is-sel' : ''}" data-y="${y}">
+                    <span class="y">${y}</span>
+                    <span><span class="t">razem ${VZ.fmt(total)}</span>${showMv ? `<span class="mv">${yr.value === null ? '(puste)' : VZ.fmt(yr.value)}</span>` : ''}</span>
+                </button>
+                <div class="months">${tiles}</div></div>`;
+        }).join('');
+
+        document.querySelectorAll('#years .tile').forEach(b => b.addEventListener('click', () => {
+            state.sel = { y: +b.dataset.y, m: +b.dataset.m }; render(true);
+        }));
+        document.querySelectorAll('#years .year-head').forEach(b => b.addEventListener('click', () => {
+            state.sel = { y: +b.dataset.y, m: null }; render(true);
+        }));
+        document.getElementById('legendMv').style.display = showMv ? '' : 'none';
+        if (animate) requestAnimationFrame(() => animateShift(months));
+    }
+
+    // Przesunięcie: kopia każdego widocznego kafelka jedzie na swoje nowe miejsce
+    function animateShift(months) {
+        const layer = document.getElementById('ghosts');
+        layer.innerHTML = '';
+        const f = FUNCS[state.fn];
+        if (!f.shift) return;
+        const cr = document.getElementById('cal').getBoundingClientRect();
+        const rectOf = i => document.querySelector(`.tile[data-y="${yearOf(i)}"][data-m="${monthOf(i)}"]`).getBoundingClientRect();
+        months.forEach(src => {
+            const t = f.raw([src])[0];
+            const a = rectOf(src);
+            const g = document.createElement('div');
+            g.className = 'ghost';
+            g.textContent = f.shift;
+            Object.assign(g.style, { left: `${a.left - cr.left}px`, top: `${a.top - cr.top}px`, width: `${a.width}px`, height: `${a.height}px` });
+            layer.appendChild(g);
+            let dx = 0, dy = -36, out = true;
+            if (inTable(t)) { const b = rectOf(t); dx = b.left - a.left; dy = b.top - a.top; out = false; }
+            requestAnimationFrame(() => requestAnimationFrame(() => {
+                g.style.transform = `translate(${dx}px, ${dy}px)`;
+                if (out) g.classList.add('out');
+            }));
+            setTimeout(() => g.classList.add('done'), 1150);
+            setTimeout(() => g.remove(), 1600);
+        });
+    }
+
+    // ---------- Kroki ----------
+    const step = (n, color, title, body) => `
+        <div class="vz-step">
+            <div class="vz-step-title"><span class="vz-num" style="background:${color}">${n}</span>${title}</div>
+            ${body}
+        </div>`;
+    const row = (field, html) => `<div class="combine-row"><span class="field">${field}</span>${html}</div>`;
+    const rangeChips = (list, kind) => ranges(list).map(r => VZ.chip('', r.text, kind, dni(r.days))).join('');
+
+    function renderSteps() {
+        const fn = state.fn;
+        const sel = state.sel;
+        const months = selMonths(sel);
+        const res = evalFn(fn, months);
+        const where = sel.m === null ? `rok ${sel.y}` : `${MFULL[sel.m]} ${sel.y}`;
+
+        const visChips = VZ.chip('Kalendarz[Rok]', String(sel.y), 'visual') +
+            (sel.m === null ? VZ.chip('Kalendarz[Miesiąc]', 'wszystkie', 'none', 'brak filtra') : VZ.chip('Kalendarz[Miesiąc]', MFULL[sel.m], 'visual'));
+
+        let html = step(1, 'var(--ctx-visual)', `Kontekst z wizualizacji · ${where}`,
+            `<div class="vz-chips">${visChips}</div>
+             <div class="combine" style="margin-top:8px">${row('Widoczne dni Kalendarz[Data]', rangeChips(months, 'visual'))}</div>`);
+
+        let fnBody;
+        if (fn === 'base') {
+            fnBody = `<div class="vz-chips">${VZ.chip('', 'brak, miara nie zmienia filtra', 'none')}</div>`;
+        } else {
+            const parts = [];
+            if (res.hit.length) parts.push(row('Daty w tabeli Kalendarz', rangeChips(res.hit, 'calc')));
+            if (res.outside.length) parts.push(row('Poza tabelą Kalendarz (odpadają)', ranges(res.outside).map(r => VZ.chip('', r.text, 'off', 'brak w tabeli')).join('')));
+            if (!res.hit.length) parts.push(row('Wynik funkcji', VZ.chip('Kalendarz[Data]', [], 'empty', 'pusta tabela')));
+            fnBody = `<div class="vz-step-note" style="margin:0 0 8px">${FUNCS[fn].desc(months)}</div><div class="combine">${parts.join('')}</div>`;
+        }
+        html += step(2, 'var(--ctx-calc)', 'Funkcja zwraca tabelę dat', fnBody);
+
+        let ctxBody;
+        if (fn === 'base') {
+            ctxBody = `<div class="combine">${row('Kalendarz', visChips)}</div>`;
+        } else {
+            const dataChip = res.hit.length
+                ? ranges(res.hit).map(r => VZ.chip('Kalendarz[Data]', r.text, 'calc')).join('')
+                : VZ.chip('Kalendarz[Data]', [], 'empty', 'żadnej daty');
+            ctxBody = `<div class="combine">
+                ${row('Rok', VZ.chip('Kalendarz[Rok]', String(sel.y), 'off', 'usunięty'))}
+                ${row('Miesiąc', sel.m === null ? VZ.chip('Kalendarz[Miesiąc]', 'wszystkie', 'none', 'i tak nie było') : VZ.chip('Kalendarz[Miesiąc]', MFULL[sel.m], 'off', 'usunięty'))}
+                ${row('Data', dataChip)}
+            </div>
+            <div class="vz-step-note">Kalendarz jest tabelą dat, więc filtr na Kalendarz[Data] zdejmuje filtry z pozostałych kolumn Kalendarza (jak REMOVEFILTERS(Kalendarz)). Bez tego Rok&nbsp;=&nbsp;${sel.y} <b>&amp;</b> daty z innego okresu dałyby (puste).</div>`;
+        }
+        html += step(3, fn === 'base' ? 'var(--ctx-visual)' : 'var(--ctx-calc)', 'Nowy kontekst filtra na Kalendarzu', ctxBody);
+
+        const kind = fn === 'base' ? 'visual' : 'calc';
+        const list = res.hit.length
+            ? res.hit.slice().sort((a, b) => a - b).map(i => VZ.chip(`${MSHORT[monthOf(i)]} ${yearOf(i)}`, VZ.fmt(SALES[i]), kind)).join('')
+            : VZ.chip('', 'żaden miesiąc', 'empty');
+        html += step(4, 'var(--text)', 'Sumowane miesiące',
+            `<div class="vz-chips">${list}</div>
+             <div class="vz-result"><span class="lbl">Wynik w komórce (tys. zł)</span><span class="val ${res.value === null ? 'blank' : ''}">${VZ.fmt(res.value)}</span></div>`);
+
+        document.getElementById('steps').innerHTML = html;
+    }
+
+    // ---------- Render ----------
+    function render(animate) {
+        const f = FUNCS[state.fn];
+        document.getElementById('code').innerHTML = VZ.code(f.code);
+        document.getElementById('takeaway').innerHTML = f.takeaway;
+        renderCal(animate);
+        renderSteps();
+        const steps = document.getElementById('steps');
+        if (state.manual) {
+            stepper = VZ.stepper(steps, updateStepNav);
+            stepper.start();
+        } else if (animate) {
+            VZ.reveal(steps);
+        }
+    }
+
+    function updateStepNav(i, n) {
+        document.getElementById('stepInfo').textContent = `Krok ${i + 1} z ${n}`;
+        document.getElementById('prevBtn').disabled = i <= 0;
+        document.getElementById('nextBtn').textContent = i >= n - 1 ? 'Pokaż wszystko' : 'Dalej →';
+    }
+
+    document.getElementById('playBtn').addEventListener('click', () => {
+        state.manual = true;
+        document.getElementById('explain').classList.add('manual');
+        render(false);
+    });
+    document.getElementById('prevBtn').addEventListener('click', () => stepper.prev());
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        if (stepper.index >= stepper.count - 1) {
+            state.manual = false;
+            document.getElementById('explain').classList.remove('manual');
+            stepper.showAll();
+        } else {
+            stepper.next();
+        }
+    });
+
+    VZ.tabs(document.getElementById('tabs'),
+        Object.entries(FUNCS).map(([id, f]) => ({ id, label: f.label })),
+        id => { state.fn = id; render(true); }, state.fn);
+
+    render(true);
+</script>
+</body>
+</html>

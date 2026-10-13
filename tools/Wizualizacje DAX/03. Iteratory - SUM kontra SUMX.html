@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUM kontra SUMX</title>
+    <link rel="stylesheet" href="../viz/kit.css">
+    <style>
+        .step-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+        .step-head .vz-label { margin: 0; }
+        #stepNav { display: none; }
+        .manual #stepNav { display: flex; }
+        .manual #playBtn { display: none; }
+
+        /* wizualizacja: tabela z kategoriami i miarami */
+        .vz-matrix th.mhead { white-space: normal; line-height: 1.25; vertical-align: bottom; font-family: var(--mono); font-size: 11.5px; font-weight: 500; }
+        .vz-matrix th.mhead.main { color: var(--text); font-weight: 700; }
+        .vz-matrix td.cell.alt { color: var(--text-2); }
+        .vz-matrix td.cell.bad { color: var(--bad); }
+        .vz-matrix td.cell.ok { color: var(--ok); }
+        .vz-matrix tr.is-row-on td.cell.alt { background: var(--surface); }
+
+        /* iteracja */
+        .iter-now {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px;
+            min-height: 36px; margin-bottom: 8px; font-size: 14px;
+        }
+        .iter-now .eq { font-family: var(--mono); font-size: 13.5px; }
+        .iter-now .eq b { color: var(--ctx-row); }
+        .iter .vz-table th { white-space: normal; line-height: 1.2; vertical-align: bottom; }
+        .iter .vz-table th, .iter .vz-table td { padding-left: 7px; padding-right: 7px; }
+        .iter .vz-table td.ptr { width: 16px; padding-right: 0; color: var(--ctx-row); font-weight: 700; }
+        .iter .vz-table td.calc { color: var(--ctx-row); font-weight: 600; }
+        .iter .vz-table td.acc { font-weight: 700; }
+        .iter .vz-table tr.done td { background: var(--ctx-row-soft); }
+        .iter .vz-table tr.todo td { background: var(--ctx-visual-soft); }
+        .iter .vz-table tr.todo td:first-child, .iter .vz-table tr.done td:first-child { box-shadow: inset 3px 0 0 var(--ctx-visual); }
+        .iter .vz-table tr.is-current td { background: var(--ctx-row-soft); box-shadow: none; }
+        .iter .vz-table tr.is-current td:first-child { box-shadow: inset 3px 0 0 var(--ctx-row); }
+        .iter .vz-table tr.is-current td.calc { animation: vzPop .35s var(--ease); }
+        .iter-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+        .iter-bar .acc { margin-left: auto; font-size: 13px; color: var(--text-2); }
+        .iter-bar .acc b { font-size: 18px; color: var(--text); font-variant-numeric: tabular-nums; }
+
+        /* agregaty kolumn */
+        .agg { display: flex; flex-direction: column; gap: 8px; }
+        .agg-line { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; font-family: var(--mono); font-size: 13px; }
+        .agg-line .fn { font-weight: 600; color: var(--brand); }
+        .agg-line .res { font-weight: 700; font-size: 15px; }
+        .formula { font-family: var(--mono); font-size: 15px; font-weight: 700; }
+
+        .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .compare > div { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 8px 10px; }
+        .compare > div.good { border-color: var(--ok); }
+        .compare > div.bad { border-color: var(--bad); }
+        .compare .lbl { font-size: 12px; color: var(--text-2); font-family: var(--mono); word-break: break-word; }
+        .compare .v { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+        .compare .good .v { color: var(--ok); }
+        .compare .bad .v { color: var(--bad); }
+
+        .vz-table th.colhi, .vz-table td.colhi { font-weight: 700; }
+        .vz-table td.colhi { color: var(--brand); }
+
+        @media (max-width: 560px) {
+            .iter .vz-table th, .iter .vz-table td, .rows .vz-table th, .rows .vz-table td { padding-left: 5px; padding-right: 5px; }
+            .iter .vz-table th, .iter .vz-table td { padding-left: 4px; padding-right: 4px; }
+            .iter .vz-table { font-size: 12.5px; }
+            .compare { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="vz-app">
+    <header class="vz-head">
+        <div class="vz-kicker">DAX · Iteratory</div>
+        <h1 class="vz-title">SUM kontra SUMX</h1>
+        <p class="vz-lead">Kliknij wiersz wizualizacji, żeby wybrać kategorię. Po prawej widać, które wiersze Sprzedaz są widoczne w tej komórce i jak funkcja je liczy: całą kolumną naraz albo wiersz po wierszu.</p>
+    </header>
+
+    <div id="tabs"></div>
+    <div class="vz-code" id="code"></div>
+
+    <div class="vz-grid">
+        <div>
+            <section class="vz-card">
+                <div class="vz-label">Wizualizacja · tabela</div>
+                <div id="matrix"></div>
+                <div class="vz-legend">
+                    <span style="color: var(--ctx-visual)"><i style="background: var(--ctx-visual-soft)"></i>wybrany wiersz = kontekst z wizualizacji</span>
+                    <span style="color: var(--ctx-row)"><i style="background: var(--ctx-row-soft)"></i>kontekst wiersza iteratora</span>
+                </div>
+            </section>
+            <div class="vz-takeaway" id="takeaway"></div>
+        </div>
+
+        <section class="vz-card" id="explain">
+            <div class="step-head">
+                <div class="vz-label">Co się dzieje w komórce</div>
+                <div class="vz-bar">
+                    <button type="button" class="vz-btn" id="playBtn">▶ Krok po kroku</button>
+                    <div class="vz-bar" id="stepNav">
+                        <button type="button" class="vz-btn" id="prevBtn">←</button>
+                        <span class="vz-hint" id="stepInfo"></span>
+                        <button type="button" class="vz-btn primary" id="nextBtn">Dalej →</button>
+                    </div>
+                </div>
+            </div>
+            <div class="vz-steps" id="steps"></div>
+        </section>
+    </div>
+</div>
+
+<script src="../viz/kit.js"></script>
+<script>
+    // Kwota = Ilość × Cena, zapisana w tabeli (np. przyszła ze źródła)
+    const ROWS = [
+        ['Rowery', 2, 1200], ['Rowery', 1, 2500], ['Rowery', 3, 900],
+        ['Kaski', 5, 150], ['Kaski', 2, 220], ['Kaski', 10, 90],
+        ['Odzież', 4, 120], ['Odzież', 1, 350], ['Odzież', 6, 60],
+    ].map(([Kategoria, Ilość, Cena]) => ({ Kategoria, Ilość, Cena, Kwota: Ilość * Cena }));
+    const CATS = ['Rowery', 'Kaski', 'Odzież'];
+
+    const nf2 = new Intl.NumberFormat('pl-PL', { maximumFractionDigits: 2 });
+    const fmt = v => (v === null ? '(puste)' : nf2.format(v));
+
+    // Miary liczone na żywo z wierszy widocznych w kontekście
+    const visible = cat => (cat ? ROWS.filter(r => r.Kategoria === cat) : ROWS);
+    const avg = (rows, col) => (rows.length ? VZ.sum(rows, col) / rows.length : null);
+    const M = {
+        sum: { name: 'SUM(Kwota)', f: rows => (rows.length ? VZ.sum(rows, 'Kwota') : null) },
+        sumx: { name: 'SUMX(Ilość × Cena)', f: rows => (rows.length ? rows.reduce((s, r) => s + r.Ilość * r.Cena, 0) : null) },
+        mul: { name: 'SUM(Ilość) × SUM(Cena)', f: rows => (rows.length ? VZ.sum(rows, 'Ilość') * VZ.sum(rows, 'Cena') : null) },
+        avgx: { name: 'AVERAGEX(Ilość × Cena)', f: rows => (rows.length ? rows.reduce((s, r) => s + r.Ilość * r.Cena, 0) / rows.length : null) },
+        avgmul: { name: 'AVERAGE(Ilość) × AVERAGE(Cena)', f: rows => (rows.length ? avg(rows, 'Ilość') * avg(rows, 'Cena') : null) },
+    };
+
+    const SCEN = {
+        sum: {
+            label: 'SUM(Kwota)',
+            code: 'Sprzedaż = SUM(Sprzedaz[{{calc|Kwota}}])',
+            cols: [['sum', 'main']],
+            iter: false,
+            takeaway: () => 'SUM to <b>agregacja kolumny</b>: bierze kolumnę Kwota z wierszy widocznych w komórce i dodaje ją za jednym razem. Nie ma kontekstu wiersza ani pętli. Działa, bo Kwota już istnieje w tabeli.',
+        },
+        sumx: {
+            label: 'SUMX',
+            code: 'Sprzedaż X = SUMX({{visual|Sprzedaz}}, {{row|Sprzedaz[Ilość] * Sprzedaz[Cena]}})',
+            cols: [['sum', 'alt'], ['sumx', 'main ok']],
+            iter: 'sum',
+            takeaway: () => 'SUMX to <b>iterator</b>: dla każdego widocznego wiersza tworzy kontekst wiersza, liczy wyrażenie (Ilość × Cena) i dopiero na końcu sumuje wyniki. Iteruje tylko po wierszach z kontekstu filtra komórki — wynik jest identyczny jak SUM(Kwota), ale bez kolumny Kwota w modelu.',
+        },
+        mul: {
+            label: 'SUM × SUM (błąd)',
+            code: 'Źle = {{calc|SUM(Sprzedaz[Ilość])}} * {{calc|SUM(Sprzedaz[Cena])}}',
+            cols: [['sumx', 'alt ok'], ['mul', 'main bad']],
+            iter: false,
+            takeaway: () => {
+                const rowsSum = CATS.reduce((s, c) => s + M.mul.f(visible(c)), 0);
+                return `SUM(Ilość) × SUM(Cena) najpierw sumuje, potem mnoży — jakby każda sztuka kosztowała sumę wszystkich cen. Ilość i Cena trzeba pomnożyć <b>w tym samym wierszu</b>, a to robi tylko iterator. Błąd widać też w sumie: ${fmt(M.mul.f(ROWS))} to nie jest nawet suma wierszy tabeli (${fmt(rowsSum)}).`;
+            },
+        },
+        avgx: {
+            label: 'AVERAGEX',
+            code: 'Śr. wartość wiersza = AVERAGEX({{visual|Sprzedaz}}, {{row|Sprzedaz[Ilość] * Sprzedaz[Cena]}})',
+            cols: [['avgx', 'main ok'], ['avgmul', 'alt bad']],
+            iter: 'avg',
+            takeaway: () => 'AVERAGEX iteruje tak samo jak SUMX, a na końcu dzieli sumę przez liczbę przejrzanych wierszy. AVERAGE(Ilość) × AVERAGE(Cena) to inna liczba: średnie liczone osobno gubią informację, która ilość szła z którą ceną.',
+        },
+    };
+
+    const state = { scen: 'sumx', cat: 'Rowery', manual: false };
+    let stepper = null;
+    let iter = null;
+
+    // ---------- Wizualizacja ----------
+    function renderMatrix() {
+        const sc = SCEN[state.scen];
+        const head = `<tr><th class="corner">Kategoria</th>` +
+            sc.cols.map(([id, cls]) => `<th class="mhead ${cls.includes('main') ? 'main' : ''}">${VZ.esc(M[id].name)}</th>`).join('') + '</tr>';
+        const rows = [...CATS, null].map(cat => {
+            const on = state.cat === cat;
+            const cells = sc.cols.map(([id, cls]) => {
+                const v = M[id].f(visible(cat));
+                const sel = on && cls.includes('main') ? 'is-selected' : '';
+                return `<td class="cell ${cls} ${sel} ${cat === null ? 'total' : ''}" data-c="${cat || ''}" tabindex="0">${fmt(v)}</td>`;
+            }).join('');
+            return `<tr class="${cat === null ? 'total-row' : ''} ${on ? 'is-row-on' : ''}"><th class="${cat === null ? 'total' : ''} ${on ? 'is-hdr-on' : ''}">${cat === null ? 'Suma' : VZ.esc(cat)}</th>${cells}</tr>`;
+        }).join('');
+        const el = document.getElementById('matrix');
+        el.innerHTML = `<div class="vz-table-wrap"><table class="vz-matrix"><thead>${head}</thead><tbody>${rows}</tbody></table></div>`;
+        el.querySelectorAll('td.cell').forEach(td => {
+            const pick = () => { state.cat = td.dataset.c || null; render(true); };
+            td.addEventListener('click', pick);
+            td.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+        });
+    }
+
+    // ---------- Kroki ----------
+    const step = (n, color, title, body) => `
+        <div class="vz-step">
+            <div class="vz-step-title"><span class="vz-num" style="background:${color}">${n}</span>${title}</div>
+            ${body}
+        </div>`;
+
+    function ctxStep(n) {
+        const vis = visible(state.cat);
+        const chip = state.cat
+            ? VZ.chip('Kategoria', state.cat, 'visual')
+            : VZ.chip('', 'brak filtrów — wiersz sumy', 'none');
+        return step(n, 'var(--ctx-visual)', `Kontekst z wizualizacji · ${state.cat || 'Suma'}`,
+            `<div class="vz-chips">${chip}</div>
+             <div class="vz-step-note">Widocznych wierszy Sprzedaz: <b>${vis.length}</b> z ${ROWS.length}.</div>`);
+    }
+
+    function rowsTable(id, hiCols) {
+        const vis = visible(state.cat);
+        const cols = ['Kategoria', 'Ilość', 'Cena', 'Kwota'];
+        const head = cols.map((c, i) => `<th class="${i ? 'num' : ''} ${hiCols.includes(c) ? 'colhi' : ''}">${c}</th>`).join('');
+        const body = ROWS.map(r => {
+            const on = vis.includes(r);
+            return `<tr class="${on ? 'is-in' : 'is-out'}">` + cols.map((c, i) =>
+                `<td class="${i ? 'num' : ''} ${hiCols.includes(c) && on ? 'colhi' : ''}">${i ? fmt(r[c]) : VZ.esc(r[c])}</td>`).join('') + '</tr>';
+        }).join('');
+        const foot = '<tr><td>Suma widocznych</td>' + cols.slice(1).map(c =>
+            `<td class="num ${hiCols.includes(c) ? 'colhi' : ''}">${hiCols.includes(c) ? fmt(VZ.sum(vis, c)) : ''}</td>`).join('') + '</tr>';
+        return `<div class="rows" id="${id}"><div class="vz-table-wrap"><table class="vz-table"><thead><tr>${head}</tr></thead><tbody>${body}</tbody><tfoot>${foot}</tfoot></table></div></div>`;
+    }
+
+    function iterStep(n, mode) {
+        return step(n, 'var(--ctx-row)', `Iteracja: wiersz po wierszu`, `
+            <div class="iter" id="iter">
+                <div class="iter-now" id="iterNow"></div>
+                <div class="vz-table-wrap"><table class="vz-table">
+                    <thead><tr><th></th><th>Kategoria</th><th class="num">Ilość</th><th class="num">Cena</th><th class="num">Ilość × Cena</th><th class="num">Σ narastająco</th></tr></thead>
+                    <tbody id="iterBody"></tbody>
+                </table></div>
+                <div class="iter-bar">
+                    <button type="button" class="vz-btn" id="iterPlay">▶ Odtwórz</button>
+                    <button type="button" class="vz-btn" id="iterNext">Następny wiersz →</button>
+                    <span class="acc">${mode === 'avg' ? 'Suma' : 'SUMX'}: <b id="iterAcc">0</b></span>
+                </div>
+                <div class="vz-step-note">Wiersze wyszarzone nie należą do kontekstu filtra komórki — iterator ich nie odwiedza.</div>
+            </div>`);
+    }
+
+    function renderSteps() {
+        const id = state.scen;
+        const vis = visible(state.cat);
+        const blank = !vis.length;
+        let html = ctxStep(1);
+        const sumx = M.sumx.f(vis);
+
+        if (id === 'sum') {
+            const v = M.sum.f(vis);
+            html += step(2, 'var(--text)', 'SUM bierze kolumnę Kwota z widocznych wierszy', rowsTable('rowsSum', ['Kwota']) +
+                '<div class="vz-step-note">Jedna operacja na całej kolumnie. Żadnego kontekstu wiersza.</div>');
+            html += step(3, 'var(--text)', 'Wynik w komórce', `<div class="vz-result" style="border-top:0;margin-top:0;padding-top:0"><span class="lbl">SUM(Sprzedaz[Kwota])</span><span class="val">${fmt(v)}</span></div>`);
+        } else if (id === 'sumx') {
+            html += iterStep(2, 'sum');
+            html += step(3, 'var(--text)', 'Wynik w komórce', `
+                <div class="compare">
+                    <div class="good"><div class="lbl">SUMX(Ilość × Cena)</div><div class="v">${fmt(sumx)}</div></div>
+                    <div><div class="lbl">SUM(Kwota)</div><div class="v">${fmt(M.sum.f(vis))}</div></div>
+                </div>
+                <div class="vz-step-note">To samo, bo Kwota w każdym wierszu to właśnie Ilość × Cena.</div>`);
+        } else if (id === 'mul') {
+            const q = VZ.sum(vis, 'Ilość');
+            const p = VZ.sum(vis, 'Cena');
+            html += step(2, 'var(--ctx-calc)', 'Dwie osobne sumy kolumn', rowsTable('rowsMul', ['Ilość', 'Cena']) + `
+                <div class="agg" style="margin-top:10px">
+                    <div class="agg-line"><span class="fn">SUM(Ilość)</span> = ${vis.map(r => fmt(r.Ilość)).join(' + ')} = <span class="res">${fmt(q)}</span></div>
+                    <div class="agg-line"><span class="fn">SUM(Cena)</span> = ${vis.map(r => fmt(r.Cena)).join(' + ')} = <span class="res">${fmt(p)}</span></div>
+                </div>`);
+            html += step(3, 'var(--bad)', 'Dopiero teraz mnożenie', `
+                <div class="formula">${fmt(q)} × ${fmt(p)} = <span style="color:var(--bad)">${fmt(q * p)}</span></div>
+                <div class="vz-step-note">Łączna ilość razy suma cen: tak, jakby każda z ${fmt(q)} sztuk kosztowała ${fmt(p)}.</div>`);
+            html += step(4, 'var(--text)', 'Porównanie z iteratorem', `
+                <div class="compare">
+                    <div class="good"><div class="lbl">SUMX(Ilość × Cena)</div><div class="v">${fmt(sumx)}</div></div>
+                    <div class="bad"><div class="lbl">SUM(Ilość) × SUM(Cena)</div><div class="v">${fmt(q * p)}</div></div>
+                </div>
+                <div class="vz-step-note">Poprawnie: ${vis.map(r => `${fmt(r.Ilość)}×${fmt(r.Cena)}`).join(' + ')} = ${fmt(sumx)}.</div>`);
+        } else if (id === 'avgx') {
+            const a = M.avgx.f(vis);
+            html += iterStep(2, 'avg');
+            html += step(3, 'var(--text)', 'Średnia: suma ÷ liczba wierszy', `
+                <div class="formula">${fmt(sumx)} ÷ ${vis.length} = <span style="color:var(--ok)">${fmt(a)}</span></div>
+                <div class="vz-step-note">AVERAGEX dzieli przez liczbę przejrzanych wierszy (pomija tylko wyniki puste).</div>`);
+            const aq = avg(vis, 'Ilość');
+            const ap = avg(vis, 'Cena');
+            html += step(4, 'var(--text)', 'Porównanie: dwie osobne średnie', `
+                <div class="agg">
+                    <div class="agg-line"><span class="fn">AVERAGE(Ilość)</span> = ${fmt(VZ.sum(vis, 'Ilość'))} ÷ ${vis.length} = <span class="res">${fmt(aq)}</span></div>
+                    <div class="agg-line"><span class="fn">AVERAGE(Cena)</span> = ${fmt(VZ.sum(vis, 'Cena'))} ÷ ${vis.length} = <span class="res">${fmt(ap)}</span></div>
+                </div>
+                <div class="compare" style="margin-top:10px">
+                    <div class="good"><div class="lbl">AVERAGEX(Ilość × Cena)</div><div class="v">${fmt(a)}</div></div>
+                    <div class="bad"><div class="lbl">AVERAGE × AVERAGE</div><div class="v">${fmt(aq * ap)}</div></div>
+                </div>`);
+        }
+        document.getElementById('steps').innerHTML = html;
+        if (SCEN[id].iter && !blank) setupIter(SCEN[id].iter);
+    }
+
+    // ---------- Animacja iteratora ----------
+    function setupIter(mode) {
+        const vis = visible(state.cat);
+        const order = ROWS.map((r, i) => i).filter(i => vis.includes(ROWS[i]));
+        let pos = -1;      // pozycja w order
+        let timer = null;
+
+        function draw() {
+            let acc = 0;
+            const values = {};
+            order.forEach((ri, k) => { if (k <= pos) { acc += ROWS[ri].Ilość * ROWS[ri].Cena; values[ri] = acc; } });
+            document.getElementById('iterBody').innerHTML = ROWS.map((r, i) => {
+                const k = order.indexOf(i);
+                let cls = 'is-out';
+                if (k >= 0) cls = k < pos ? 'done' : k === pos ? 'is-current' : 'todo';
+                const done = k >= 0 && k <= pos;
+                return `<tr class="${cls}">
+                    <td class="ptr">${k >= 0 && k === pos ? '▶' : ''}</td>
+                    <td>${VZ.esc(r.Kategoria)}</td>
+                    <td class="num">${fmt(r.Ilość)}</td>
+                    <td class="num">${fmt(r.Cena)}</td>
+                    <td class="num calc">${done ? fmt(r.Ilość * r.Cena) : ''}</td>
+                    <td class="num acc">${done ? fmt(values[i]) : ''}</td></tr>`;
+            }).join('');
+            const now = document.getElementById('iterNow');
+            if (pos < 0) {
+                now.innerHTML = VZ.chip('', `start: ${order.length} widocznych wierszy`, 'none');
+            } else if (pos < order.length) {
+                const r = ROWS[order[pos]];
+                now.innerHTML = `${VZ.chip('', `Ilość = ${fmt(r.Ilość)} · Cena = ${fmt(r.Cena)}`, 'row', `wiersz ${pos + 1}/${order.length}`)}
+                    <span class="eq"><b>${fmt(r.Ilość)} × ${fmt(r.Cena)}</b> = ${fmt(r.Ilość * r.Cena)}</span>`;
+            }
+            if (pos >= order.length - 1 && pos >= 0) {
+                const end = mode === 'avg'
+                    ? `koniec: ${fmt(acc)} ÷ ${order.length} = ${fmt(acc / order.length)}`
+                    : `koniec iteracji: ${fmt(acc)}`;
+                now.innerHTML += ' ' + VZ.chip('', end, 'and');
+            }
+            document.getElementById('iterAcc').textContent = fmt(acc);
+            const fin = pos >= order.length - 1;
+            document.getElementById('iterNext').disabled = fin;
+            document.getElementById('iterPlay').textContent = fin ? '↺ Od nowa' : timer ? '❚❚ Pauza' : '▶ Odtwórz';
+        }
+
+        function stop() { clearInterval(timer); timer = null; }
+        function next() { if (pos < order.length - 1) pos++; if (pos >= order.length - 1) stop(); draw(); }
+        function play() {
+            if (timer) { stop(); draw(); return; }
+            if (pos >= order.length - 1) pos = -1;
+            timer = setInterval(next, 750);
+            draw();
+        }
+        document.getElementById('iterPlay').addEventListener('click', play);
+        document.getElementById('iterNext').addEventListener('click', () => { stop(); next(); });
+
+        if (iter) iter.stop();
+        iter = { stop, play, start() { if (!timer && pos < 0) play(); }, finish() { stop(); pos = order.length - 1; draw(); } };
+        draw();
+    }
+
+    // ---------- Render ----------
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function render(animate) {
+        if (iter) { iter.stop(); iter = null; }
+        const s = SCEN[state.scen];
+        document.getElementById('code').innerHTML = VZ.code(s.code);
+        document.getElementById('takeaway').innerHTML = s.takeaway();
+        renderMatrix();
+        renderSteps();
+        const steps = document.getElementById('steps');
+        if (state.manual) {
+            stepper = VZ.stepper(steps, updateStepNav);
+            stepper.start();
+        } else {
+            if (animate) VZ.reveal(steps);
+            if (iter) {
+                if (reduced) iter.finish();
+                else { const it = iter; setTimeout(() => { if (iter === it) it.start(); }, 500); }
+            }
+        }
+    }
+
+    function updateStepNav(i, n) {
+        document.getElementById('stepInfo').textContent = `Krok ${i + 1} z ${n}`;
+        document.getElementById('prevBtn').disabled = i <= 0;
+        document.getElementById('nextBtn').textContent = i >= n - 1 ? 'Pokaż wszystko' : 'Dalej →';
+        // iteracja rusza, gdy jej krok staje się bieżący
+        const cur = document.querySelectorAll('#steps .vz-step')[i];
+        if (iter && cur && cur.querySelector('#iter') && !reduced) iter.start();
+    }
+
+    document.getElementById('playBtn').addEventListener('click', () => {
+        state.manual = true;
+        document.getElementById('explain').classList.add('manual');
+        render(false);
+    });
+    document.getElementById('prevBtn').addEventListener('click', () => stepper.prev());
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        if (stepper.index >= stepper.count - 1) {
+            state.manual = false;
+            document.getElementById('explain').classList.remove('manual');
+            stepper.showAll();
+        } else {
+            stepper.next();
+        }
+    });
+
+    VZ.tabs(document.getElementById('tabs'),
+        Object.entries(SCEN).map(([id, s]) => ({ id, label: s.label })),
+        id => { state.scen = id; render(true); }, state.scen);
+
+    render(true);
+</script>
+</body>
+</html>

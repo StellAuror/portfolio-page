@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtr kolumny kontra filtr tabeli</title>
+    <link rel="stylesheet" href="../viz/kit.css">
+    <style>
+        .combine { display: flex; flex-direction: column; gap: 8px; }
+        .combine-row { display: grid; grid-template-columns: 92px minmax(0, 1fr); align-items: center; gap: 6px; }
+        .combine-row > .vz-chips { min-height: 0; }
+        .combine-row .field {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-3);
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+        @media (max-width: 480px) {
+            .vz-chip { white-space: normal; flex-wrap: wrap; row-gap: 0; border-radius: 14px; }
+            .combine-row { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+        }
+        .step-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
+        .step-head .vz-label { margin: 0; }
+        #stepNav { display: none; }
+        .manual #stepNav { display: flex; }
+        .manual #playBtn { display: none; }
+
+        /* Tabela argumentu filtra: które kolumny obejmuje i które wiersze zawiera */
+        .arg-sub { font-size: 13px; color: var(--text-2); margin-bottom: 8px; }
+        .arg-sub code { font-family: var(--mono); font-size: 12.5px; background: var(--surface); padding: 1px 4px; border-radius: 4px; }
+        .arg-tbl th.cov { color: var(--ctx-calc); background: var(--ctx-calc-soft); box-shadow: inset 0 -2px 0 var(--ctx-calc); }
+        .arg-tbl th.nocov { opacity: .45; }
+        .arg-tbl tr.pass td { background: var(--ctx-calc-soft); font-weight: 600; }
+        .arg-tbl tr.pass td:first-child { box-shadow: inset 3px 0 0 var(--ctx-calc); }
+        .arg-tbl tr.fail td { color: var(--text-3); text-decoration: line-through; text-decoration-color: var(--ctx-off); }
+        .arg-tbl tr.fail td.st { text-decoration: none; }
+        .arg-tbl tr.hidden td { opacity: .22; }
+        .arg-tbl td.st { text-align: center; font-weight: 700; width: 1%; }
+        .arg-tbl tr.pass td.st { color: var(--ctx-calc); }
+        .arg-res {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px;
+            margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--line-strong);
+            font-size: 13px; color: var(--text-2);
+        }
+        .shape {
+            display: inline-flex; align-items: center; gap: 6px;
+            font-size: 12px; font-weight: 700; letter-spacing: .03em;
+            color: var(--ctx-calc); background: var(--ctx-calc-soft);
+            border: 1.5px solid var(--ctx-calc); border-radius: 6px; padding: 2px 8px;
+        }
+        .shape.empty { color: var(--bad); background: #fdeaea; border-color: var(--bad); }
+
+        .practice { margin-top: 20px; }
+        .practice ul { list-style: none; display: grid; gap: 10px; }
+        .practice li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 8px; font-size: 14px; color: var(--text-2); }
+        .practice li b { color: var(--text); }
+        .practice li code { font-family: var(--mono); font-size: 12.5px; background: var(--surface); padding: 1px 4px; border-radius: 4px; color: var(--text); word-break: break-word; }
+        .practice .ic { font-weight: 800; text-align: center; }
+        .practice .ic.ok { color: var(--ok); }
+        .practice .ic.warn { color: var(--ctx-calc); }
+        .practice .ic.bad { color: var(--bad); }
+
+        @media (max-width: 480px) {
+            .vz-card { padding: 12px; }
+            .vz-step { padding: 10px 10px; }
+            .vz-table { font-size: 12.5px; }
+            .vz-table th, .vz-table td { padding: 4px 5px; }
+            .vz-matrix { font-size: 12.5px; }
+            .vz-matrix th, .vz-matrix td { padding: 7px 4px; }
+            .vz-matrix th.corner { font-size: 10.5px; }
+        }
+        @media (max-width: 400px) {
+            .vz-card { padding: 10px; }
+            .vz-matrix { font-size: 12px; }
+            .vz-matrix th, .vz-matrix td { padding: 7px 3px; }
+            .vz-matrix .vz-swatch { margin-right: 3px; }
+        }
+    </style>
+</head>
+<body>
+<div class="vz-app">
+    <header class="vz-head">
+        <div class="vz-kicker">DAX · Argumenty CALCULATE</div>
+        <h1 class="vz-title">Filtr kolumny kontra filtr tabeli</h1>
+        <p class="vz-lead">Każdy argument filtra w CALCULATE jest tabelą. Liczy się to, jakie ma kolumny i które wiersze do niej trafiły. Kliknij komórkę macierzy i porównaj cztery sposoby zapisania „tylko czerwone”.</p>
+    </header>
+
+    <div id="tabs"></div>
+    <div class="vz-code" id="code"></div>
+
+    <div class="vz-grid">
+        <div>
+            <section class="vz-card">
+                <div class="vz-label">Wizualizacja · macierz</div>
+                <div id="matrix"></div>
+                <div class="vz-legend">
+                    <span style="color: var(--ctx-visual)"><i style="background: var(--ctx-visual-soft)"></i>wybrana komórka = kontekst z wizualizacji</span>
+                    <span id="legendChanged" style="color: var(--ctx-calc)"><i style="background: var(--ctx-calc-soft)"></i>wynik inny niż samej miary (przekreślony)</span>
+                </div>
+            </section>
+            <div class="vz-takeaway" id="takeaway"></div>
+        </div>
+
+        <section class="vz-card" id="explain">
+            <div class="step-head">
+                <div class="vz-label">Co się dzieje w komórce</div>
+                <div class="vz-bar">
+                    <button type="button" class="vz-btn" id="playBtn">▶ Krok po kroku</button>
+                    <div class="vz-bar" id="stepNav">
+                        <button type="button" class="vz-btn" id="prevBtn">←</button>
+                        <span class="vz-hint" id="stepInfo"></span>
+                        <button type="button" class="vz-btn primary" id="nextBtn">Dalej →</button>
+                    </div>
+                </div>
+            </div>
+            <div class="vz-steps" id="steps"></div>
+        </section>
+    </div>
+
+    <section class="vz-card practice">
+        <div class="vz-label">Dobra praktyka i wydajność</div>
+        <ul>
+            <li><span class="ic ok">✓</span><span><b>Filtruj kolumny, nie tabele.</b> <code>Sprzedaz[Kolor] = "Czerwony"</code> to tabela z jedną kolumną i kilkoma wartościami. Silnik filtruje ją bardzo tanio.</span></li>
+            <li><span class="ic ok">✓</span><span><b>Chcesz przecięcia z kontekstem? Napisz to wprost:</b> <code>KEEPFILTERS(Sprzedaz[Kolor] = "Czerwony")</code>. Wynik jest taki sam jak z <code>FILTER(Sprzedaz, …)</code>, ale bez iterowania tabeli faktów.</span></li>
+            <li><span class="ic warn">!</span><span><b><code>FILTER(Sprzedaz, …)</code> iteruje tabelę faktów wiersz po wierszu</b> i zwraca filtr na <b>wszystkich</b> jej kolumnach, a dokładniej na tabeli rozszerzonej, czyli także na kolumnach wymiarów połączonych relacją (Produkt, Data…). Przy milionach wierszy to wolne i łatwo o niespodziankę.</span></li>
+            <li><span class="ic bad">✗</span><span><b><code>FILTER(ALL(Sprzedaz), …)</code> zdejmuje wszystkie filtry z tabeli</b>, nie tylko z kolumny Kolor. Jeśli chodziło o jedną kolumnę, wystarczy predykat kolumny albo <code>FILTER(ALL(Sprzedaz[Kolor]), …)</code>.</span></li>
+            <li><span class="ic ok">✓</span><span><b>FILTER jest potrzebny</b>, gdy warunek dotyczy miary albo kilku kolumn naraz. Wtedy iteruj jak najwęższą tabelę, np. <code>FILTER(VALUES(Sprzedaz[Kolor]), [Sprzedaż] &gt; 1000)</code>.</span></li>
+        </ul>
+    </section>
+</div>
+
+<script src="../viz/kit.js"></script>
+<script>
+    const ROWS = VZ.sales;
+    const CATS = ['Rowery', 'Kaski', 'Odzież'];
+    const COLS = ['Czerwony', 'Niebieski', 'Czarny'];
+    const TARGET = 'Czerwony';
+    const isRed = r => r.Kolor === TARGET;
+    const ALL_COLS = ['Id', 'Kategoria', 'Kolor', 'Kwota'];
+
+    // Każdy scenariusz: argTable(ctx) buduje tabelę argumentu filtra (w kontekście komórki),
+    // rows(ctx) zwraca wiersze Sprzedaz, które przechodzą przez nowy kontekst filtra.
+    const FORMULAS = {
+        base: {
+            label: 'Sama miara',
+            code: 'Sprzedaż = SUM(Sprzedaz[Kwota])',
+            rows: ctx => VZ.filterRows(ROWS, ctx),
+            kind: 'in',
+        },
+        col: {
+            label: 'Predykat kolumny',
+            code: 'Czerwone = CALCULATE([Sprzedaż], {{calc|Sprzedaz[Kolor] = "Czerwony"}})\n-- DAX zamienia predykat na tabelę jednej kolumny:\n-- CALCULATE([Sprzedaż], FILTER(ALL(Sprzedaz[Kolor]), Sprzedaz[Kolor] = "Czerwony"))',
+            type: 'column',
+            rows: ctx => VZ.filterRows(ROWS, { ...ctx, Kolor: [TARGET] }),
+            kind: 'in calc',
+        },
+        ftab: {
+            label: 'FILTER(Sprzedaz, …)',
+            code: 'Czerwone (FILTER) =\nCALCULATE([Sprzedaż], {{calc|FILTER(Sprzedaz, Sprzedaz[Kolor] = "Czerwony")}})',
+            type: 'table',
+            // FILTER widzi tylko wiersze z kontekstu komórki
+            table: ctx => VZ.filterRows(ROWS, ctx).filter(isRed),
+            kind: 'in calc',
+        },
+        fall: {
+            label: 'FILTER(ALL(Sprzedaz), …)',
+            code: 'Czerwone (FILTER ALL) =\nCALCULATE([Sprzedaż], {{calc|FILTER(}}{{off|ALL(Sprzedaz)}}{{calc|, Sprzedaz[Kolor] = "Czerwony")}})',
+            type: 'table',
+            table: () => ROWS.filter(isRed),
+            kind: 'in calc',
+        },
+        keep: {
+            label: 'KEEPFILTERS',
+            code: 'Czerwone (KF) = CALCULATE([Sprzedaż], {{and|KEEPFILTERS(Sprzedaz[Kolor] = "Czerwony")}})',
+            type: 'column',
+            rows: ctx => VZ.filterRows(ROWS, { ...ctx, Kolor: ctx.Kolor ? VZ.intersect(ctx.Kolor, [TARGET]) : [TARGET] }),
+            kind: 'in and',
+        },
+    };
+    // Filtr tabeli nadpisuje wszystkie kolumny Sprzedaz: zostają dokładnie wiersze z tabeli argumentu
+    ['ftab', 'fall'].forEach(id => { FORMULAS[id].rows = ctx => FORMULAS[id].table(ctx); });
+
+    const state = { formula: 'col', sel: { r: 'Rowery', c: 'Niebieski' }, manual: false };
+    let stepper = null;
+
+    const visualCtx = sel => {
+        const ctx = {};
+        if (sel.r) ctx.Kategoria = [sel.r];
+        if (sel.c) ctx.Kolor = [sel.c];
+        return ctx;
+    };
+    const valueOf = (fid, ctx) => { const rs = FORMULAS[fid].rows(ctx); return rs.length ? VZ.sum(rs, 'Kwota') : null; };
+
+    function renderMatrix() {
+        const f = state.formula;
+        VZ.matrix(document.getElementById('matrix'), {
+            rowField: 'Kategoria', colField: 'Kolor', rowValues: CATS, colValues: COLS,
+            value: ctx => valueOf(f, ctx),
+            base: f === 'base' ? null : ctx => valueOf('base', ctx),
+            selected: state.sel,
+            onSelect: sel => { state.sel = sel; render(true); },
+        });
+        document.getElementById('legendChanged').style.visibility = f === 'base' ? 'hidden' : 'visible';
+    }
+
+    // ---------- Krok 2: tabela argumentu filtra ----------
+    function argHtml(fid, vis) {
+        const f = FORMULAS[fid];
+        if (f.type === 'column') {
+            const pass = COLS.filter(c => c === TARGET);
+            const body = COLS.map(c => `<tr class="${c === TARGET ? 'pass' : 'fail'}"><td>${VZ.swatch(c)}${c}</td><td class="st">${c === TARGET ? '✓' : '✗'}</td></tr>`).join('');
+            return `
+                <div class="arg-sub">FILTER przechodzi po <code>ALL(Sprzedaz[Kolor])</code>, czyli po wszystkich ${COLS.length} kolorach. Kontekst komórki nie ma tu znaczenia.</div>
+                <div class="vz-table-wrap"><table class="vz-table arg-tbl" style="width:auto;min-width:200px">
+                    <thead><tr><th class="cov">Kolor</th><th></th></tr></thead><tbody>${body}</tbody></table></div>
+                <div class="arg-res"><span>Argument filtra:</span><span class="shape">1 kolumna × ${pass.length} wiersz</span>${VZ.chip('Kolor', pass, 'calc')}</div>`;
+        }
+        // Filtr tabeli: wszystkie kolumny, wiersze zależne od kontekstu (ftab) albo wszystkie (fall)
+        const visible = r => (fid === 'fall' ? true : VZ.rowPasses(r, vis));
+        const nVisible = ROWS.filter(visible).length;
+        const table = f.table(vis);
+        const head = ALL_COLS.map(c => `<th class="cov ${c === 'Kwota' || c === 'Id' ? 'num' : ''}">${c}</th>`).join('') + '<th></th>';
+        const body = ROWS.map(r => {
+            const v = visible(r);
+            const p = v && isRed(r);
+            const cls = !v ? 'hidden' : p ? 'pass' : 'fail';
+            const st = !v ? '' : p ? '✓' : '✗';
+            return `<tr class="${cls}"><td class="num">${r.Id}</td><td>${r.Kategoria}</td><td>${VZ.swatch(r.Kolor)}${r.Kolor}</td><td class="num">${VZ.fmt(r.Kwota)}</td><td class="st">${st}</td></tr>`;
+        }).join('');
+        const sub = fid === 'fall'
+            ? `FILTER przechodzi po <code>ALL(Sprzedaz)</code>: po wszystkich ${ROWS.length} wierszach, bez względu na komórkę.`
+            : (Object.keys(vis).length
+                ? `FILTER przechodzi po <code>Sprzedaz</code> <b>w kontekście komórki</b>: widzi tylko ${nVisible} z ${ROWS.length} wierszy. Reszta jest wyszarzona.`
+                : `FILTER przechodzi po <code>Sprzedaz</code> w kontekście komórki. To suma całkowita, więc widzi wszystkie ${ROWS.length} wierszy.`);
+        const shape = table.length
+            ? `<span class="shape">${ALL_COLS.length} kolumny × ${table.length} ${plWiersz(table.length)}</span>${VZ.chip('Id', table.map(r => r.Id), 'calc')}`
+            : `<span class="shape empty">${ALL_COLS.length} kolumny × 0 wierszy · pusta tabela</span>`;
+        return `
+            <div class="arg-sub">${sub}</div>
+            <div class="vz-table-wrap"><table class="vz-table arg-tbl"><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>
+            <div class="arg-res"><span>Argument filtra obejmuje <b>wszystkie kolumny</b>:</span>${shape}</div>`;
+    }
+
+    const plWiersz = n => (n === 1 ? 'wiersz' : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? 'wiersze' : 'wierszy');
+
+    // ---------- Krok 3: jak CALCULATE nakłada argument ----------
+    function combineHtml(fid, vis) {
+        const row = (n, h) => `<div class="combine-row"><span class="field">${n}</span><div class="vz-chips">${h}</div></div>`;
+        const none = (col, what) => VZ.chip(col, 'wszystkie', 'none', what);
+        const lines = [];
+        if (fid === 'col' || fid === 'keep' || fid === 'base') {
+            lines.push(row('Kategoria', vis.Kategoria ? VZ.chip('Kategoria', vis.Kategoria, 'visual', fid === 'base' ? '' : 'bez zmian') : none('Kategoria', 'brak filtra')));
+            let k;
+            const visChip = vis.Kolor ? VZ.chip('Kolor', vis.Kolor, 'visual') : none('Kolor', 'brak filtra');
+            if (fid === 'base') k = visChip;
+            else if (fid === 'col') k = (vis.Kolor ? VZ.chip('Kolor', vis.Kolor, 'off', 'nadpisany') : visChip) + VZ.op('→', 'arrow') + VZ.chip('Kolor', TARGET, 'calc');
+            else {
+                const both = vis.Kolor ? VZ.intersect(vis.Kolor, [TARGET]) : [TARGET];
+                k = visChip + VZ.op('&') + VZ.chip('Kolor', TARGET, 'calc') + VZ.op('=', 'arrow') +
+                    (both.length ? VZ.chip('Kolor', both, 'and') : VZ.chip('Kolor', [], 'empty', 'nic nie spełnia obu'));
+            }
+            lines.push(row('Kolor', k));
+            return '<div class="combine">' + lines.join('') + '</div>';
+        }
+        // Filtr tabeli: nadpisuje filtry na wszystkich kolumnach Sprzedaz
+        const table = FORMULAS[fid].table(vis);
+        lines.push(row('Kategoria', vis.Kategoria ? VZ.chip('Kategoria', vis.Kategoria, 'off', 'nadpisany') : none('Kategoria', 'brak filtra')));
+        lines.push(row('Kolor', vis.Kolor ? VZ.chip('Kolor', vis.Kolor, 'off', 'nadpisany') : none('Kolor', 'brak filtra')));
+        lines.push(row('Sprzedaz', table.length
+            ? VZ.chip('wiersze', table.map(r => r.Id), 'calc', 'z tabeli') + VZ.chip('', `${VZ.distinct(table, 'Kategoria').join(', ')} · ${TARGET}`, 'calc')
+            : VZ.chip('wiersze', [], 'empty', 'pusta tabela')));
+        return '<div class="combine">' + lines.join('') + '</div>';
+    }
+
+    function note3(fid, vis) {
+        const hasVis = Object.keys(vis).length > 0;
+        switch (fid) {
+            case 'base': return 'Miara nie ma argumentów filtra, więc kontekst się nie zmienia.';
+            case 'col': return 'Tabela argumentu ma tylko kolumnę Kolor, więc CALCULATE nadpisuje tylko filtr Koloru. Kategoria z wiersza zostaje.';
+            case 'keep': return 'Ta sama tabela jednej kolumny, ale KEEPFILTERS nie nadpisuje: dokłada ją do istniejącego filtra Koloru (&).';
+            case 'ftab': return hasVis
+                ? 'Tabela ma wszystkie kolumny Sprzedaz, więc CALCULATE nadpisuje <b>każdy</b> filtr komórki na tej tabeli. Ale jej wiersze pochodzą z komórki, więc nadpisanie niczego nie poszerza i efekt wygląda jak przecięcie (&).'
+                : 'Komórka sumy nie ma własnych filtrów, więc zostają wiersze z tabeli argumentu: wszystkie czerwone.';
+            case 'fall': return hasVis
+                ? 'Tabela ma wszystkie kolumny Sprzedaz i wiersze ze <b>wszystkich kategorii</b>. Nadpisuje filtr Koloru, a przy okazji także filtr Kategorii z wiersza macierzy.'
+                : 'Komórka sumy nie ma własnych filtrów. Zostają wszystkie czerwone wiersze.';
+        }
+    }
+
+    function renderSteps() {
+        const fid = state.formula;
+        const f = FORMULAS[fid];
+        const vis = visualCtx(state.sel);
+        const rows = f.rows(vis);
+        const result = rows.length ? VZ.sum(rows, 'Kwota') : null;
+        const where = [state.sel.r || 'Suma (wszystkie kategorie)', state.sel.c || 'Suma (wszystkie kolory)'].join(' × ');
+        const visChips = Object.keys(vis).length
+            ? Object.entries(vis).map(([c, v]) => VZ.chip(c, v, 'visual')).join('')
+            : VZ.chip('', 'brak filtrów — komórka sumy całkowitej', 'none');
+        const ids = new Set(rows.map(r => r.Id));
+
+        let n = 1;
+        let html = `
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-visual)">${n++}</span>Kontekst z wizualizacji · ${VZ.esc(where)}</div>
+                <div class="vz-chips">${visChips}</div>
+            </div>`;
+        if (fid !== 'base') {
+            html += `
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-calc)">${n++}</span>Argument filtra · tabela, którą buduje formuła</div>
+                ${argHtml(fid, vis)}
+            </div>`;
+        }
+        html += `
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-and)">${n++}</span>${fid === 'base' ? 'Kontekst filtra' : 'CALCULATE nakłada tabelę na kontekst'}</div>
+                ${combineHtml(fid, vis)}
+                <div class="vz-step-note">${note3(fid, vis)}</div>
+            </div>
+            <div class="vz-step">
+                <div class="vz-step-title"><span class="vz-num" style="background:var(--text)">${n++}</span>Wiersze Sprzedaz, które przechodzą przez filtr</div>
+                <div id="facts"></div>
+                <div class="vz-result">
+                    <span class="lbl">Wynik w komórce</span>
+                    <span class="val ${result === null ? 'blank' : ''}">${result === null ? '(puste)' : VZ.fmt(result)}</span>
+                </div>
+            </div>`;
+        document.getElementById('steps').innerHTML = html;
+
+        VZ.table(document.getElementById('facts'), {
+            columns: [{ key: 'Kategoria' }, { key: 'Kolor' }, { key: 'Kwota', num: true }],
+            rows: ROWS,
+            state: r => (ids.has(r.Id) ? f.kind : 'out'),
+        });
+    }
+
+    function takeaway() {
+        const fid = state.formula;
+        const vis = visualCtx(state.sel);
+        const where = `${state.sel.r || 'Suma'} × ${state.sel.c || 'Suma'}`;
+        switch (fid) {
+            case 'base':
+                return 'Bez CALCULATE miara liczy się dokładnie w kontekście komórki. To punkt odniesienia: w pozostałych zakładkach przekreślona liczba w macierzy to właśnie ta wartość.';
+            case 'col':
+                return 'Predykat na kolumnie to skrót od <b>FILTER(ALL(Sprzedaz[Kolor]), …)</b>: tabela z <b>jedną kolumną</b>, zbudowana bez patrzenia na komórkę. CALCULATE nadpisuje nią tylko Kolor, a Kategoria zostaje. Dlatego każdy wiersz macierzy pokazuje czerwoną sprzedaż swojej kategorii, w każdej kolumnie.';
+            case 'ftab': {
+                const n = FORMULAS.ftab.table(vis).length;
+                return `FILTER(Sprzedaz, …) iteruje <b>tylko wiersze widoczne w komórce</b> (w ${VZ.esc(where)} zwrócił ${n} ${plWiersz(n)}). Tabela filtra też nadpisuje, i to wszystkie kolumny Sprzedaz, ale zawiera wyłącznie wiersze z komórki. Wynik wygląda więc jak <b>przecięcie</b>: poza kolumną „Czerwony” jest pusty.`;
+            }
+            case 'fall':
+                return `ALL(Sprzedaz) zdejmuje filtry z całej tabeli, więc FILTER zwraca czerwone wiersze <b>ze wszystkich kategorii</b>. Ta tabela nadpisuje też Kategorię z wiersza macierzy, dlatego każda komórka pokazuje tę samą liczbę: <b>${VZ.fmt(VZ.sum(ROWS.filter(isRed), 'Kwota'))}</b>. To prawie nigdy nie jest zamierzone.`;
+            case 'keep':
+                return 'KEEPFILTERS daje <b>ten sam wynik co FILTER(Sprzedaz, …)</b>: porównaj macierze. Filtruje jednak jedną kolumnę zamiast całej tabeli faktów. Jeśli chodzi Ci o przecięcie z kontekstem, zapisz je właśnie tak.';
+        }
+    }
+
+    function render(animate) {
+        const f = FORMULAS[state.formula];
+        document.getElementById('code').innerHTML = VZ.code(f.code);
+        renderMatrix();
+        renderSteps();
+        document.getElementById('takeaway').innerHTML = takeaway();
+        const steps = document.getElementById('steps');
+        if (state.manual) {
+            stepper = VZ.stepper(steps, updateStepNav);
+            stepper.start();
+        } else if (animate) {
+            VZ.reveal(steps);
+        }
+    }
+
+    function updateStepNav(i, n) {
+        document.getElementById('stepInfo').textContent = `Krok ${i + 1} z ${n}`;
+        document.getElementById('prevBtn').disabled = i <= 0;
+        document.getElementById('nextBtn').textContent = i >= n - 1 ? 'Pokaż wszystko' : 'Dalej →';
+    }
+
+    document.getElementById('playBtn').addEventListener('click', () => {
+        state.manual = true;
+        document.getElementById('explain').classList.add('manual');
+        render(false);
+    });
+    document.getElementById('prevBtn').addEventListener('click', () => stepper.prev());
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        if (stepper.index >= stepper.count - 1) {
+            state.manual = false;
+            document.getElementById('explain').classList.remove('manual');
+            stepper.showAll();
+        } else {
+            stepper.next();
+        }
+    });
+
+    VZ.tabs(document.getElementById('tabs'),
+        Object.entries(FORMULAS).map(([id, f]) => ({ id, label: f.label })),
+        id => { state.formula = id; render(true); }, state.formula);
+
+    render(true);
+</script>
+</body>
+</html>

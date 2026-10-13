@@ -1,106 +1,288 @@
 {
   "folders": {
+    "Wizualizacje DAX": {
+      "description": "Interaktywne wizualizacje: jak DAX liczy w kontekście filtra i wiersza",
+      "tags": [
+        "Wizualizacja",
+        "DAX",
+        "Kontekst"
+      ],
+      "files": {
+        "01. Kontekst filtra - CALCULATE i KEEPFILTERS.html": {
+          "description": "CALCULATE nadpisuje filtr, KEEPFILTERS dokłada warunek (&), REMOVEFILTERS go zdejmuje",
+          "tags": [
+            "Wizualizacja",
+            "Kontekst",
+            "DAX"
+          ],
+          "createdDate": "2026-10-13"
+        },
+        "02. Kontekst wiersza i przejście kontekstu.html": {
+          "description": "Dlaczego CALCULATE w kolumnie kalkulowanej zamienia wiersz w filtr",
+          "tags": [
+            "Wizualizacja",
+            "Kontekst",
+            "DAX"
+          ],
+          "createdDate": "2026-10-13"
+        },
+        "03. Iteratory - SUM kontra SUMX.html": {
+          "description": "Iterator przechodzi wiersz po wierszu: SUMX kontra SUM",
+          "tags": [
+            "Wizualizacja",
+            "DAX"
+          ],
+          "createdDate": "2026-10-13"
+        },
+        "04. ALL, ALLEXCEPT, ALLSELECTED - udział procentowy.html": {
+          "description": "Które filtry zdejmuje ALL, ALLEXCEPT i ALLSELECTED: udział %",
+          "tags": [
+            "Wizualizacja",
+            "Kontekst",
+            "DAX"
+          ],
+          "createdDate": "2026-10-13"
+        },
+        "05. Filtr kolumny kontra filtr tabeli.html": {
+          "description": "Predykat kolumny, FILTER(tabela) i FILTER(ALL(tabela)) w CALCULATE",
+          "tags": [
+            "Wizualizacja",
+            "Kontekst",
+            "DAX"
+          ],
+          "createdDate": "2026-10-13"
+        },
+        "06. Relacje i propagacja filtrów.html": {
+          "description": "Jak filtr płynie po relacjach: kierunek, RELATED, RELATEDTABLE",
+          "tags": [
+            "Wizualizacja",
+            "Model",
+            "DAX"
+          ],
+          "createdDate": "2026-10-13"
+        },
+        "07. Analiza czasowa - DATESYTD, SAMEPERIODLASTYEAR, DATEADD.html": {
+          "description": "Jak funkcje czasowe przesuwają i rozszerzają filtr dat",
+          "tags": [
+            "Wizualizacja",
+            "Czas",
+            "DAX"
+          ],
+          "createdDate": "2026-10-13"
+        }
+      }
+    },
+    "Wizualizacje Power Query": {
+      "description": "Interaktywne wizualizacje: jak Power Query (M) przekształca tabele krok po kroku",
+      "tags": [
+        "Wizualizacja",
+        "Power Query",
+        "M"
+      ],
+      "files": {
+        "01. Kroki zapytania - jak czytać kod M.html": {
+          "description": "Zastosowane kroki, let … in i each: co robi każdy krok z tabelą",
+          "tags": [
+            "Wizualizacja",
+            "Power Query",
+            "M"
+          ],
+          "createdDate": "2026-10-13"
+        },
+        "02. Scalanie zapytań - rodzaje złączeń.html": {
+          "description": "Sześć rodzajów złączeń: które wiersze zostają, skąd biorą się null",
+          "tags": [
+            "Wizualizacja",
+            "Power Query",
+            "M"
+          ],
+          "createdDate": "2026-10-13"
+        },
+        "03. Unpivot, Pivot i Grupowanie.html": {
+          "description": "Jak komórki zamieniają się w wiersze i z powrotem; grupowanie",
+          "tags": [
+            "Wizualizacja",
+            "Power Query",
+            "M"
+          ],
+          "createdDate": "2026-10-13"
+        }
+      }
+    },
     "Odczarujpowerbi": {
       "description": "Kurs DAX - materiały edukacyjne do nauki Power BI",
-      "tags": ["DAX", "Tutorial", "Power BI"],
+      "tags": [
+        "DAX",
+        "Tutorial",
+        "Power BI"
+      ],
       "files": {
         "01. Podstawy DAX.html": {
           "description": "Wprowadzenie do języka DAX i podstawowe koncepcje",
-          "tags": ["Tutorial", "Podstawy", "DAX"],
+          "tags": [
+            "Tutorial",
+            "Podstawy",
+            "DAX"
+          ],
           "createdDate": "2025-12-29"
         },
         "01. Podstawy DAX - Funkcje agregujące.html": {
           "description": "Funkcje agregujące (SUM, AVERAGE, COUNT)",
-          "tags": ["Tutorial", "Funkcje", "Agregacja"],
+          "tags": [
+            "Tutorial",
+            "Funkcje",
+            "Agregacja"
+          ],
           "createdDate": "2025-12-29"
         },
         "01. Podstawy DAX - Funkcje dat.html": {
           "description": "Funkcje dat (DATE, YEAR, MONTH)",
-          "tags": ["Tutorial", "Funkcje", "Daty"],
+          "tags": [
+            "Tutorial",
+            "Funkcje",
+            "Daty"
+          ],
           "createdDate": "2025-12-29"
         },
         "01. Podstawy DAX - Funkcje logiczne.html": {
           "description": "Funkcje logiczne (IF, AND, OR)",
-          "tags": ["Tutorial", "Funkcje", "Logika"],
+          "tags": [
+            "Tutorial",
+            "Funkcje",
+            "Logika"
+          ],
           "createdDate": "2025-12-29"
         },
         "01. Podstawy DAX - Funkcje tekstowe.html": {
           "description": "Funkcje tekstowe (CONCATENATE, LEFT, RIGHT)",
-          "tags": ["Tutorial", "Funkcje", "Tekst"],
+          "tags": [
+            "Tutorial",
+            "Funkcje",
+            "Tekst"
+          ],
           "createdDate": "2025-12-29"
         },
         "01a. Gaps.html": {
           "description": "Analiza luk w danych",
-          "tags": ["Tutorial", "Zaawansowane"],
+          "tags": [
+            "Tutorial",
+            "Zaawansowane"
+          ],
           "createdDate": "2025-12-29"
         },
         "01a. Quiz.html": {
           "description": "Quiz sprawdzający wiedzę z podstaw DAX",
-          "tags": ["Quiz", "Test"],
+          "tags": [
+            "Quiz",
+            "Test"
+          ],
           "createdDate": "2025-12-29"
         }
       }
     },
     "Projekty Graficzne": {
       "description": "Kolekcja projektów graficznych - palety kolorów i koncepcje wizualne",
-      "tags": ["Design", "UI", "Kolory"],
+      "tags": [
+        "Design",
+        "UI",
+        "Kolory"
+      ],
       "files": {
         "ocean.html": {
           "description": "Paleta kolorów inspirowana oceanem",
-          "tags": ["Design", "Kolory", "Natura"],
+          "tags": [
+            "Design",
+            "Kolory",
+            "Natura"
+          ],
           "createdDate": "2025-12-29"
         },
         "sunset.html": {
           "description": "Paleta kolorów inspirowana zachodem słońca",
-          "tags": ["Design", "Kolory", "Natura"],
+          "tags": [
+            "Design",
+            "Kolory",
+            "Natura"
+          ],
           "createdDate": "2025-12-29"
         },
         "forest.html": {
           "description": "Paleta kolorów inspirowana lasem",
-          "tags": ["Design", "Kolory", "Natura"],
+          "tags": [
+            "Design",
+            "Kolory",
+            "Natura"
+          ],
           "createdDate": "2025-12-29"
         }
       }
     },
     "Dokumentacja": {
       "description": "Dokumentacja brandingowa i wytyczne projektowe",
-      "tags": ["Branding", "Guidelines", "Dokumentacja"],
+      "tags": [
+        "Branding",
+        "Guidelines",
+        "Dokumentacja"
+      ],
       "files": {
         "branding.html": {
           "description": "Standardy brandingowe i identyfikacja wizualna",
-          "tags": ["Branding", "Standards"],
+          "tags": [
+            "Branding",
+            "Standards"
+          ],
           "createdDate": "2025-12-29"
         },
         "guidelines.html": {
           "description": "Wytyczne projektowe i specyfikacje techniczne",
-          "tags": ["Guidelines", "Specyfikacja"],
+          "tags": [
+            "Guidelines",
+            "Specyfikacja"
+          ],
           "createdDate": "2025-12-29"
         }
       }
     },
     "Prototypy": {
       "description": "Prototypy interfejsów użytkownika i warianty projektowe",
-      "tags": ["Prototypy", "UI", "Design"],
+      "tags": [
+        "Prototypy",
+        "UI",
+        "Design"
+      ],
       "files": {
         "variant-a.html": {
           "description": "Wariant A interfejsu",
-          "tags": ["Prototyp", "Wariant"],
+          "tags": [
+            "Prototyp",
+            "Wariant"
+          ],
           "createdDate": "2025-12-29"
         },
         "variant-b.html": {
           "description": "Wariant B interfejsu",
-          "tags": ["Prototyp", "Wariant"],
+          "tags": [
+            "Prototyp",
+            "Wariant"
+          ],
           "createdDate": "2025-12-29"
         }
       },
       "subfolders": {
         "Motywy Ciemne": {
           "description": "Prototypy z ciemnymi motywami kolorystycznymi",
-          "tags": ["Dark Mode", "Prototypy", "UI"],
+          "tags": [
+            "Dark Mode",
+            "Prototypy",
+            "UI"
+          ],
           "files": {
             "dark-mode.html": {
               "description": "Wersja interfejsu z ciemnym motywem",
-              "tags": ["Dark Mode", "UI"],
+              "tags": [
+                "Dark Mode",
+                "UI"
+              ],
               "createdDate": "2025-12-29"
             }
           }
@@ -110,8 +292,12 @@
   },
   "defaults": {
     "folderDescription": "Folder z zawartością",
-    "folderTags": ["Content"],
+    "folderTags": [
+      "Content"
+    ],
     "fileDescription": "Dokument HTML",
-    "fileTags": ["HTML"]
+    "fileTags": [
+      "HTML"
+    ]
   }
 }
