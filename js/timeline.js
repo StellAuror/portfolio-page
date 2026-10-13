@@ -272,6 +272,7 @@ function drawGuides(index) {
 function showEvent(index, instant = false) {
     const items = window.timelineData;
     if (!items.length || index < 0 || index >= items.length) return;
+    if (!document.getElementById('timeline-left-content')) return;
 
     currentIdx = index;
     const event = items[index];
@@ -307,6 +308,7 @@ function showEvent(index, instant = false) {
         nav.querySelector('.tl-mnav-prev').disabled = index === items.length - 1;
         nav.querySelector('.tl-mnav-next').disabled = index === 0;
         nav.querySelector('.tl-mnav-count').textContent = `${items.length - index} / ${items.length}`;
+        nav.querySelector('.tl-mnav-label').textContent = event.label || '';
     });
 
     autoScrollToActiveItem(instant);
@@ -324,10 +326,14 @@ function autoScrollToActiveItem(instant = false) {
 
 // Render (or re-render) only when the strip is actually visible
 function refreshTimeline() {
-    if (!journeyVisible()) return;
-    const wrapper = document.querySelector('#journey .timeline-wrapper');
-    if (timelineDirty || wrapper.clientWidth !== renderedWidth) {
-        renderTimeline();
+    const section = document.getElementById('journey');
+    if (!section || !section.classList.contains('active') || !window.timelineData.length) return;
+    // The time strip is hidden on phones — content and step navigation still work without it
+    if (journeyVisible()) {
+        const wrapper = document.querySelector('#journey .timeline-wrapper');
+        if (timelineDirty || wrapper.clientWidth !== renderedWidth) renderTimeline();
+    } else {
+        timelineDirty = true;
     }
     bindControls();
     showEvent(Math.min(currentIdx, window.timelineData.length - 1), true);
@@ -351,7 +357,7 @@ function bindControls() {
             if (next < 0 || next >= window.timelineData.length) return;
             showEvent(next);
             if (nav.classList.contains('tl-mnav-bottom')) {
-                document.querySelector('#journey .timeline-container')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.querySelector('#journey .tl-mnav-top')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         };
         nav.querySelector('.tl-mnav-prev').addEventListener('click', () => go(1));

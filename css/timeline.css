@@ -447,7 +447,7 @@
 
     /* Order: header → time strip → step nav → image → text → step nav */
     .timeline-header { order: 0; }
-    .timeline-container { order: 1; margin: 0 -1rem; }
+    .timeline-container { display: none; }
     .tl-mnav-top { order: 2; }
     .timeline-main-content { order: 3; }
 
@@ -536,7 +536,10 @@
     }
 
     .tl-mnav-top {
-        margin: 4px 0 8px;
+        margin: 8px 0 16px;
+        padding: 10px 0;
+        border-top: 1px solid #1a1a1a;
+        border-bottom: 1px solid #1a1a1a;
     }
 
     .tl-mnav-bottom {
@@ -564,6 +567,26 @@
 
     .tl-mnav button:disabled {
         opacity: 0.25;
+    }
+
+    .tl-mnav-info {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        text-align: center;
+    }
+
+    .tl-mnav-label {
+        color: #fff;
+        font-size: 0.9rem;
+        font-weight: 500;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
     }
 
     .tl-mnav-count {
