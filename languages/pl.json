@@ -9,12 +9,50 @@
         "copied": "Skopiowano"
     },
     "about": {
-        "title": "O mnie",
+        "title": "Start",
         "subtitle": "Developer i konsultant BI, Fabric & Power Platform z 4-letnim doświadczeniem w danych",
         "greeting": "Cześć, jestem Michał — zamieniam dane w decyzje.",
         "p1": "Moja przygoda z danymi zaczęła się wcześnie — już w gimnazjum projektowałem arkusze kalkulacyjne dla nauczycieli. Z czasem ta ciekawość przerodziła się w pasję, a potem w świadomy wybór ścieżki: od studiów z zastosowania informatyki w biznesie, przez analitykę w międzynarodowym zespole Novartis, po prowadzenie własnych wdrożeń.",
         "p2": "Dziś realizuję kompleksowe projekty Business Intelligence dla klientów B2B — także dla największych firm na rynku. Pracuję w całym ekosystemie danych Microsoft: Microsoft Fabric jako fundament danych, Power BI na poziomie eksperckim oraz Power Apps (canvas i model-driven) na Dataverse z Power Automate — tak, aby użytkownicy mogli od razu działać na tym, co pokazują raporty. Odpowiadam za cały cykl: od warsztatów z biznesem i architektury danych, przez model semantyczny i raporty, po wdrożenie i przekazanie rozwiązania zespołowi klienta. Kieruję też małym zespołem wdrożeniowym — planuję prace, dzielę zadania i pilnuję jakości tego, co dostarczamy.",
         "p3": "Po godzinach dzielę się wiedzą jako mentor 1:1 z Power BI, SQL i modelowania danych. Wierzę, że liczby mają sens dopiero wtedy, gdy stają się częścią rozmowy — a droga od surowych danych do świadomej decyzji to dla mnie sedno pracy z danymi."
+    },
+    "me": {
+        "title": "O mnie",
+        "subtitle": "Poza pracą — czyli to, co składa mnie w całość",
+        "craneAlt": "Origami żuraw z białego papieru na myszce komputerowej",
+        "quote": "Jak origami, co z początku formy nie chce zdradzać\nŻycie nas łamie wiele razy, bo nie znamy celu\nNie chcemy wierzyć sobie samym, że dobrze się składa\nKsięga losu w tysiąc żurawi z papieru",
+        "intro": {
+            "p1": "Od zawsze ciągnęło mnie w dwie strony. Z jednej — przedmioty ścisłe: matematyka, fizyka, logika i to przyjemne kliknięcie, kiedy coś wreszcie się zgadza. Z drugiej — kreatywność: potrzeba wymyślania, projektowania i nadawania rzeczom formy. Długo byłem przekonany, że to dwa osobne światy i prędzej czy później trzeba będzie wybrać jeden.",
+            "p2": "Pierwsza wskazówka, że wcale nie muszę, przyszła jeszcze w gimnazjum, przy arkuszach dla nauczycieli — miały liczyć bezbłędnie, ale chciałem też, żeby dobrze wyglądały i dało się z nich szybko coś wyczytać. Na dobre zrozumiałem to dopiero, kiedy trafiłem na Business Intelligence. Dashboard to miejsce, gdzie logika spotyka się z projektowaniem: każda miara musi się zgadzać co do grosza, a każdy wykres musi dać się przeczytać w kilka sekund. To mnie zwyczajnie pochłonęło — i wytyczyło kierunek zawodowy, który przy okazji stał się pasją.",
+            "p3": "Origami dobrze to oddaje: zwykła kartka, ścisłe zasady zginania, a na końcu coś, co ma formę. Poniżej trzy rzeczy, które składają mnie poza pracą."
+        },
+        "space": {
+            "label": "01 — Kosmos",
+            "title": "Pop-sci, czyli skąd to wszystko",
+            "p1": "Kosmos fascynuje mnie, odkąd pamiętam. Prawdziwy zapłon przyszedł z „Krótką historią czasu” Stephena Hawkinga — książką, która pokazała mi, że o czarnych dziurach, początku Wszechświata i naturze czasu da się myśleć bez doktoratu z fizyki, byle z ciekawością.",
+            "p2": "Potem był „Interstellar” i „Interstellar i nauka” Kipa Thorne’a — fizyka, który nie tylko doradzał przy filmie, ale policzył, jak naprawdę wyglądałaby Gargantua. Do dziś najbardziej lubię w popularnonaukowych książkach moment, w którym skomplikowane równanie zamienia się w obraz, który da się zrozumieć. Trochę jak w dobrym dashboardzie.",
+            "w1": "Krótka historia czasu",
+            "w2": "Interstellar",
+            "w3": "Interstellar i nauka",
+            "hint": "Poruszaj kursorem — tak czarna dziura zakrzywia światło gwiazd"
+        },
+        "philosophy": {
+            "label": "02 — Filozofia",
+            "title": "Filozofia w praktycznym wydaniu",
+            "p1": "Filozofia interesuje mnie nie jako system do wykucia, ale jako pytania, które wracają w zwykłym życiu: co jest słuszne, co nadaje rzeczom sens, jak żyć z wyborami, których nie da się cofnąć.",
+            "p2": "Szukam ich wszędzie tam, gdzie ktoś odważył się zadać je na serio. Od „Braci Karamazow” Dostojewskiego — wiary, winy i wolności rozpisanych na jedną rodzinę — po „Clair Obscur: Expedition 33”, grę, która o stracie i o tym, po co tworzyć, mówi mocniej niż niejedna książka. Medium jest drugorzędne; liczy się to, czy po ostatniej stronie albo napisach końcowych coś we mnie zostaje.",
+            "w1": "Bracia Karamazow",
+            "a1": "Fiodor Dostojewski",
+            "k1": "Powieść · 1880",
+            "k2": "Gra · 2025"
+        },
+        "gravel": {
+            "label": "03 — Sport",
+            "title": "Gravel, czyli sport bez tabeli wyników",
+            "p1": "Sport to dla mnie przede wszystkim wycieczki rowerowe na gravelu — szutry, leśne dukty i boczne drogi, czyli wszędzie tam, gdzie asfalt się kończy, a zaczyna się właściwa trasa.",
+            "p2": "To najlepszy reset po dniu z modelami i miarami: kilka godzin w ruchu, zero powiadomień, tylko droga, oddech i las. A jeśli coś trzeba jeszcze dokończyć — lepiej przy drewnianym stole na trasie niż przy biurku.",
+            "alt": "Laptop i plecak na drewnianym stole w leśnej wiacie"
+        }
     },
     "story": {
         "title": "Początek",
@@ -869,7 +907,8 @@
         "metrics": "{current}/{total}"
     },
     "nav": {
-        "about": "O mnie",
+        "about": "Start",
+        "me": "O mnie",
         "journey": "Droga",
         "projects": "Projekty",
         "skills": "Umiejętności",

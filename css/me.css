@@ -1,0 +1,376 @@
+/* About me: life outside work */
+
+.me-intro {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 2.5rem;
+    align-items: center;
+    margin-bottom: 3rem;
+}
+
+.me-intro-media {
+    margin: 0;
+    border: 1px solid #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+}
+
+.me-intro-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 45% 50%;
+    display: block;
+    filter: grayscale(0.15);
+}
+
+.me-intro-text {
+    color: #d0d0d0;
+    line-height: 1.75;
+}
+
+.me-intro-text > p + p {
+    margin-top: 1rem;
+}
+
+.me-quote {
+    margin: 0 0 2rem;
+    padding-left: 1.25rem;
+    border-left: 2px solid #8b5cf6;
+}
+
+.me-quote p {
+    white-space: pre-line;
+    font-style: italic;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #ffffff;
+}
+
+.me-quote cite {
+    display: block;
+    margin-top: 0.75rem;
+    font-style: normal;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #71767b;
+}
+
+.me-quote cite::before {
+    content: '— ';
+}
+
+/* ---------- Segments ---------- */
+
+.me-segment {
+    position: relative;
+    overflow: hidden;
+    background: #000000;
+    border: 1px solid #1a1a1a;
+    border-radius: 8px;
+    padding: 2.5rem;
+    margin-bottom: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.me-segment:hover {
+    border-color: #2a2a2a;
+}
+
+.me-segment-body {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    color: #d0d0d0;
+    line-height: 1.75;
+}
+
+.me-segment-body p + p {
+    margin-top: 1rem;
+}
+
+.me-segment-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #71767b;
+    margin-bottom: 0.5rem;
+}
+
+.me-segment-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 1.25rem;
+    line-height: 1.3;
+}
+
+.me-works {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.75rem;
+}
+
+.me-works li {
+    display: flex;
+    flex-direction: column;
+    padding: 0.55rem 0.9rem;
+    border: 1px solid #2a2a2a;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    font-size: 0.9rem;
+    line-height: 1.35;
+    color: #ffffff;
+}
+
+.me-works small {
+    font-size: 0.75rem;
+    color: #71767b;
+}
+
+/* 01: space */
+.me-space {
+    min-height: 460px;
+    display: flex;
+    align-items: center;
+}
+
+.me-stars {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.me-space .me-segment-body {
+    text-shadow: 0 0 12px #000, 0 0 4px #000;
+}
+
+.me-hint {
+    position: absolute;
+    right: 1.25rem;
+    bottom: 1rem;
+    z-index: 1;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: #4a4f54;
+}
+
+/* 03: gravel */
+.me-gravel {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 2.5rem;
+    align-items: center;
+}
+
+.me-gravel-media {
+    margin: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #1a1a1a;
+}
+
+.me-gravel-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    object-position: 50% 60%;
+}
+
+/* ---------- Custom cursors (fine pointers only, set by me.js) ---------- */
+
+.me-cursors-on .me-segment[data-cursor] {
+    cursor: none;
+}
+
+.me-cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 2000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    will-change: transform;
+}
+
+.me-cursor.visible {
+    opacity: 1;
+}
+
+/* Bike: wheels spin with the distance travelled, the frame faces the direction */
+.me-cursor-bike svg {
+    display: block;
+    width: 64px;
+    height: 39px;
+    overflow: visible;
+    filter: drop-shadow(0 0 1.5px #000) drop-shadow(0 0 3px rgba(0, 0, 0, 0.8));
+    transition: transform 0.25s ease;
+}
+
+.me-cursor-bike.left svg {
+    transform: scaleX(-1);
+}
+
+.me-cursor-bike .wheel {
+    transform-box: fill-box;
+    transform-origin: center;
+}
+
+/* Book: a page turns forward or back depending on the direction */
+.me-cursor-book .book {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+    position: relative;
+    width: 44px;
+    height: 30px;
+    perspective: 160px;
+}
+
+.me-cursor-book .page {
+    position: absolute;
+    top: 0;
+    width: 22px;
+    height: 30px;
+    background: #f2f0ea;
+    border: 1px solid #8b5cf6;
+    background-image: repeating-linear-gradient(to bottom, transparent 0 5px, rgba(0, 0, 0, 0.18) 5px 6px);
+    background-size: 14px 100%;
+    background-position: 4px 6px;
+    background-repeat: no-repeat;
+}
+
+.me-cursor-book .page-left {
+    left: 0;
+    border-radius: 3px 0 0 3px;
+}
+
+.me-cursor-book .page-right,
+.me-cursor-book .page-turn {
+    left: 22px;
+    border-radius: 0 3px 3px 0;
+}
+
+.me-cursor-book .page-turn {
+    transform-origin: left center;
+    opacity: 0;
+}
+
+.me-cursor-book .page-turn.forward {
+    animation: meTurnForward 0.45s ease-in-out;
+}
+
+.me-cursor-book .page-turn.back {
+    animation: meTurnBack 0.45s ease-in-out;
+}
+
+@keyframes meTurnForward {
+    0% { opacity: 1; transform: rotateY(0deg); }
+    100% { opacity: 1; transform: rotateY(-180deg); }
+}
+
+@keyframes meTurnBack {
+    0% { opacity: 1; transform: rotateY(-180deg); }
+    100% { opacity: 1; transform: rotateY(0deg); }
+}
+
+@media (max-width: 1000px) {
+    .me-intro {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
+    }
+
+    .me-intro-media {
+        aspect-ratio: 4 / 3;
+    }
+
+    .me-segment {
+        padding: 1.5rem;
+    }
+
+    .me-space {
+        min-height: 0;
+    }
+
+    .me-gravel {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .me-hint {
+        display: none;
+    }
+}
+
+/* 02: philosophy — two works on a shelf */
+.me-philosophy {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 2.5rem;
+    align-items: center;
+}
+
+.me-shelf {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+.me-shelf li {
+    width: 150px;
+    aspect-ratio: 2 / 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1rem;
+    border: 1px solid #2a2a2a;
+    border-left: 3px solid #8b5cf6;
+    border-radius: 3px 8px 8px 3px;
+    background: linear-gradient(160deg, #0d0d0d, #050505);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.me-shelf li:nth-child(2) {
+    border-left-color: #1d9bf0;
+}
+
+.me-shelf li:hover {
+    transform: translateY(-4px) rotate(-1deg);
+    border-color: #3a3a3a;
+}
+
+.me-shelf span {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: #ffffff;
+}
+
+.me-shelf small {
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    color: #71767b;
+}
+
+@media (max-width: 1000px) {
+    .me-philosophy {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .me-shelf li {
+        width: auto;
+        flex: 1;
+        aspect-ratio: auto;
+        min-height: 150px;
+    }
+}

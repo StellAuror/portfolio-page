@@ -9,12 +9,50 @@
         "copied": "Copied"
     },
     "about": {
-        "title": "About me",
+        "title": "Home",
         "subtitle": "BI, Fabric & Power Platform developer and consultant with 4 years of experience in data",
         "greeting": "Hi, I’m Michał — I turn data into decisions.",
         "p1": "My adventure with data started early — back in middle school I was already designing spreadsheets for my teachers. Over time that curiosity grew into a passion and then into a deliberate career path: from studying IT applications in business, through analytics in an international team at Novartis, to leading implementations of my own.",
         "p2": "Today I deliver end-to-end Business Intelligence projects for B2B clients — including some of the largest companies on the market. I work across the whole Microsoft data stack: Microsoft Fabric as the data foundation, Power BI at an expert level, and Power Apps (canvas and model-driven) on Dataverse with Power Automate — so that people can act on what the reports show right away. I own the whole cycle: from business workshops and data architecture, through the semantic model and reports, to rollout and handover to the client's team. I also lead a small implementation team — planning the work, splitting tasks and keeping the quality of what we deliver high.",
         "p3": "Beyond client work, I share what I know as a 1:1 mentor in Power BI, SQL and data modeling. I believe numbers only gain meaning once they become part of a conversation — and the path from raw data to an informed decision is, to me, the heart of working with data."
+    },
+    "me": {
+        "title": "About me",
+        "subtitle": "Outside of work — the things that fold me into shape",
+        "craneAlt": "A white paper origami crane sitting on a computer mouse",
+        "quote": "Jak origami, co z początku formy nie chce zdradzać\nŻycie nas łamie wiele razy, bo nie znamy celu\nNie chcemy wierzyć sobie samym, że dobrze się składa\nKsięga losu w tysiąc żurawi z papieru",
+        "intro": {
+            "p1": "I have always been pulled in two directions. On one side: science subjects — maths, physics, logic and that satisfying click when something finally adds up. On the other: creativity — the urge to invent, design and give things a shape. For a long time I was sure these were two separate worlds and that sooner or later I would have to pick one.",
+            "p2": "The first hint that I didn't have to came back in middle school, with the spreadsheets I built for my teachers — they had to calculate flawlessly, but I also wanted them to look good and be quick to read. I only truly understood it when I found Business Intelligence. A dashboard is where logic meets design: every measure has to be right to the cent, and every chart has to be readable in seconds. It simply drew me in — and set a career direction that became a passion along the way.",
+            "p3": "Origami captures it well: a plain sheet of paper, strict folding rules, and in the end something with a form. Below are three things that shape me outside of work."
+        },
+        "space": {
+            "label": "01 — Space",
+            "title": "Pop-sci, or where it all comes from",
+            "p1": "Space has fascinated me for as long as I can remember. The real spark was Stephen Hawking’s “A Brief History of Time” — the book that showed me you can think about black holes, the beginning of the Universe and the nature of time without a PhD in physics, as long as you bring curiosity.",
+            "p2": "Then came “Interstellar” and Kip Thorne’s “The Science of Interstellar” — the physicist who didn't just advise on the film, but actually computed what Gargantua would look like. To this day my favourite moment in a popular-science book is when a complicated equation turns into a picture you can understand. A bit like a good dashboard.",
+            "w1": "A Brief History of Time",
+            "w2": "Interstellar",
+            "w3": "The Science of Interstellar",
+            "hint": "Move the cursor — this is how a black hole bends starlight"
+        },
+        "philosophy": {
+            "label": "02 — Philosophy",
+            "title": "Philosophy, the practical kind",
+            "p1": "I'm interested in philosophy not as a system to memorise, but as the questions that keep coming back in everyday life: what is right, what gives things meaning, how to live with choices that can't be undone.",
+            "p2": "I look for them wherever someone dared to ask them seriously. From Dostoevsky’s “The Brothers Karamazov” — faith, guilt and freedom played out within one family — to “Clair Obscur: Expedition 33”, a game that says more about loss and why we create than many books do. The medium is secondary; what matters is whether something stays with me after the last page or the end credits.",
+            "w1": "The Brothers Karamazov",
+            "a1": "Fyodor Dostoevsky",
+            "k1": "Novel · 1880",
+            "k2": "Game · 2025"
+        },
+        "gravel": {
+            "label": "03 — Sport",
+            "title": "Gravel, or sport without a leaderboard",
+            "p1": "For me, sport mostly means gravel bike trips — dirt roads, forest tracks and back lanes, wherever the tarmac ends and the actual route begins.",
+            "p2": "It's the best reset after a day of models and measures: a few hours on the move, zero notifications, just the road, breathing and the forest. And if something still needs finishing — better at a wooden table along the trail than at a desk.",
+            "alt": "A laptop and a backpack on a wooden table in a forest shelter"
+        }
     },
     "story": {
         "title": "The Beginning",
@@ -869,7 +907,8 @@
         }
     },
     "nav": {
-        "about": "About",
+        "about": "Home",
+        "me": "About me",
         "journey": "Journey",
         "projects": "Projects",
         "skills": "Skills",

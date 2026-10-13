@@ -1,5 +1,5 @@
 // Navigation functionality
-const SECTION_IDS = ['about', 'journey', 'projects', 'skills', 'testimonials'];
+const SECTION_IDS = ['about', 'me', 'journey', 'projects', 'skills', 'testimonials'];
 window.activeSection = 'about';
 
 function showSection(sectionId, linkElement) {

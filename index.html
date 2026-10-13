@@ -6,19 +6,20 @@
     <title>Michał Krawczuk | BI, Fabric & Power Platform</title>
     <link rel="icon" href="static/cv.webp">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-    <link rel="stylesheet" href="css/theme.css?v=2026-10-13h">
-    <link rel="stylesheet" href="css/languages.css?v=2026-10-13h">
-    <link rel="stylesheet" href="css/mobile-specific.css?v=2026-10-13h">
-    <link rel="stylesheet" href="css/project-modal.css?v=2026-10-13h">
-    <link rel="stylesheet" href="css/project-tiles.css?v=2026-10-13h">
-    <link rel="stylesheet" href="css/navigation.css?v=2026-10-13h">
-    <link rel="stylesheet" href="css/about-me.css?v=2026-10-13h">
-    <link rel="stylesheet" href="css/story.css?v=2026-10-13h">
-    <link rel="stylesheet" href="css/music.css?v=2026-10-13h">
-    <link rel="stylesheet" href="css/timeline.css?v=2026-10-13h">
-    <link rel="stylesheet" href="css/skills.css?v=2026-10-13h">
-    <link rel="stylesheet" href="css/testimonials.css?v=2026-10-13h">
-    <link rel="stylesheet" href="css/consent.css?v=2026-10-13h">
+    <link rel="stylesheet" href="css/theme.css?v=2026-10-13i">
+    <link rel="stylesheet" href="css/languages.css?v=2026-10-13i">
+    <link rel="stylesheet" href="css/mobile-specific.css?v=2026-10-13i">
+    <link rel="stylesheet" href="css/project-modal.css?v=2026-10-13i">
+    <link rel="stylesheet" href="css/project-tiles.css?v=2026-10-13i">
+    <link rel="stylesheet" href="css/navigation.css?v=2026-10-13i">
+    <link rel="stylesheet" href="css/about-me.css?v=2026-10-13i">
+    <link rel="stylesheet" href="css/story.css?v=2026-10-13i">
+    <link rel="stylesheet" href="css/music.css?v=2026-10-13i">
+    <link rel="stylesheet" href="css/timeline.css?v=2026-10-13i">
+    <link rel="stylesheet" href="css/skills.css?v=2026-10-13i">
+    <link rel="stylesheet" href="css/testimonials.css?v=2026-10-13i">
+    <link rel="stylesheet" href="css/me.css?v=2026-10-13i">
+    <link rel="stylesheet" href="css/consent.css?v=2026-10-13i">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
@@ -30,7 +31,12 @@
       </a>
     </li>
     <li class="mobile-nav-item">
-      <a href="#about" aria-label="About" class="mobile-nav-link active" onclick="showSection('about', this)">
+      <a href="#about" aria-label="Home" class="mobile-nav-link active" onclick="showSection('about', this)">
+        <i class="fa fa-house"></i>
+      </a>
+    </li>
+    <li class="mobile-nav-item">
+      <a href="#me" aria-label="About me" class="mobile-nav-link" onclick="showSection('me', this)">
         <i class="fa fa-user"></i>
       </a>
     </li>
@@ -115,7 +121,10 @@
             <nav>
                 <ul class="navigation">
                     <li class="nav-item">
-                        <a href="#about" class="nav-link active" onclick="showSection('about', this)" data-i18n="nav.about">About</a>
+                        <a href="#about" class="nav-link active" onclick="showSection('about', this)" data-i18n="nav.about">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#me" class="nav-link" onclick="showSection('me', this)" data-i18n="nav.me">About me</a>
                     </li>
                     <li class="nav-item">
                         <a href="#journey" class="nav-link" onclick="showSection('journey', this)" data-i18n="nav.journey">Journey</a>
@@ -144,7 +153,7 @@
 
             <!-- About Me Section -->
             <section id="about" class="content-section active">
-                <h2 class="section-header" data-i18n="about.title">About Me</h2>
+                <h2 class="section-header" data-i18n="about.title">Home</h2>
                 <p class="section-subtitle" data-i18n="about.subtitle"></p>
                 <div class="text-wraper">
                     <h3 data-i18n="about.greeting"></h3>
@@ -197,6 +206,7 @@
             </section>
             
         <!-- Dynamically loaded-->
+            <section id="fetch-me"></section>
             <section id="fetch-journey"></section>
             <section id="fetch-skills"></section>
             <section id="fetch-projects"></section>
@@ -235,17 +245,18 @@
     </div>
 
     <!-- JS Fetching -->
-    <script src = "js/load.js?v=2026-10-13h"></script>
-    <script src = "js/language.js?v=2026-10-13h"></script>
-    <script src = "js/navigation.js?v=2026-10-13h"></script>
-    <script src = "js/projects.js?v=2026-10-13h"></script>
-    <script src = "js/story.js?v=2026-10-13h"></script>
-    <script src = "js/music.js?v=2026-10-13h"></script>
-    <script src = "js/timeline.js?v=2026-10-13h"></script>
-    <script src = "js/skills.js?v=2026-10-13h"></script>
-    <script src = "js/testimonials.js?v=2026-10-13h"></script>
-    <script src = "js/consent.js?v=2026-10-13h"></script>
-    <script src = "js/visits.js?v=2026-10-13h"></script>
+    <script src = "js/load.js?v=2026-10-13i"></script>
+    <script src = "js/language.js?v=2026-10-13i"></script>
+    <script src = "js/navigation.js?v=2026-10-13i"></script>
+    <script src = "js/projects.js?v=2026-10-13i"></script>
+    <script src = "js/story.js?v=2026-10-13i"></script>
+    <script src = "js/music.js?v=2026-10-13i"></script>
+    <script src = "js/timeline.js?v=2026-10-13i"></script>
+    <script src = "js/skills.js?v=2026-10-13i"></script>
+    <script src = "js/testimonials.js?v=2026-10-13i"></script>
+    <script src = "js/me.js?v=2026-10-13i"></script>
+    <script src = "js/consent.js?v=2026-10-13i"></script>
+    <script src = "js/visits.js?v=2026-10-13i"></script>
 </body>
 </html>
 

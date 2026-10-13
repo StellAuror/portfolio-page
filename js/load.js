@@ -1,4 +1,5 @@
 const sections = [
+  { id: 'fetch-me', file: 'me.html' },
   { id: 'fetch-journey', file: 'journey.html' },
   { id: 'fetch-projects', file: 'projects.html' },
   { id: 'fetch-skills', file: 'skills.html' },
