@@ -1,65 +1,14 @@
 /* About me: life outside work */
 
 .me-intro {
-    display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 2.5rem;
-    align-items: center;
+    max-width: 760px;
     margin-bottom: 3rem;
-}
-
-.me-intro-media {
-    margin: 0;
-    border: 1px solid #1a1a1a;
-    border-radius: 8px;
-    overflow: hidden;
-    aspect-ratio: 4 / 5;
-}
-
-.me-intro-media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 45% 50%;
-    display: block;
-    filter: grayscale(0.15);
-}
-
-.me-intro-text {
     color: #d0d0d0;
     line-height: 1.75;
 }
 
-.me-intro-text > p + p {
+.me-intro p + p {
     margin-top: 1rem;
-}
-
-.me-quote {
-    margin: 0 0 2rem;
-    padding-left: 1.25rem;
-    border-left: 2px solid #8b5cf6;
-}
-
-.me-quote p {
-    white-space: pre-line;
-    font-style: italic;
-    font-size: 1.1rem;
-    line-height: 1.7;
-    color: #ffffff;
-}
-
-.me-quote cite {
-    display: block;
-    margin-top: 0.75rem;
-    font-style: normal;
-    font-size: 0.8rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #71767b;
-}
-
-.me-quote cite::before {
-    content: '— ';
 }
 
 /* ---------- Segments ---------- */
@@ -109,31 +58,6 @@
     line-height: 1.3;
 }
 
-.me-works {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 1.75rem;
-}
-
-.me-works li {
-    display: flex;
-    flex-direction: column;
-    padding: 0.55rem 0.9rem;
-    border: 1px solid #2a2a2a;
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.6);
-    font-size: 0.9rem;
-    line-height: 1.35;
-    color: #ffffff;
-}
-
-.me-works small {
-    font-size: 0.75rem;
-    color: #71767b;
-}
-
 /* 01: space */
 .me-space {
     min-height: 460px;
@@ -141,7 +65,7 @@
     align-items: center;
 }
 
-.me-stars {
+.me-canvas {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -151,6 +75,19 @@
 
 .me-space .me-segment-body {
     text-shadow: 0 0 12px #000, 0 0 4px #000;
+}
+
+/* 02: philosophy — the paint layer sits above the text and inverts it (light ↔ dark) */
+.me-philosophy {
+    min-height: 380px;
+    display: flex;
+    align-items: center;
+}
+
+.me-philosophy .me-canvas {
+    z-index: 2;
+    pointer-events: none;
+    mix-blend-mode: difference;
 }
 
 .me-hint {
@@ -184,6 +121,72 @@
     height: auto;
     aspect-ratio: 4 / 3;
     object-fit: cover;
+}
+
+/* ---------- Closing: crane + Bisz ---------- */
+
+.me-closing {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: 2.5rem;
+    align-items: center;
+    margin-top: 3rem;
+}
+
+.me-closing-media {
+    margin: 0;
+    border: 1px solid #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.me-closing-media img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    filter: grayscale(0.15);
+}
+
+.me-quote {
+    margin: 0;
+    padding-left: 1.25rem;
+    border-left: 2px solid #8b5cf6;
+}
+
+.me-quote-line {
+    font-style: italic;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #ffffff;
+}
+
+.me-quote-line + .me-quote-line {
+    margin-top: 0.35rem;
+}
+
+/* EN: the Polish original under each translated line */
+.me-quote-original {
+    display: block;
+    font-style: normal;
+    font-size: 0.85rem;
+    color: #8a8f94;
+    margin-bottom: 0.6rem;
+}
+
+.me-quote cite {
+    display: block;
+    margin-top: 1rem;
+    font-style: normal;
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #71767b;
+}
+
+.me-quote cite::before {
+    content: '— ';
 }
 
 /* ---------- Custom cursors (fine pointers only, set by me.js) ---------- */
@@ -226,78 +229,28 @@
     transform-origin: center;
 }
 
-/* Book: a page turns forward or back depending on the direction */
-.me-cursor-book .book {
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
-    position: relative;
-    width: 44px;
-    height: 30px;
-    perspective: 160px;
-}
-
-.me-cursor-book .page {
-    position: absolute;
-    top: 0;
-    width: 22px;
-    height: 30px;
-    background: #f2f0ea;
-    border: 1px solid #8b5cf6;
-    background-image: repeating-linear-gradient(to bottom, transparent 0 5px, rgba(0, 0, 0, 0.18) 5px 6px);
-    background-size: 14px 100%;
-    background-position: 4px 6px;
-    background-repeat: no-repeat;
-}
-
-.me-cursor-book .page-left {
-    left: 0;
-    border-radius: 3px 0 0 3px;
-}
-
-.me-cursor-book .page-right,
-.me-cursor-book .page-turn {
-    left: 22px;
-    border-radius: 0 3px 3px 0;
-}
-
-.me-cursor-book .page-turn {
-    transform-origin: left center;
-    opacity: 0;
-}
-
-.me-cursor-book .page-turn.forward {
-    animation: meTurnForward 0.45s ease-in-out;
-}
-
-.me-cursor-book .page-turn.back {
-    animation: meTurnBack 0.45s ease-in-out;
-}
-
-@keyframes meTurnForward {
-    0% { opacity: 1; transform: rotateY(0deg); }
-    100% { opacity: 1; transform: rotateY(-180deg); }
-}
-
-@keyframes meTurnBack {
-    0% { opacity: 1; transform: rotateY(-180deg); }
-    100% { opacity: 1; transform: rotateY(0deg); }
+/* Brush (Clair Obscur): the tip is the hotspot, bottom-left of the box */
+.me-cursor-brush svg {
+    display: block;
+    width: 46px;
+    height: 46px;
+    overflow: visible;
+    filter: drop-shadow(0 0 1.5px #000) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
 }
 
 @media (max-width: 1000px) {
-    .me-intro {
-        grid-template-columns: 1fr;
-        gap: 1.75rem;
-    }
-
-    .me-intro-media {
-        aspect-ratio: 4 / 3;
-    }
-
     .me-segment {
         padding: 1.5rem;
     }
 
-    .me-space {
+    .me-space,
+    .me-philosophy {
         min-height: 0;
+    }
+
+    .me-closing {
+        grid-template-columns: 1fr;
+        gap: 1.75rem;
     }
 
     .me-gravel {
@@ -307,69 +260,5 @@
 
     .me-hint {
         display: none;
-    }
-}
-
-/* 02: philosophy — two works on a shelf */
-.me-philosophy {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 2.5rem;
-    align-items: center;
-}
-
-.me-shelf {
-    list-style: none;
-    display: flex;
-    gap: 1rem;
-}
-
-.me-shelf li {
-    width: 150px;
-    aspect-ratio: 2 / 3;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1rem;
-    border: 1px solid #2a2a2a;
-    border-left: 3px solid #8b5cf6;
-    border-radius: 3px 8px 8px 3px;
-    background: linear-gradient(160deg, #0d0d0d, #050505);
-    transition: transform 0.3s ease, border-color 0.3s ease;
-}
-
-.me-shelf li:nth-child(2) {
-    border-left-color: #1d9bf0;
-}
-
-.me-shelf li:hover {
-    transform: translateY(-4px) rotate(-1deg);
-    border-color: #3a3a3a;
-}
-
-.me-shelf span {
-    font-size: 1rem;
-    font-weight: 600;
-    line-height: 1.3;
-    color: #ffffff;
-}
-
-.me-shelf small {
-    font-size: 0.72rem;
-    letter-spacing: 0.04em;
-    color: #71767b;
-}
-
-@media (max-width: 1000px) {
-    .me-philosophy {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-
-    .me-shelf li {
-        width: auto;
-        flex: 1;
-        aspect-ratio: auto;
-        min-height: 150px;
     }
 }

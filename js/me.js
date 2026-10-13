@@ -1,11 +1,11 @@
-// About me: per-segment cursors (black hole, book, bike) and the lensed star field
+// About me: per-segment cursors (black hole, brush, bike), the lensed star field and the light-painting canvas
 (function () {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
     // ---------- Star field with gravitational lensing ----------
     function initSpace(segment) {
-        const canvas = segment.querySelector('.me-stars');
+        const canvas = segment.querySelector('.me-canvas');
         const ctx = canvas.getContext('2d');
         let w = 0, h = 0, dpr = 1, stars = [];
         let pointer = null;               // pointer position inside the segment, if any
@@ -188,7 +188,126 @@
         segment.addEventListener('pointerleave', () => { pointer = null; });
     }
 
-    // ---------- DOM cursors: book and bike ----------
+    // ---------- Clair Obscur: painting light that scatters into petals ----------
+    // The canvas is blended with "difference", so painted light inverts the text beneath it
+    function initBrush(segment) {
+        const canvas = segment.querySelector('.me-canvas');
+        const ctx = canvas.getContext('2d');
+        const HOLD = 1300, FADE = 900;
+        let w = 0, h = 0, strokes = [], petals = [], last = null, rafId = null, prevT = 0;
+
+        function resize() {
+            const rect = canvas.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            w = rect.width;
+            h = rect.height;
+            canvas.width = Math.round(w * dpr);
+            canvas.height = Math.round(h * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            strokes = [];
+            petals = [];
+        }
+
+        function spawnPetal(s, t) {
+            const k = Math.random();
+            const spread = (Math.random() - 0.5) * s.w;
+            const nx = -(s.y2 - s.y1), ny = s.x2 - s.x1, len = Math.hypot(nx, ny) || 1;
+            petals.push({
+                x: s.x1 + (s.x2 - s.x1) * k + nx / len * spread,
+                y: s.y1 + (s.y2 - s.y1) * k + ny / len * spread,
+                vx: (Math.random() - 0.3) * 0.04,
+                vy: -0.02 - Math.random() * 0.05,
+                rot: Math.random() * Math.PI,
+                vr: (Math.random() - 0.5) * 0.006,
+                size: 1.6 + Math.random() * 2,
+                born: t,
+                life: 1400 + Math.random() * 1200,
+                crimson: Math.random() < 0.7,
+            });
+        }
+
+        function draw(t) {
+            const dt = Math.min(t - (prevT || t), 50);
+            prevT = t;
+            ctx.clearRect(0, 0, w, h);
+            ctx.lineCap = 'round';
+
+            strokes = strokes.filter(s => {
+                const age = t - s.born;
+                if (age >= HOLD && !s.scattered) {
+                    s.scattered = true;
+                    if (!reduceMotion) for (let i = 0; i < Math.ceil(s.w / 9); i++) spawnPetal(s, t);
+                }
+                const alpha = age < HOLD ? 1 : 1 - (age - HOLD) / FADE;
+                if (alpha <= 0) return false;
+
+                ctx.strokeStyle = `rgba(241,231,208,${0.95 * alpha})`;
+                ctx.lineWidth = s.w;
+                ctx.beginPath();
+                ctx.moveTo(s.x1, s.y1);
+                ctx.lineTo(s.x2, s.y2);
+                ctx.stroke();
+
+                // Bristle streaks give the stroke some texture
+                const nx = -(s.y2 - s.y1), ny = s.x2 - s.x1, len = Math.hypot(nx, ny) || 1;
+                ctx.strokeStyle = `rgba(150,120,95,${0.25 * alpha})`;
+                ctx.lineWidth = Math.max(0.8, s.w * 0.08);
+                for (const off of [-0.3, 0.12, 0.36]) {
+                    const ox = nx / len * s.w * off, oy = ny / len * s.w * off;
+                    ctx.beginPath();
+                    ctx.moveTo(s.x1 + ox, s.y1 + oy);
+                    ctx.lineTo(s.x2 + ox, s.y2 + oy);
+                    ctx.stroke();
+                }
+                return true;
+            });
+
+            petals = petals.filter(p => {
+                const age = t - p.born;
+                if (age > p.life) return false;
+                p.x += (p.vx + Math.sin((t + p.born) * 0.003) * 0.02) * dt;
+                p.y += p.vy * dt;
+                p.rot += p.vr * dt;
+                const a = 1 - age / p.life;
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rot);
+                ctx.fillStyle = p.crimson ? `rgba(200,60,78,${a})` : `rgba(241,231,208,${a * 0.8})`;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, p.size, p.size * 2.2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+                return true;
+            });
+
+            if (strokes.length || petals.length) rafId = requestAnimationFrame(draw);
+            else { rafId = null; prevT = 0; }
+        }
+
+        function paint(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left, y = e.clientY - rect.top, t = performance.now();
+            if (last) {
+                const dist = Math.hypot(x - last.x, y - last.y);
+                if (dist < 1.5) return;
+                const speed = dist / Math.max(t - last.t, 8);           // px per ms
+                const width = Math.max(5, Math.min(26, 26 - speed * 9));
+                const smooth = last.w == null ? width : last.w + (width - last.w) * 0.35;
+                strokes.push({ x1: last.x, y1: last.y, x2: x, y2: y, w: smooth, born: t });
+                last = { x, y, t, w: smooth };
+            } else {
+                last = { x, y, t, w: null };
+            }
+            if (!rafId) rafId = requestAnimationFrame(draw);
+        }
+
+        new ResizeObserver(resize).observe(segment);
+        segment.addEventListener('pointermove', paint);
+        segment.addEventListener('pointerleave', () => { last = null; });
+    }
+
+    // ---------- DOM cursors: brush and bike ----------
     const BIKE_SVG = `
         <svg viewBox="0 0 56 34" aria-hidden="true">
             <g fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -205,12 +324,18 @@
             </g>
         </svg>`;
 
-    const BOOK_HTML = `
-        <div class="book" aria-hidden="true">
-            <div class="page page-left"></div>
-            <div class="page page-right"></div>
-            <div class="page page-turn"></div>
-        </div>`;
+    // Drawn horizontally from the tip, then tilted so the tip sits at the bottom-left (2, 44)
+    const BRUSH_SVG = `
+        <svg viewBox="0 0 46 46" aria-hidden="true">
+            <g transform="translate(2 44) rotate(-45)">
+                <path d="M24 -3.2 L57 -1.7 Q61 0 57 1.7 L24 3.2Z" fill="#1b1414" stroke="#4a3a32" stroke-width="0.6"/>
+                <rect x="50" y="-2" width="2.2" height="4" fill="#c9a24a"/>
+                <rect x="16" y="-3.6" width="8.5" height="7.2" rx="1" fill="#c9a24a"/>
+                <path d="M18.5 -3.6v7.2M21.5 -3.6v7.2" stroke="#8a6a2a" stroke-width="0.6"/>
+                <path d="M0 0 C4 -3.5 10 -4 16 -3.2 L16 3.2 C10 4 4 3.5 0 0Z" fill="#efe6d2"/>
+                <path d="M0 0 C2 -1.7 4.5 -2.2 7 -2 L7 2 C4.5 2.2 2 1.7 0 0Z" fill="#c83c4e"/>
+            </g>
+        </svg>`;
 
     function createCursor(kind, html) {
         const el = document.createElement('div');
@@ -224,21 +349,16 @@
         section.classList.add('me-cursors-on');
 
         const bike = createCursor('bike', BIKE_SVG);
-        const book = createCursor('book', BOOK_HTML);
+        const brush = createCursor('brush', BRUSH_SVG);
         const wheels = bike.querySelectorAll('[data-wheel]');
-        const turn = book.querySelector('.page-turn');
-        const cursors = { bike, book };
+        const cursors = { bike, brush };
 
-        let wheelAngle = 0, bookTravel = 0, lastX = null;
+        let wheelAngle = 0, lastX = null;
 
         function place(el, x, y) {
-            el.style.transform = `translate(${x - el.offsetWidth / 2}px, ${y - el.offsetHeight / 2}px)`;
-        }
-
-        function turnPage(direction) {
-            turn.classList.remove('forward', 'back');
-            void turn.offsetWidth; // restart the animation
-            turn.classList.add(direction);
+            // The brush paints from its tip; everything else is centred on the pointer
+            if (el === brush) el.style.transform = `translate(${x - 2}px, ${y - 44}px)`;
+            else el.style.transform = `translate(${x - el.offsetWidth / 2}px, ${y - el.offsetHeight / 2}px)`;
         }
 
         section.querySelectorAll('.me-segment[data-cursor]').forEach(segment => {
@@ -265,19 +385,33 @@
                     if (Math.abs(dx) > 0.5) bike.classList.toggle('left', dx < 0);
                     wheelAngle += Math.abs(dx) / 9.5 * (180 / Math.PI);
                     if (!reduceMotion) wheels.forEach(wh => { wh.style.transform = `rotate(${wheelAngle}deg)`; });
-                } else if (el === book) {
-                    if (Math.sign(dx) !== Math.sign(bookTravel)) bookTravel = 0;
-                    bookTravel += dx;
-                    if (Math.abs(bookTravel) > 70) {
-                        turnPage(bookTravel > 0 ? 'forward' : 'back');
-                        bookTravel = 0;
-                    }
                 }
             });
         });
 
         // Hide the cursors whenever the section is left
         document.addEventListener('sectionchange', () => Object.values(cursors).forEach(c => c.classList.remove('visible')));
+    }
+
+    // Bisz: in English each translated line carries the Polish original beneath it
+    function renderQuote(me) {
+        const box = document.getElementById('me-quote-lines');
+        if (!box || !me?.quote) return;
+        box.replaceChildren(...me.quote.map((line, i) => {
+            const p = document.createElement('p');
+            p.className = 'me-quote-line';
+            p.textContent = line;
+            const original = me.quoteOriginal?.[i];
+            if (original) {
+                p.lang = 'en';
+                const o = document.createElement('span');
+                o.className = 'me-quote-original';
+                o.lang = 'pl';
+                o.textContent = original;
+                p.appendChild(o);
+            }
+            return p;
+        }));
     }
 
     function translateAlts(translations) {
@@ -287,13 +421,18 @@
         });
     }
 
-    document.addEventListener('langchange', e => translateAlts(e.detail.translations));
+    document.addEventListener('langchange', e => {
+        translateAlts(e.detail.translations);
+        renderQuote(e.detail.translations.me);
+    });
 
     window.sectionsReady?.then(() => {
         const section = document.getElementById('me');
         if (!section) return;
         const space = section.querySelector('.me-space');
         if (space) initSpace(space);
+        const philosophy = section.querySelector('.me-philosophy');
+        if (philosophy) initBrush(philosophy);
         if (finePointer) initCursors(section);
     });
 })();
