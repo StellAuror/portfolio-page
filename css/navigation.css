@@ -28,6 +28,8 @@
     color: #71767b;
     font-size: 0.95rem;
     margin-bottom: 1rem;
+    white-space: pre-line;
+    line-height: 1.4;
 }
 
 .contact-info {

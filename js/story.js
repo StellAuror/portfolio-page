@@ -16,39 +16,24 @@ const autoPlayBtn = document.getElementById('story-auto-play-btn');
 const autoPlayProgress = document.getElementById('story-auto-play-progress');
 const progressIndicators = document.getElementById('story-progress-indicators');
 
-let _currentLang = window.currentLang || "en";
+let storyInitialized = false;
 
-Object.defineProperty(window, "currentLang", {
-  get: () => _currentLang,
-  set: async (value) => {
-    _currentLang = value;
-    await loadStories();       // <-- automatyczne przeładowanie stories
-    showStory(0);              // <-- np. pokaż pierwszą po zmianie języka
-  }
+// Stories come from the active language file (language.js fires "langchange")
+document.addEventListener('langchange', (e) => {
+    stories = e.detail.translations.stories || [];
+    if (!stories.length) return;
+
+    if (!storyInitialized) {
+        storyInitialized = true;
+        totalNumber.textContent = stories.length.toString().padStart(2, '0');
+        createProgressDots();
+        startAutoPlay();
+        addEventListeners();
+    }
+    currentIndex = Math.min(currentIndex, stories.length - 1);
+    isAnimating = false;
+    showStory(currentIndex);
 });
-async function waitForLang() {
-  while (!currentLang) {
-    await new Promise(resolve => setTimeout(resolve, 100));
-  }
-}
-
-async function loadStories() {
-  const response = await fetch(`languages/${currentLang}.json`);
-  const data = await response.json();
-  stories = data.stories; 
-}
-
-async function initializeApp() {
-    await waitForLang();             // <-- czekaj na currentLang
-    await loadStories();
-
-
-    totalNumber.textContent = stories.length.toString().padStart(2, '0');
-    createProgressDots();
-    startAutoPlay();
-    addEventListeners();
-    showStory(0);
-}
 
 function createProgressDots() {
     progressIndicators.innerHTML = '';
@@ -66,8 +51,10 @@ function addEventListeners() {
     document.getElementById('story-next-btn').addEventListener('click', nextStory);
     autoPlayBtn.addEventListener('click', toggleAutoPlay);
     
-    // Keyboard navigation
+    // Keyboard navigation (only while the About section is visible)
     document.addEventListener('keydown', (e) => {
+        if (window.activeSection !== 'about') return;
+        if (e.target.closest && e.target.closest('input, textarea, button, a')) return;
         if (e.key === 'ArrowLeft') prevStory();
         if (e.key === 'ArrowRight') nextStory();
         if (e.key === ' ') {
@@ -220,5 +207,4 @@ function toggleAutoPlay() {
     }
 }
 
-// Initialize the application
-initializeApp();
+

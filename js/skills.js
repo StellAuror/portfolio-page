@@ -14,7 +14,7 @@ const byPath = (obj, path) =>
   path.split('.').reduce((o, k) => (o && o[k] != null ? o[k] : undefined), obj);
 
 function t(key, params = {}, fallback = key) {
-  const str = byPath(SkillsState.data?.skillUI || {}, key);
+  const str = byPath(SkillsState.data || {}, key);
   let out = typeof str === 'string' ? str : fallback;
   if (out && typeof out === 'string' && params) {
     out = out.replace(/\{(\w+)\}/g, (m, p) => (params[p] != null ? params[p] : m));
@@ -365,35 +365,19 @@ async function setSkillsLanguage(newLang) {
   }
 }
 
-// Init
-async function initSkills() {
-  const section = document.getElementById('skills');
-  if (!section || SkillsState.initialized) return;
+// Render whenever the language changes (language.js fires "langchange")
+document.addEventListener('langchange', (e) => {
+  const json = e.detail.translations;
+  if (!validSkills(json)) return;
+  SkillsState.cache[e.detail.lang] = json;
+  SkillsState.data = json;
+  SkillsState.skills = json.skills;
+  SkillsState.lang = e.detail.lang;
+  renderSkills(json.skills);
+});
 
-  const lang = window.currentLang || 'en';
-  try {
-    const data = await getSkillsData(lang);
-    renderSkills(data);
-  } catch (e) {
-    showSkillsError(
-      'errors.loadFailed',
-      { language: lang, error: e.message || String(e) },
-      `Failed to load skills in ${lang}.`
-    );
-  }
-}
-
-document.addEventListener('DOMContentLoaded', initSkills);
-
-// Interop with external language switcher (optional)
-if (typeof window.changeLang === 'function') {
-  const prev = window.changeLang;
-  window.changeLang = async (l) => {
-    await prev(l);
-    await setSkillsLanguage(l);
-  };
-}
-
-// Expose
 window.setSkillsLanguage = setSkillsLanguage;
-window.loadSkillsSection = () => renderSkills(SkillsState.skills || {});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') hideSkillPopup();
+});

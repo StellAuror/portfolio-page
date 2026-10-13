@@ -1,105 +1,86 @@
 // Navigation functionality
+const SECTION_IDS = ['about', 'journey', 'projects', 'skills', 'testimonials'];
+window.activeSection = 'about';
+
 function showSection(sectionId, linkElement) {
-    // Hide all sections
-    const sections = document.querySelectorAll('.content-section');
-    const mobilesections = document.querySelectorAll('.mobile-content-section');
+    const target = document.getElementById(sectionId);
+    if (!target) return;
 
-    sections.forEach(section => section.classList.remove('active'));
-    mobilesections.forEach(section => section.classList.remove('active'));
-    
-    // Show selected section
-    document.getElementById(sectionId).classList.add('active');
-    
-    // Update navigation active state
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => link.classList.remove('active'));
-    linkElement.classList.add('active');
+    document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+    target.classList.add('active');
+    window.activeSection = sectionId;
 
-    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
-    mobileNavLinks.forEach(link => link.classList.remove('active'));
-    linkElement.classList.add('active');
-    
-    // Close mobile sidebar
-    if (window.innerWidth <= 1000) {
-        document.getElementById('sidebar').classList.remove('open');
-    }
+    // Sync desktop and mobile navigation, whichever was clicked
+    document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === `#${sectionId}`);
+    });
+
+    const main = document.querySelector('.main-content');
+    if (main) main.scrollTop = 0;
+
+    if (history.replaceState) history.replaceState(null, '', `#${sectionId}`);
+
+    if (window.innerWidth <= 1000) closeSidebar();
+
+    document.dispatchEvent(new CustomEvent('sectionchange', { detail: { id: sectionId } }));
 }
 
+document.querySelectorAll('.nav-link, .mobile-nav-link[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => e.preventDefault());
+});
 
-// Handle window resize
+// ---------- Mobile sidebar ----------
 const sidebar = document.getElementById('sidebar');
-
-window.addEventListener('touchstart', e => {
-  startX = e.touches[0].clientX;
-});
-
-window.addEventListener('touchend', e => {
-  endX = e.changedTouches[0].clientX;
-  const deltaX = endX - startX;
-
-  if (deltaX > 100) {  // swipe right - open sidebar
-    sidebar.style.display = 'block';
-  } else if (deltaX < -100) {  // swipe left - close sidebar
-    sidebar.style.display = 'none';
-  }
-});
-
-window.addEventListener('resize', function() {
-    if (window.innerWidth > 1000) {
-        sidebar.classList.remove('open');
-    }
-});
-
-// Smooth scroll for navigation links
-document.querySelectorAll('.nav-link').forEach(link => {
-    link.addEventListener('click', function(e) {
-        if (this.getAttribute('href').startsWith('#')) {
-            e.preventDefault();
-        }
-    });
-});
-
-// Add some interactive effects
-document.addEventListener('DOMContentLoaded', function() {
-    // Add hover effects to cards
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
-        card.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-        });
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-    });
-});
+const sidebarToggle = document.getElementById('mobile-nav-item-toggle');
 
 function openSidebar() {
-    document.getElementById('sidebar').style.display = 'block';
+    sidebar.classList.add('open');
+    sidebarToggle?.querySelector('a')?.classList.add('active');
 }
 
 function closeSidebar() {
-    document.getElementById('sidebar').style.display = 'none';
+    sidebar.classList.remove('open');
+    sidebarToggle?.querySelector('a')?.classList.remove('active');
 }
 
-function toggleSidebar(item) {
-    const sidebar = document.getElementById('sidebar');
-    if (sidebar.style.display === 'block') {
-        closeSidebar();
-        item.classList.remove('active');
-    } else {
-        openSidebar();
-        item.classList.add('active');
-    }
+function toggleSidebar() {
+    if (sidebar.classList.contains('open')) closeSidebar();
+    else openSidebar();
 }
 
-function resetSidebarDisplay() {
-  const sidebar = document.getElementById('sidebar');
-  if (window.innerWidth > 1000) {
-    sidebar.style.display = 'block';  // force show on desktop
-  } else {
-    sidebar.style.display = 'none';   // hide on mobile by default
-  }
-}
+// Close when tapping outside the sidebar or pressing Escape
+document.addEventListener('click', e => {
+    if (!sidebar.classList.contains('open')) return;
+    if (sidebar.contains(e.target) || sidebarToggle?.contains(e.target)) return;
+    closeSidebar();
+});
 
-window.addEventListener('resize', resetSidebarDisplay);
-window.addEventListener('load', resetSidebarDisplay);
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeSidebar();
+});
+
+// Edge swipe opens / swipe left closes — only from the screen edge,
+// so horizontal scrolling inside the page never toggles the sidebar
+let swipeStartX = null;
+window.addEventListener('touchstart', e => {
+    const x = e.touches[0].clientX;
+    swipeStartX = (x < 24 || sidebar.classList.contains('open')) ? x : null;
+}, { passive: true });
+
+window.addEventListener('touchend', e => {
+    if (swipeStartX === null) return;
+    const deltaX = e.changedTouches[0].clientX - swipeStartX;
+    if (deltaX > 80) openSidebar();
+    else if (deltaX < -80) closeSidebar();
+    swipeStartX = null;
+}, { passive: true });
+
+window.addEventListener('resize', () => {
+    if (window.innerWidth > 1000) closeSidebar();
+});
+
+// Deep links: open the section from the URL hash once sections are loaded
+window.sectionsReady?.then(() => {
+    const id = location.hash.slice(1);
+    if (SECTION_IDS.includes(id) && id !== 'about') showSection(id);
+});

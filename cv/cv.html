@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Michał Krawczuk — CV</title>
+<!-- Source of static/cv.pdf. Regenerate with Chrome: print to PDF, A4, no margins, no headers/footers. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Lato:wght@300;400;700&display=swap">
+<style>
+    @page { size: A4; margin: 0; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 210mm; height: 297mm; }
+    body {
+        font-family: 'Lato', Calibri, sans-serif;
+        color: #111;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .page { display: flex; width: 210mm; height: 297mm; overflow: hidden; }
+
+    /* ---------- Sidebar ---------- */
+    .sidebar {
+        width: 69mm;
+        flex: none;
+        background: #262626;
+        color: #fff;
+        padding: 4mm 3.5mm 4mm 4mm;
+        font-family: Calibri, 'Carlito', 'Lato', sans-serif;
+        font-size: 10pt;
+    }
+    .photo {
+        display: block;
+        width: 54mm;
+        height: 54mm;
+        margin: 0 auto 4mm;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .name { font-size: 22pt; font-weight: 300; margin-bottom: 3mm; }
+    .contact { list-style: none; margin-bottom: 3mm; }
+    .contact li { display: flex; align-items: center; gap: 3mm; margin-bottom: 1.6mm; }
+    .contact svg { width: 5mm; height: 5mm; fill: #fff; flex: none; }
+    .contact a { color: #6fa8dc; text-decoration: underline; line-height: 1.25; }
+
+    .side-title {
+        font-family: 'Archivo Black', sans-serif;
+        font-size: 11.5pt;
+        text-align: center;
+        margin: 3.2mm 0 1.2mm;
+    }
+    .rated { list-style: none; }
+    .rated li { display: flex; align-items: center; gap: 2.2mm; line-height: 1.38; }
+    .dots { display: inline-flex; gap: 0.6mm; flex: none; }
+    .dots i { width: 1.9mm; height: 1.9mm; border-radius: 50%; background: #fff; }
+    .dots i.off { background: #8a8a8a; }
+    .lang { list-style: none; }
+    .lang li { display: flex; align-items: center; gap: 2mm; line-height: 1.38; }
+    .lang svg { width: 5.5mm; height: 3.6mm; }
+    .other { list-style: none; padding-left: 5mm; }
+    .other li { line-height: 1.3; }
+    .other li::before { content: '-'; display: inline-block; width: 6mm; margin-left: -5mm; }
+
+    /* ---------- Main ---------- */
+    .main { flex: 1; padding: 5mm 6mm 4mm 6mm; }
+    h2 {
+        font-family: 'Archivo Black', sans-serif;
+        font-weight: 400;
+        font-size: 21pt;
+        line-height: 1.1;
+        padding-bottom: 1.5mm;
+        border-bottom: 0.6mm solid #555;
+        margin-bottom: 3mm;
+    }
+    h2 + .entry { margin-top: 0; }
+    section + section { margin-top: 6mm; }
+    .entry { display: grid; grid-template-columns: 22mm 1fr; gap: 2mm; margin-top: 4mm; font-size: 10.5pt; }
+    .when { font-size: 10pt; line-height: 1.35; }
+    .when .dur { display: block; color: #8a8a8a; }
+    .what h3 { font-size: 11pt; font-weight: 700; line-height: 1.3; }
+    .what .where { color: #8a8a8a; font-size: 11pt; }
+    .what p { line-height: 1.35; }
+    .what .muted { color: #8a8a8a; }
+    .what ul { padding-left: 8mm; margin-top: 0.5mm; }
+    .what li { font-size: 11pt; line-height: 1.3; margin-bottom: 0.3mm; }
+    .what a.cert { color: #9b4f7a; font-weight: 700; text-decoration: underline; font-size: 11pt; }
+</style>
+</head>
+<body>
+<div class="page">
+    <aside class="sidebar">
+        <img class="photo" src="../static/cv.webp" alt="Michał Krawczuk">
+        <h1 class="name">Michał Krawczuk</h1>
+
+        <ul class="contact">
+            <li><svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg><span>+48 739 984 232</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 2v.5l-8 5-8-5V6h16zM4 18V8.85l8 5 8-5V18H4z"/></svg><a href="mailto:michalkrawczuk.gen@gmail.com">michalkrawczuk.gen<br>@gmail.com</a></li>
+            <li><svg viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg><a href="https://www.linkedin.com/in/micha%C5%82-krawczuk-bb8b34245/">linkedin.com/in/<br>michał-krawczuk</a></li>
+            <li><svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg><a href="https://github.com/StellAuror">github.com/StellAuror</a></li>
+            <li><svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V7h18v12zM5 9h6v6H5V9zm8 0h6v1.5h-6V9zm0 3h6v1.5h-6V12zm0 3h4v1.5h-4V15z"/></svg><a href="https://michal-krawczuk.me">https://michal-krawczuk.me</a></li>
+        </ul>
+
+        <h4 class="side-title">Technical Skills</h4>
+        <ul class="rated" id="tech"></ul>
+
+        <h4 class="side-title">Soft Skills</h4>
+        <ul class="lang">
+            <li>Polish – Native
+                <svg viewBox="0 0 8 5"><rect width="8" height="2.5" fill="#fff"/><rect y="2.5" width="8" height="2.5" fill="#dc143c"/></svg></li>
+            <li>English – Fluent (B2/C1)
+                <svg viewBox="0 0 60 30"><clipPath id="t"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#t)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></svg></li>
+        </ul>
+        <ul class="rated" id="soft"></ul>
+
+        <h4 class="side-title">Other Skills</h4>
+        <ul class="other">
+            <li>ETL / ELT</li>
+            <li>Medallion Architecture</li>
+            <li>Data Modeling &amp; DAX</li>
+            <li>Agentic AI Workflows</li>
+            <li>KPI Design</li>
+            <li>Relational DBs</li>
+            <li>SAP ERP</li>
+            <li>BPMN, ARIS &amp; UML</li>
+            <li>Storytelling</li>
+            <li>Agile &amp; Kaizen</li>
+            <li>Zettelkasten</li>
+            <li>Miro, Figma</li>
+        </ul>
+    </aside>
+
+    <main class="main">
+        <section>
+            <h2>Experience</h2>
+
+            <div class="entry">
+                <div class="when">Aug 2025 –<br>Present<span class="dur">[1y 3mo]</span></div>
+                <div class="what">
+                    <h3>Developer &amp; Consultant: BI, Fabric, Power Platform<br>Clickless / Odczaruj Power BI</h3>
+                    <div class="where">Remote</div>
+                    <ul>
+                        <li>Team lead of a small implementation team; leading end-to-end BI projects for B2B clients, from the largest corporations to SMEs</li>
+                        <li>Requirements workshops, KPI design and data architecture in Microsoft Fabric</li>
+                        <li>Power BI semantic models, advanced DAX, performance tuning and report design</li>
+                        <li>Power Apps (canvas &amp; model-driven) on Dataverse with Power Automate</li>
+                        <li>1:1 mentoring in Power BI, SQL and data modeling; supporting courses</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="entry">
+                <div class="when">Apr 2023 –<br>Dec 2024<span class="dur">[1y 9mo]</span></div>
+                <div class="what">
+                    <h3>Data Analyst at Novartis Global Artwork</h3>
+                    <div class="where">Warsaw</div>
+                    <ul>
+                        <li>Collaborative member of an international operations team</li>
+                        <li>Specializing in reporting, analytical tool development, KPI design, and process optimization</li>
+                        <li>Supporting SAP system development</li>
+                        <li>Delivering actionable insights for informed decision-making</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="entry">
+                <div class="when">Jun 2022 –<br>Mar 2023<span class="dur">[9mo]</span></div>
+                <div class="what">
+                    <h3>Intern at Novartis Global Artwork</h3>
+                    <div class="where">Łódź, Stryków</div>
+                    <ul>
+                        <li>Intern in an international operations team</li>
+                        <li>Preparing and automating recurring reports</li>
+                        <li>Participating in Novartis internship projects</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Education</h2>
+            <div class="entry">
+                <div class="when">Oct 2020 –<br>Jan 2024</div>
+                <div class="what">
+                    <h3>Wrocław University of Science and Technology<br>Management Engineering</h3>
+                    <div class="where">Wrocław</div>
+                    <p>Engineer’s Degree, specialization: IT Application in Business</p>
+                    <p>Final Thesis Topic:</p>
+                    <p class="muted">Development of a Tool for Interactive Data Visualization in R Shiny for Monitoring the Product Labeling Process at Medic Pharma Company.</p>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Courses</h2>
+            <div class="entry">
+                <div class="when">Jul 2025</div>
+                <div class="what">
+                    <a class="cert" href="https://learn.microsoft.com/api/credentials/share/en-us/MichaKrawczuk-2645/142518F38A7994A?sharingId=9C2497028F072997">Microsoft Data Analyst Associate PL-300</a>
+                    <p>Official certification validating proficiency in data preparation, modeling, visualization, analysis, management, and security in Power BI.</p>
+                </div>
+            </div>
+            <div class="entry">
+                <div class="when">Jan 2022 –<br>Jun 2022</div>
+                <div class="what">
+                    <h3>DataCamp – Certified Courses</h3>
+                    <p>Programming in R, Data Manipulation, Data Visualization, Dashboard Development, Machine Learning</p>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    const rated = (id, items) => document.getElementById(id).innerHTML = items.map(([name, level]) =>
+        `<li><span class="dots">${[1, 2, 3, 4, 5].map(i => `<i class="${i > level ? 'off' : ''}"></i>`).join('')}</span>${name}</li>`).join('');
+
+    rated('tech', [
+        ['Power BI', 5], ['Microsoft Fabric', 5], ['Power Apps', 5], ['Dataverse', 5], ['Power Automate', 5],
+        ['Excel', 5], ['R', 5], ['SQL', 4], ['Python', 3], ['Git', 3]
+    ]);
+    rated('soft', [
+        ['Analytical Thinking', 5], ['Communication', 5], ['Project Leadership', 5], ['Mentoring', 5],
+        ['Independence', 5], ['Teamwork', 4], ['Attention to Detail', 4]
+    ]);
+</script>
+</body>
+</html>
