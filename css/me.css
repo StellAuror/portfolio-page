@@ -182,9 +182,8 @@
     display: block;
     width: 100%;
     height: auto;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 4 / 3;
     object-fit: cover;
-    object-position: 50% 60%;
 }
 
 /* ---------- Custom cursors (fine pointers only, set by me.js) ---------- */
