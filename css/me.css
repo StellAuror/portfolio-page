@@ -73,230 +73,43 @@
     color: #4a4f54;
 }
 
-/* Stories: book and game spines on the left, text on the right */
+/* Stories: a small painting stage on the left, text on the right */
 .me-stories {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 3rem;
-    align-items: center;
+    align-items: stretch;
 }
 
-.me-strips {
-    display: flex;
-    gap: 6px;
-    height: 420px;
-}
-
-/* A spine: dark and quiet until hovered or focused, then it opens and comes alive */
-.me-strip {
+.me-stage {
     position: relative;
-    flex: 1 1 0;
-    min-width: 0;
-    overflow: hidden;
-    border-radius: 6px;
-    background: #0a0a0a;
-    cursor: default;
-    outline: none;
-    transition: flex-grow 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), background-color 0.4s ease;
+    min-height: 300px;
+    touch-action: pan-y;
+    -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 70%, transparent 100%);
+    mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 70%, transparent 100%);
 }
 
-.me-strip:focus-visible {
-    box-shadow: 0 0 0 2px #1d9bf0;
-}
-
-.me-strip.active {
-    flex-grow: 5;
-}
-
-.me-strip-spine {
+.me-stage-hint {
     position: absolute;
-    inset: 1rem 0;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    writing-mode: vertical-rl;
-    transform: rotate(180deg);
+    padding: 2rem;
+    text-align: center;
     font-size: 0.8rem;
-    letter-spacing: 0.08em;
-    white-space: nowrap;
+    letter-spacing: 0.05em;
     color: #4a4f54;
-    transition: opacity 0.3s ease;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
 }
 
-.me-strip.active .me-strip-spine {
+.me-stage.painting .me-stage-hint {
     opacity: 0;
 }
 
-.me-strip-art {
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-
-.me-strip.active .me-strip-art {
-    opacity: 1;
-}
-
-.me-strip-art i {
-    position: absolute;
-    display: block;
-}
-
-.me-strip-caption {
-    position: absolute;
-    left: 1.25rem;
-    right: 1.25rem;
-    bottom: 1.25rem;
-    opacity: 0;
-    transform: translateY(12px);
-    transition: opacity 0.4s ease 0.15s, transform 0.4s ease 0.15s;
-}
-
-.me-strip.active .me-strip-caption {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.me-strip-title {
-    display: block;
-    font-size: 1.15rem;
-    font-weight: 600;
-    line-height: 1.25;
-    color: #ffffff;
-    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6);
-}
-
-.me-strip-kind {
-    display: block;
-    margin-top: 0.3rem;
-    font-size: 0.72rem;
-    letter-spacing: 0.06em;
-    color: rgba(255, 255, 255, 0.7);
-}
-
-/* Animations only run while a spine is open */
-.me-strip:not(.active) .me-strip-art *,
-.me-strip:not(.active) .me-strip-title {
-    animation-play-state: paused !important;
-}
-
-/* The Brothers Karamazov: a candle in the dark */
-.me-strip[data-id="karamazov"] .me-strip-art { background: radial-gradient(ellipse at 50% 40%, #4a1a12 0%, #1a0806 60%, #0a0404 100%); }
-.me-strip[data-id="karamazov"] .candle { left: 50%; top: 44%; width: 14px; height: 70px; margin-left: -7px; background: linear-gradient(#e9dcc0, #b9a888); border-radius: 2px; }
-.me-strip[data-id="karamazov"] .flame { left: 50%; top: calc(44% - 30px); width: 14px; height: 26px; margin-left: -7px; border-radius: 50% 50% 50% 50% / 65% 65% 35% 35%; background: radial-gradient(ellipse at 50% 70%, #fff6d6 0%, #ffc04d 45%, rgba(255, 110, 30, 0) 75%); transform-origin: 50% 100%; animation: meFlicker 1.6s ease-in-out infinite; }
-.me-strip[data-id="karamazov"] .glow { left: 50%; top: calc(44% - 70px); width: 140px; height: 140px; margin-left: -70px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 170, 70, 0.28), transparent 70%); animation: meGlow 3s ease-in-out infinite; }
-
-/* Thus Spoke Zarathustra: the sun rising over the mountains */
-.me-strip[data-id="zarathustra"] .me-strip-art { background: linear-gradient(#1c2a4a 0%, #a2532b 70%, #2a1608 100%); }
-.me-strip[data-id="zarathustra"] .sun { left: 50%; top: 30%; width: 70px; height: 70px; margin-left: -35px; border-radius: 50%; background: radial-gradient(circle, #fff1c2, #ffb347 70%); box-shadow: 0 0 60px rgba(255, 190, 90, 0.8); animation: meRise 6s ease-out infinite; }
-.me-strip[data-id="zarathustra"] .rays { left: 50%; top: 30%; width: 260px; height: 260px; margin: -95px 0 0 -130px; border-radius: 50%; background: repeating-conic-gradient(rgba(255, 220, 150, 0.16) 0 6deg, transparent 6deg 18deg); -webkit-mask-image: radial-gradient(circle, #000 20%, transparent 70%); mask-image: radial-gradient(circle, #000 20%, transparent 70%); animation: meSpin 30s linear infinite; }
-.me-strip[data-id="zarathustra"] .peaks { left: 0; right: 0; bottom: 0; height: 45%; background: #120b08; clip-path: polygon(0 55%, 18% 25%, 32% 48%, 52% 8%, 70% 42%, 84% 22%, 100% 50%, 100% 100%, 0 100%); }
-
-/* Frankl: meaning spreading in rings from a single point */
-.me-strip[data-id="frankl"] .me-strip-art { background: radial-gradient(circle at 50% 40%, #12423f 0%, #08201f 55%, #040d0d 100%); }
-.me-strip[data-id="frankl"] .dot { left: 50%; top: 40%; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: #d8fff6; box-shadow: 0 0 18px #7fffe0; }
-.me-strip[data-id="frankl"] .ring { left: 50%; top: 40%; width: 220px; height: 220px; margin: -110px 0 0 -110px; border-radius: 50%; border: 1px solid rgba(160, 255, 230, 0.6); animation: meRipple 4.5s ease-out infinite; }
-.me-strip[data-id="frankl"] .ring:nth-child(3) { animation-delay: 1.5s; }
-.me-strip[data-id="frankl"] .ring:nth-child(4) { animation-delay: 3s; }
-
-/* Kwantechizm: an interference pattern that keeps shifting */
-.me-strip[data-id="kwantechizm"] .me-strip-art { background: linear-gradient(160deg, #1b1446, #0a0920); }
-.me-strip[data-id="kwantechizm"] .fringes { inset: 0; background: repeating-linear-gradient(90deg, rgba(139, 92, 246, 0) 0, rgba(139, 92, 246, 0.55) 9px, rgba(139, 92, 246, 0) 18px); background-size: 200% 100%; -webkit-mask-image: radial-gradient(ellipse 45% 40% at 50% 40%, #000 30%, transparent 100%); mask-image: radial-gradient(ellipse 45% 40% at 50% 40%, #000 30%, transparent 100%); animation: meFringes 3s linear infinite; }
-.me-strip[data-id="kwantechizm"] .slit { left: 50%; top: 12%; width: 40px; height: 3px; margin-left: -20px; background: linear-gradient(90deg, #8b5cf6 0 35%, transparent 35% 65%, #8b5cf6 65%); opacity: 0.8; }
-
-/* The Witcher: snow over two crossed blades */
-.me-strip[data-id="witcher"] .me-strip-art { background: linear-gradient(#2a3038 0%, #12161b 60%, #2a0c0c 100%); }
-.me-strip[data-id="witcher"] .blade { left: 50%; top: 38%; width: 3px; height: 150px; margin: -75px 0 0 -1.5px; background: linear-gradient(#f2f4f7, #8e98a5 80%, #5a3a22 80%); border-radius: 2px; }
-.me-strip[data-id="witcher"] .blade.b1 { transform: rotate(32deg); }
-.me-strip[data-id="witcher"] .blade.b2 { transform: rotate(-32deg); }
-.me-strip[data-id="witcher"] .snow { top: -10px; width: 4px; height: 4px; border-radius: 50%; background: #fff; opacity: 0.8; animation: meSnow 5s linear infinite; }
-.me-strip[data-id="witcher"] .snow:nth-of-type(3) { left: 12%; animation-delay: 0s; }
-.me-strip[data-id="witcher"] .snow:nth-of-type(4) { left: 30%; animation-delay: 1.8s; animation-duration: 6s; }
-.me-strip[data-id="witcher"] .snow:nth-of-type(5) { left: 48%; animation-delay: 3.1s; }
-.me-strip[data-id="witcher"] .snow:nth-of-type(6) { left: 66%; animation-delay: 0.9s; animation-duration: 7s; }
-.me-strip[data-id="witcher"] .snow:nth-of-type(7) { left: 84%; animation-delay: 2.4s; }
-
-/* Cyberpunk 2077: neon scanlines and a glitching title */
-.me-strip[data-id="cyberpunk"] .me-strip-art { background: linear-gradient(#fcee0a 0%, #b8a800 18%, #0d0f14 55%); }
-.me-strip[data-id="cyberpunk"] .scan { inset: 0; background: repeating-linear-gradient(0deg, rgba(0, 240, 255, 0.12) 0 2px, transparent 2px 6px); animation: meScan 1.2s linear infinite; }
-.me-strip[data-id="cyberpunk"] .bar { left: 0; right: 0; top: 46%; height: 3px; background: #00f0ff; box-shadow: 0 0 14px #00f0ff; animation: meGlitch 2.6s steps(1) infinite; }
-.me-strip[data-id="cyberpunk"].active .me-strip-title { animation: meTitleGlitch 2.6s steps(1) infinite; }
-
-/* Clair Obscur: Expedition 33: a painted 33 shedding petals */
-.me-strip[data-id="e33"] .me-strip-art { background: radial-gradient(ellipse at 50% 35%, #efe6d2 0%, #8f7c63 30%, #2a1418 70%, #120709 100%); }
-.me-strip[data-id="e33"] .num { left: 0; right: 0; top: 18%; text-align: center; font-family: Georgia, 'Times New Roman', serif; font-size: 5rem; font-style: italic; color: rgba(40, 10, 14, 0.75); }
-.me-strip[data-id="e33"] .petal { top: 30%; width: 7px; height: 14px; border-radius: 50% 0 50% 0; background: #c83c4e; animation: mePetal 4.5s ease-in infinite; }
-.me-strip[data-id="e33"] .petal:nth-of-type(2) { left: 35%; animation-delay: 0s; }
-.me-strip[data-id="e33"] .petal:nth-of-type(3) { left: 50%; animation-delay: 1.1s; }
-.me-strip[data-id="e33"] .petal:nth-of-type(4) { left: 62%; animation-delay: 2.2s; background: #efe6d2; }
-.me-strip[data-id="e33"] .petal:nth-of-type(5) { left: 44%; animation-delay: 3.3s; }
-
-@keyframes meFlicker {
-    0%, 100% { transform: scale(1, 1) rotate(-2deg); }
-    25% { transform: scale(0.92, 1.08) rotate(2deg); }
-    50% { transform: scale(1.04, 0.95) rotate(-1deg); }
-    75% { transform: scale(0.96, 1.05) rotate(1deg); }
-}
-
-@keyframes meGlow {
-    0%, 100% { opacity: 0.8; }
-    50% { opacity: 1; }
-}
-
-@keyframes meRise {
-    from { transform: translateY(70px); }
-    to { transform: translateY(0); }
-}
-
-@keyframes meSpin {
-    to { transform: rotate(360deg); }
-}
-
-@keyframes meRipple {
-    from { transform: scale(0.05); opacity: 1; }
-    to { transform: scale(1); opacity: 0; }
-}
-
-@keyframes meFringes {
-    to { background-position: -36px 0; }
-}
-
-@keyframes meSnow {
-    to { transform: translate(-20px, 460px); }
-}
-
-@keyframes meScan {
-    to { background-position: 0 6px; }
-}
-
-@keyframes meGlitch {
-    0% { transform: translateY(0); opacity: 1; }
-    20% { transform: translateY(-60px); opacity: 0.4; }
-    22% { transform: translateY(40px); opacity: 1; }
-    60% { transform: translateY(90px); opacity: 0.7; }
-    62% { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes meTitleGlitch {
-    0%, 100% { text-shadow: none; transform: none; }
-    20% { text-shadow: 2px 0 #00f0ff, -2px 0 #ff2a6d; transform: translateX(1px); }
-    22% { text-shadow: none; transform: none; }
-    60% { text-shadow: -2px 0 #00f0ff, 2px 0 #ff2a6d; transform: translateX(-1px); }
-    62% { text-shadow: none; transform: none; }
-}
-
-@keyframes mePetal {
-    0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
-    10% { opacity: 1; }
-    100% { transform: translate(60px, 260px) rotate(320deg); opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .me-strip-art *,
-    .me-strip-title {
-        animation: none !important;
-    }
+.me-stories .me-segment-body {
+    align-self: center;
 }
 
 /* Gravel: text on the left, photo on the right with a faint tyre track drawn over it */
@@ -391,6 +204,36 @@
     content: '— ';
 }
 
+/* ---------- Custom cursors (fine pointers only, set by me.js) ---------- */
+
+.me-cursors-on [data-cursor] {
+    cursor: none;
+}
+
+.me-cursor {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 2000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    will-change: transform;
+}
+
+.me-cursor.visible {
+    opacity: 1;
+}
+
+/* Brush (Clair Obscur): the tip is the hotspot, bottom-left of the box */
+.me-cursor-brush svg {
+    display: block;
+    width: 32px;
+    height: 32px;
+    overflow: visible;
+    filter: drop-shadow(0 0 1.5px #000) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7));
+}
+
 /* The black hole replaces the pointer in the space segment */
 @media (hover: hover) and (pointer: fine) {
     .me-space {
@@ -413,20 +256,9 @@
         gap: 1.5rem;
     }
 
-    .me-strips {
+    .me-stage {
         order: 2;
-        height: 300px;
-        gap: 4px;
-    }
-
-    .me-strip-caption {
-        left: 0.75rem;
-        right: 0.75rem;
-        bottom: 0.75rem;
-    }
-
-    .me-strip-title {
-        font-size: 1rem;
+        min-height: 220px;
     }
 
     .me-closing {

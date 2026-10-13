@@ -38,45 +38,8 @@
         },
         "stories": {
             "title": "Stories, or entertainment with a second layer",
-            "p1": "Books and games are first of all entertainment for me — fantasy, a good plot, worlds you want to come back to. But the best ones have a second layer: along with the adventure they ask who we actually are, what drives us, and what I would do in the hero's place.",
-            "p2": "I like that these stories don't hand out ready answers. Instead, every now and then they make me look at myself a little differently — which is probably why they stay with me longer than the last page or the end credits.",
-            "items": [
-                {
-                    "id": "karamazov",
-                    "title": "The Brothers Karamazov",
-                    "kind": "Fyodor Dostoevsky · novel"
-                },
-                {
-                    "id": "zarathustra",
-                    "title": "Thus Spoke Zarathustra",
-                    "kind": "Friedrich Nietzsche · philosophy"
-                },
-                {
-                    "id": "frankl",
-                    "title": "Lectures on the meaning of life",
-                    "kind": "Viktor Frankl · lectures"
-                },
-                {
-                    "id": "kwantechizm",
-                    "title": "Kwantechizm",
-                    "kind": "Andrzej Dragan · popular science"
-                },
-                {
-                    "id": "witcher",
-                    "title": "The Witcher",
-                    "kind": "Saga & games"
-                },
-                {
-                    "id": "cyberpunk",
-                    "title": "Cyberpunk 2077",
-                    "kind": "Game"
-                },
-                {
-                    "id": "e33",
-                    "title": "Clair Obscur: Expedition 33",
-                    "kind": "Game"
-                }
-            ]
+            "p1": "Books and games are first of all entertainment for me — fantasy, a good plot, worlds you want to come back to. I like the ones that bring a bit of philosophy along with the adventure and leave you wondering what being human actually means. A good story can do that with a lighter touch than many textbooks.",
+            "hint": "Paint here"
         },
         "gravel": {
             "title": "Gravel, or how I switch off",

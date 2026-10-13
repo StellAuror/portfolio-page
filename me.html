@@ -19,13 +19,15 @@
         <span class="me-hint" data-i18n="me.space.hint"></span>
     </article>
 
-    <!-- 02: stories — book and game spines that open into small animated covers -->
+    <!-- 02: stories — a small canvas beside the text; the cursor is a Clair Obscur brush whose light scatters into petals -->
     <article class="me-segment me-stories">
-        <div class="me-strips" id="me-strips"></div>
+        <div class="me-stage" data-cursor="brush">
+            <canvas class="me-canvas" aria-hidden="true"></canvas>
+            <span class="me-stage-hint" data-i18n="me.stories.hint"></span>
+        </div>
         <div class="me-segment-body">
             <h3 class="me-segment-title" data-i18n="me.stories.title"></h3>
             <p data-i18n="me.stories.p1"></p>
-            <p data-i18n="me.stories.p2"></p>
         </div>
     </article>
 

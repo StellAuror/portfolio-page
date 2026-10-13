@@ -38,45 +38,8 @@
         },
         "stories": {
             "title": "Historie, czyli rozrywka z drugim dnem",
-            "p1": "Książki i gry to dla mnie przede wszystkim rozrywka — fantastyka, dobra fabuła, światy, do których chce się wracać. Ale te najlepsze mają drugie dno: przy okazji przygody pytają, kim właściwie jest człowiek, co nim kieruje i co sam zrobiłbym na miejscu bohatera.",
-            "p2": "Lubię to, że takie historie nie dają gotowych odpowiedzi. Za to co jakiś czas każą spojrzeć na siebie trochę inaczej — i chyba dlatego zostają ze mną na dłużej niż ostatnia strona czy napisy końcowe.",
-            "items": [
-                {
-                    "id": "karamazov",
-                    "title": "Bracia Karamazow",
-                    "kind": "Fiodor Dostojewski · powieść"
-                },
-                {
-                    "id": "zarathustra",
-                    "title": "Tako rzecze Zaratustra",
-                    "kind": "Friedrich Nietzsche · filozofia"
-                },
-                {
-                    "id": "frankl",
-                    "title": "Wykłady o sensie życia",
-                    "kind": "Viktor Frankl · wykłady"
-                },
-                {
-                    "id": "kwantechizm",
-                    "title": "Kwantechizm",
-                    "kind": "Andrzej Dragan · popularnonaukowa"
-                },
-                {
-                    "id": "witcher",
-                    "title": "Wiedźmin",
-                    "kind": "Saga i gry"
-                },
-                {
-                    "id": "cyberpunk",
-                    "title": "Cyberpunk 2077",
-                    "kind": "Gra"
-                },
-                {
-                    "id": "e33",
-                    "title": "Clair Obscur: Expedition 33",
-                    "kind": "Gra"
-                }
-            ]
+            "p1": "Książki i gry to dla mnie przede wszystkim rozrywka — fantastyka, dobra fabuła, światy, do których chce się wracać. Najbardziej lubię te, które obok przygody mają w sobie trochę filozofii i każą się zastanowić, czym właściwie jest człowiek. Dobra historia potrafi to zrobić lżej niż niejeden podręcznik.",
+            "hint": "Maluj tutaj"
         },
         "gravel": {
             "title": "Gravel, czyli jak się wyciszam",

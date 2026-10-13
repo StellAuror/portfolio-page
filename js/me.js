@@ -1,6 +1,7 @@
-// About me: the lensed star field, the story spines and the unicycle track
+// About me: the lensed star field, the Clair Obscur brush canvas and the unicycle track
 (function () {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
     // ---------- Star field with gravitational lensing ----------
     function initSpace(segment) {
@@ -187,61 +188,123 @@
         segment.addEventListener('pointerleave', () => { pointer = null; });
     }
 
-    // ---------- Stories: spines that open into small animated covers ----------
-    const STRIP_ART = {
-        karamazov: ['glow', 'candle', 'flame'],
-        zarathustra: ['rays', 'sun', 'peaks'],
-        frankl: ['dot', 'ring', 'ring', 'ring'],
-        kwantechizm: ['fringes', 'slit'],
-        witcher: ['blade b1', 'blade b2', 'snow', 'snow', 'snow', 'snow', 'snow'],
-        cyberpunk: ['scan', 'bar'],
-        e33: ['num', 'petal', 'petal', 'petal', 'petal'],
-    };
+    // ---------- Clair Obscur: painting light that scatters into petals ----------
+    function initBrush(segment) {
+        const canvas = segment.querySelector('.me-canvas');
+        const ctx = canvas.getContext('2d');
+        const HOLD = 1300, FADE = 900;
+        let w = 0, h = 0, strokes = [], petals = [], last = null, rafId = null, prevT = 0;
 
-    function renderStrips(items) {
-        const box = document.getElementById('me-strips');
-        if (!box || !Array.isArray(items)) return;
+        function resize() {
+            const rect = canvas.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            w = rect.width;
+            h = rect.height;
+            canvas.width = Math.round(w * dpr);
+            canvas.height = Math.round(h * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            strokes = [];
+            petals = [];
+        }
 
-        box.replaceChildren(...items.map(item => {
-            const strip = document.createElement('div');
-            strip.className = 'me-strip';
-            strip.dataset.id = item.id;
-            strip.tabIndex = 0;
-            strip.setAttribute('role', 'button');
-            strip.setAttribute('aria-label', `${item.title} — ${item.kind}`);
+        function spawnPetal(s, t) {
+            const k = Math.random();
+            const spread = (Math.random() - 0.5) * s.w;
+            const nx = -(s.y2 - s.y1), ny = s.x2 - s.x1, len = Math.hypot(nx, ny) || 1;
+            petals.push({
+                x: s.x1 + (s.x2 - s.x1) * k + nx / len * spread,
+                y: s.y1 + (s.y2 - s.y1) * k + ny / len * spread,
+                vx: (Math.random() - 0.3) * 0.04,
+                vy: -0.02 - Math.random() * 0.05,
+                rot: Math.random() * Math.PI,
+                vr: (Math.random() - 0.5) * 0.006,
+                size: 0.9 + Math.random() * 1.1,
+                born: t,
+                life: 1400 + Math.random() * 1200,
+                crimson: Math.random() < 0.7,
+            });
+        }
 
-            const art = document.createElement('div');
-            art.className = 'me-strip-art';
-            art.setAttribute('aria-hidden', 'true');
-            (STRIP_ART[item.id] || []).forEach(cls => {
-                const piece = document.createElement('i');
-                piece.className = cls;
-                if (cls === 'num') piece.textContent = '33';
-                art.appendChild(piece);
+        function draw(t) {
+            const dt = Math.min(t - (prevT || t), 50);
+            prevT = t;
+            ctx.clearRect(0, 0, w, h);
+            ctx.lineCap = 'round';
+
+            strokes = strokes.filter(s => {
+                const age = t - s.born;
+                if (age >= HOLD && !s.scattered) {
+                    s.scattered = true;
+                    if (!reduceMotion && Math.random() < 0.35) spawnPetal(s, t);
+                }
+                const alpha = age < HOLD ? 1 : 1 - (age - HOLD) / FADE;
+                if (alpha <= 0) return false;
+
+                ctx.strokeStyle = `rgba(241,231,208,${0.7 * alpha})`;
+                ctx.lineWidth = s.w;
+                ctx.beginPath();
+                ctx.moveTo(s.x1, s.y1);
+                ctx.lineTo(s.x2, s.y2);
+                ctx.stroke();
+
+                // Bristle streaks give the stroke some texture
+                const nx = -(s.y2 - s.y1), ny = s.x2 - s.x1, len = Math.hypot(nx, ny) || 1;
+                ctx.strokeStyle = `rgba(150,120,95,${0.2 * alpha})`;
+                ctx.lineWidth = Math.max(0.8, s.w * 0.08);
+                for (const off of [-0.25, 0.25]) {
+                    const ox = nx / len * s.w * off, oy = ny / len * s.w * off;
+                    ctx.beginPath();
+                    ctx.moveTo(s.x1 + ox, s.y1 + oy);
+                    ctx.lineTo(s.x2 + ox, s.y2 + oy);
+                    ctx.stroke();
+                }
+                return true;
             });
 
-            const spine = document.createElement('span');
-            spine.className = 'me-strip-spine';
-            spine.setAttribute('aria-hidden', 'true');
-            spine.textContent = item.title;
+            petals = petals.filter(p => {
+                const age = t - p.born;
+                if (age > p.life) return false;
+                p.x += (p.vx + Math.sin((t + p.born) * 0.003) * 0.02) * dt;
+                p.y += p.vy * dt;
+                p.rot += p.vr * dt;
+                const a = 1 - age / p.life;
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rot);
+                ctx.fillStyle = p.crimson ? `rgba(200,60,78,${a * 0.8})` : `rgba(241,231,208,${a * 0.6})`;
+                ctx.beginPath();
+                ctx.ellipse(0, 0, p.size, p.size * 2.2, 0, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+                return true;
+            });
 
-            const caption = document.createElement('div');
-            caption.className = 'me-strip-caption';
-            caption.innerHTML = '<span class="me-strip-title"></span><span class="me-strip-kind"></span>';
-            caption.firstChild.textContent = item.title;
-            caption.lastChild.textContent = item.kind;
+            if (strokes.length || petals.length) rafId = requestAnimationFrame(draw);
+            else { rafId = null; prevT = 0; segment.classList.remove('painting'); }
+        }
 
-            strip.append(art, spine, caption);
-            return strip;
-        }));
-    }
+        function paint(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left, y = e.clientY - rect.top, t = performance.now();
+            if (last) {
+                const dist = Math.hypot(x - last.x, y - last.y);
+                if (dist < 1.5) return;
+                const speed = dist / Math.max(t - last.t, 8);           // px per ms
+                const width = Math.max(2, Math.min(9, 9 - speed * 3.5));
+                const smooth = last.w == null ? width : last.w + (width - last.w) * 0.35;
+                strokes.push({ x1: last.x, y1: last.y, x2: x, y2: y, w: smooth, born: t });
+                last = { x, y, t, w: smooth };
+            } else {
+                last = { x, y, t, w: null };
+            }
+            segment.classList.add('painting');
+            if (!rafId) rafId = requestAnimationFrame(draw);
+        }
 
-    function initStrips(box) {
-        const open = strip => box.querySelectorAll('.me-strip').forEach(s => s.classList.toggle('active', s === strip));
-        box.addEventListener('pointerover', e => { const s = e.target.closest('.me-strip'); if (s) open(s); });
-        box.addEventListener('pointerleave', () => { if (!box.querySelector(':focus-visible')) open(null); });
-        box.addEventListener('focusin', e => open(e.target.closest('.me-strip')));
-        box.addEventListener('focusout', e => { if (!box.contains(e.relatedTarget)) open(null); });
+        new ResizeObserver(resize).observe(segment);
+        segment.addEventListener('pointermove', paint);
+        segment.addEventListener('pointerleave', () => { last = null; });
     }
 
     // ---------- Gravel: a faint unicycle tyre track over the photo that fades ----------
@@ -320,6 +383,41 @@
         segment.addEventListener('pointerleave', () => { last = null; });
     }
 
+    // ---------- DOM cursor: the Clair Obscur brush ----------
+    // Drawn horizontally from the tip, then tilted so the tip sits at the bottom-left (2, 44)
+    const BRUSH_SVG = `
+        <svg viewBox="0 0 46 46" aria-hidden="true">
+            <g transform="translate(2 44) rotate(-45)">
+                <path d="M24 -3.2 L57 -1.7 Q61 0 57 1.7 L24 3.2Z" fill="#1b1414" stroke="#4a3a32" stroke-width="0.6"/>
+                <rect x="50" y="-2" width="2.2" height="4" fill="#c9a24a"/>
+                <rect x="16" y="-3.6" width="8.5" height="7.2" rx="1" fill="#c9a24a"/>
+                <path d="M18.5 -3.6v7.2M21.5 -3.6v7.2" stroke="#8a6a2a" stroke-width="0.6"/>
+                <path d="M0 0 C4 -3.5 10 -4 16 -3.2 L16 3.2 C10 4 4 3.5 0 0Z" fill="#efe6d2"/>
+                <path d="M0 0 C2 -1.7 4.5 -2.2 7 -2 L7 2 C4.5 2.2 2 1.7 0 0Z" fill="#c83c4e"/>
+            </g>
+        </svg>`;
+
+    function initCursors(section) {
+        section.classList.add('me-cursors-on');
+
+        const brush = document.createElement('div');
+        brush.className = 'me-cursor me-cursor-brush';
+        brush.innerHTML = BRUSH_SVG;
+        document.body.appendChild(brush);
+
+        // The brush paints from its tip, so the tip is the hotspot
+        const place = e => { brush.style.transform = `translate(${e.clientX - 1.4}px, ${e.clientY - 30.6}px)`; };
+
+        section.querySelectorAll('[data-cursor="brush"]').forEach(stage => {
+            stage.addEventListener('pointerenter', e => { place(e); brush.classList.add('visible'); });
+            stage.addEventListener('pointerleave', () => brush.classList.remove('visible'));
+            stage.addEventListener('pointermove', place);
+        });
+
+        // Hide the cursor whenever the section is left
+        document.addEventListener('sectionchange', () => brush.classList.remove('visible'));
+    }
+
     // Bisz: in English each translated line carries the Polish original beneath it
     function renderQuote(me) {
         const box = document.getElementById('me-quote-lines');
@@ -351,7 +449,6 @@
     document.addEventListener('langchange', e => {
         translateAlts(e.detail.translations);
         renderQuote(e.detail.translations.me);
-        renderStrips(e.detail.translations.me?.stories?.items);
     });
 
     window.sectionsReady?.then(() => {
@@ -359,9 +456,10 @@
         if (!section) return;
         const space = section.querySelector('.me-space');
         if (space) initSpace(space);
-        const strips = section.querySelector('#me-strips');
-        if (strips) initStrips(strips);
+        const stage = section.querySelector('.me-stage');
+        if (stage) initBrush(stage);
         const photo = section.querySelector('.me-gravel-media');
         if (photo) initTracks(photo);
+        if (finePointer) initCursors(section);
     });
 })();
