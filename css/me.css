@@ -11,43 +11,23 @@
     margin-top: 1rem;
 }
 
-/* ---------- Segments ---------- */
+/* ---------- Segments: no frames, text alternates left / right ---------- */
 
 .me-segment {
     position: relative;
-    overflow: hidden;
-    background: #000000;
-    border: 1px solid #1a1a1a;
-    border-radius: 8px;
-    padding: 2.5rem;
-    margin-bottom: 1rem;
-    transition: border-color 0.3s ease;
-}
-
-.me-segment:hover {
-    border-color: #2a2a2a;
+    margin-bottom: 5rem;
 }
 
 .me-segment-body {
     position: relative;
     z-index: 1;
-    max-width: 640px;
+    max-width: 600px;
     color: #d0d0d0;
     line-height: 1.75;
 }
 
 .me-segment-body p + p {
     margin-top: 1rem;
-}
-
-.me-segment-label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #71767b;
-    margin-bottom: 0.5rem;
 }
 
 .me-segment-title {
@@ -58,13 +38,6 @@
     line-height: 1.3;
 }
 
-/* 01: space */
-.me-space {
-    min-height: 460px;
-    display: flex;
-    align-items: center;
-}
-
 .me-canvas {
     position: absolute;
     inset: 0;
@@ -73,34 +46,89 @@
     display: block;
 }
 
+/* Space: text on the left, the star field fades out at its edges instead of ending on a frame */
+.me-space {
+    min-height: 460px;
+    display: flex;
+    align-items: center;
+    padding: 3rem 0;
+}
+
+.me-space .me-canvas {
+    -webkit-mask-image: radial-gradient(ellipse 70% 75% at 60% 50%, #000 45%, transparent 100%);
+    mask-image: radial-gradient(ellipse 70% 75% at 60% 50%, #000 45%, transparent 100%);
+}
+
 .me-space .me-segment-body {
     text-shadow: 0 0 12px #000, 0 0 4px #000;
 }
 
-/* 02: philosophy — the paint layer sits above the text and inverts it (light ↔ dark) */
-.me-philosophy {
-    min-height: 380px;
-    display: flex;
-    align-items: center;
-}
-
-.me-philosophy .me-canvas {
-    z-index: 2;
-    pointer-events: none;
-    mix-blend-mode: difference;
-}
-
 .me-hint {
     position: absolute;
-    right: 1.25rem;
-    bottom: 1rem;
+    right: 0;
+    bottom: 0.5rem;
     z-index: 1;
     font-size: 0.75rem;
     letter-spacing: 0.05em;
     color: #4a4f54;
 }
 
-/* 03: gravel */
+/* Philosophy: the painting stage on the left, text on the right */
+.me-philosophy {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 3rem;
+    align-items: stretch;
+}
+
+.me-stage {
+    position: relative;
+    min-height: 360px;
+    touch-action: pan-y;
+    -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 70%, transparent 100%);
+    mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 70%, transparent 100%);
+}
+
+.me-stage-hint {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    color: #4a4f54;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+}
+
+.me-stage.painting .me-stage-hint {
+    opacity: 0;
+}
+
+.me-philosophy .me-segment-body {
+    align-self: center;
+}
+
+.me-shelf {
+    margin-top: 1.75rem;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    color: #71767b;
+}
+
+/* Gravel: text on the left, photo on the right; the tyre track runs between them and the text */
+.me-gravel .me-canvas {
+    z-index: 1;
+    pointer-events: none;
+}
+
+.me-gravel .me-segment-body {
+    z-index: 2;
+}
+
 .me-gravel {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
@@ -112,7 +140,6 @@
     margin: 0;
     border-radius: 8px;
     overflow: hidden;
-    border: 1px solid #1a1a1a;
 }
 
 .me-gravel-media img {
@@ -130,12 +157,11 @@
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     gap: 2.5rem;
     align-items: center;
-    margin-top: 3rem;
+    margin-top: 0;
 }
 
 .me-closing-media {
     margin: 0;
-    border: 1px solid #1a1a1a;
     border-radius: 8px;
     overflow: hidden;
 }
@@ -191,7 +217,7 @@
 
 /* ---------- Custom cursors (fine pointers only, set by me.js) ---------- */
 
-.me-cursors-on .me-segment[data-cursor] {
+.me-cursors-on [data-cursor] {
     cursor: none;
 }
 
@@ -210,25 +236,6 @@
     opacity: 1;
 }
 
-/* Bike: wheels spin with the distance travelled, the frame faces the direction */
-.me-cursor-bike svg {
-    display: block;
-    width: 64px;
-    height: 39px;
-    overflow: visible;
-    filter: drop-shadow(0 0 1.5px #000) drop-shadow(0 0 3px rgba(0, 0, 0, 0.8));
-    transition: transform 0.25s ease;
-}
-
-.me-cursor-bike.left svg {
-    transform: scaleX(-1);
-}
-
-.me-cursor-bike .wheel {
-    transform-box: fill-box;
-    transform-origin: center;
-}
-
 /* Brush (Clair Obscur): the tip is the hotspot, bottom-left of the box */
 .me-cursor-brush svg {
     display: block;
@@ -240,12 +247,22 @@
 
 @media (max-width: 1000px) {
     .me-segment {
-        padding: 1.5rem;
+        margin-bottom: 3.5rem;
     }
 
-    .me-space,
-    .me-philosophy {
+    .me-space {
         min-height: 0;
+        padding: 1.5rem 0;
+    }
+
+    .me-philosophy {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .me-stage {
+        order: 2;
+        min-height: 240px;
     }
 
     .me-closing {

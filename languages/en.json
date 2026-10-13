@@ -31,21 +31,19 @@
             "p2": "The first hint that I didn't have to came back in middle school, with the spreadsheets I built for my teachers — they had to calculate flawlessly, but I also wanted them to look good and be quick to read. I only truly understood it when I found Business Intelligence. A dashboard is where logic meets design: every measure has to be right to the cent, and every chart has to be readable in seconds. It simply drew me in — and set a career direction that became a passion along the way."
         },
         "space": {
-            "label": "01 — Space",
             "title": "Pop-sci, or where it all comes from",
             "p1": "Space has fascinated me for as long as I can remember. The real spark was Stephen Hawking’s “A Brief History of Time” — the book that showed me you can think about black holes, the beginning of the Universe and the nature of time without a PhD in physics, as long as you bring curiosity.",
             "p2": "Then came “Interstellar” and Kip Thorne’s “The Science of Interstellar” — the physicist who didn't just advise on the film, but actually computed what Gargantua would look like. To this day my favourite moment in a popular-science book is when a complicated equation turns into a picture you can understand.",
             "hint": "Move the cursor — this is how a black hole bends starlight"
         },
         "philosophy": {
-            "label": "02 — Philosophy",
             "title": "Philosophy, the practical kind",
-            "p1": "I'm interested in philosophy not as a system to memorise, but as the questions that keep coming back in everyday life: what is right, what gives things meaning, how to live with choices that can't be undone.",
-            "p2": "I look for them wherever someone dared to ask them seriously. From Dostoevsky’s “The Brothers Karamazov” — faith, guilt and freedom played out within one family — to “Clair Obscur: Expedition 33”, a game that says more about loss and why we create than many books do. The medium is secondary; what matters is whether something stays with me after the last page or the end credits.",
-            "hint": "Paint with the cursor — the light stays for a moment, then scatters into petals"
+            "p1": "I like philosophy that steps down from the lectern. I'm not after systems to memorise, but the questions that arrive sooner or later anyway: what to do with freedom, where to find meaning when the plan falls apart, and how to live with choices that can't be undone.",
+            "p2": "I usually find them where nobody tells me to look — in a novel, in lectures written down right after the war, and just as often in a game where decisions have consequences. A good story asks these questions more quietly than a textbook, but it stays with me longer.",
+            "hint": "Paint here — the light stays for a moment, then scatters into petals",
+            "shelf": "The Brothers Karamazov · Thus Spoke Zarathustra · Viktor Frankl's lectures on the meaning of life · Andrzej Dragan's Kwantechizm · The Witcher · Cyberpunk 2077 · Clair Obscur: Expedition 33"
         },
         "gravel": {
-            "label": "03 — Sport",
             "title": "Gravel, or sport without a leaderboard",
             "p1": "For me, sport mostly means gravel bike trips — dirt roads, forest tracks and back lanes, wherever the tarmac ends and the actual route begins.",
             "p2": "It's the best reset after a day of models and measures: a few hours on the move, zero notifications, just the road, breathing and the forest. And if something still needs finishing — better at a wooden table along the trail than at a desk.",

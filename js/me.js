@@ -1,4 +1,4 @@
-// About me: per-segment cursors (black hole, brush, bike), the lensed star field and the light-painting canvas
+// About me: the lensed star field, the Clair Obscur brush canvas and the unicycle track
 (function () {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -189,7 +189,6 @@
     }
 
     // ---------- Clair Obscur: painting light that scatters into petals ----------
-    // The canvas is blended with "difference", so painted light inverts the text beneath it
     function initBrush(segment) {
         const canvas = segment.querySelector('.me-canvas');
         const ctx = canvas.getContext('2d');
@@ -282,7 +281,7 @@
             });
 
             if (strokes.length || petals.length) rafId = requestAnimationFrame(draw);
-            else { rafId = null; prevT = 0; }
+            else { rafId = null; prevT = 0; segment.classList.remove('painting'); }
         }
 
         function paint(e) {
@@ -299,6 +298,7 @@
             } else {
                 last = { x, y, t, w: null };
             }
+            segment.classList.add('painting');
             if (!rafId) rafId = requestAnimationFrame(draw);
         }
 
@@ -307,23 +307,83 @@
         segment.addEventListener('pointerleave', () => { last = null; });
     }
 
-    // ---------- DOM cursors: brush and bike ----------
-    const BIKE_SVG = `
-        <svg viewBox="0 0 56 34" aria-hidden="true">
-            <g fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                <g class="wheel" data-wheel>
-                    <circle cx="11" cy="23" r="9.5"/>
-                    <path d="M11 13.5v19M1.5 23h19M4.3 16.3l13.4 13.4M17.7 16.3L4.3 29.7" stroke-width="0.8" stroke="#8b8f94"/>
-                </g>
-                <g class="wheel" data-wheel>
-                    <circle cx="45" cy="23" r="9.5"/>
-                    <path d="M45 13.5v19M35.5 23h19M38.3 16.3l13.4 13.4M51.7 16.3L38.3 29.7" stroke-width="0.8" stroke="#8b8f94"/>
-                </g>
-                <path d="M11 23l9-12h17l-9 12H11zM28 23L20 11M37 11l8 12M20 11l-1-4M17 7h5M37 11l-2-5h5" stroke="#8b5cf6"/>
-                <circle cx="28" cy="23" r="1.8" fill="#8b5cf6" stroke="none"/>
-            </g>
-        </svg>`;
+    // ---------- Gravel: a unicycle tyre track that follows the pointer and fades ----------
+    function initTracks(segment) {
+        const canvas = segment.querySelector('.me-canvas');
+        const ctx = canvas.getContext('2d');
+        const HOLD = 700, FADE = 1100, WIDTH = 9, STEP = 5;
+        let w = 0, h = 0, marks = [], last = null, travelled = 0, rafId = null;
 
+        function resize() {
+            const rect = canvas.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            w = rect.width;
+            h = rect.height;
+            canvas.width = Math.round(w * dpr);
+            canvas.height = Math.round(h * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            marks = [];
+        }
+
+        function draw(t) {
+            ctx.clearRect(0, 0, w, h);
+            ctx.lineCap = 'round';
+            marks = marks.filter(m => {
+                const age = t - m.born;
+                const alpha = age < HOLD ? 1 : 1 - (age - HOLD) / FADE;
+                if (alpha <= 0) return false;
+                const nx = -Math.sin(m.a), ny = Math.cos(m.a);   // across the track
+                const tx = Math.cos(m.a), ty = Math.sin(m.a);    // along the track
+                const half = WIDTH / 2;
+
+                // Tyre edges
+                ctx.strokeStyle = `rgba(200,200,200,${0.35 * alpha})`;
+                ctx.lineWidth = 1;
+                for (const side of [-1, 1]) {
+                    ctx.beginPath();
+                    ctx.moveTo(m.x - tx * STEP / 2 + nx * half * side, m.y - ty * STEP / 2 + ny * half * side);
+                    ctx.lineTo(m.x + tx * STEP / 2 + nx * half * side, m.y + ty * STEP / 2 + ny * half * side);
+                    ctx.stroke();
+                }
+
+                // Chevron tread knob
+                ctx.strokeStyle = `rgba(220,220,220,${0.6 * alpha})`;
+                ctx.lineWidth = 1.6;
+                ctx.beginPath();
+                ctx.moveTo(m.x + nx * half * 0.8 - tx * 1.8, m.y + ny * half * 0.8 - ty * 1.8);
+                ctx.lineTo(m.x + tx * 1.2, m.y + ty * 1.2);
+                ctx.lineTo(m.x - nx * half * 0.8 - tx * 1.8, m.y - ny * half * 0.8 - ty * 1.8);
+                ctx.stroke();
+                return true;
+            });
+
+            if (marks.length) rafId = requestAnimationFrame(draw);
+            else rafId = null;
+        }
+
+        function roll(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left, y = e.clientY - rect.top;
+            if (!last) { last = { x, y }; return; }
+            const dx = x - last.x, dy = y - last.y, dist = Math.hypot(dx, dy);
+            if (dist < 0.5) return;
+            const a = Math.atan2(dy, dx), t = performance.now();
+            // Lay a tread knob every few pixels along the path
+            for (let d = STEP - travelled; d <= dist; d += STEP) {
+                marks.push({ x: last.x + dx * d / dist, y: last.y + dy * d / dist, a, born: t });
+            }
+            travelled = (travelled + dist) % STEP;
+            last = { x, y };
+            if (!rafId) rafId = requestAnimationFrame(draw);
+        }
+
+        new ResizeObserver(resize).observe(segment);
+        segment.addEventListener('pointermove', roll);
+        segment.addEventListener('pointerleave', () => { last = null; });
+    }
+
+    // ---------- DOM cursor: the Clair Obscur brush ----------
     // Drawn horizontally from the tip, then tilted so the tip sits at the bottom-left (2, 44)
     const BRUSH_SVG = `
         <svg viewBox="0 0 46 46" aria-hidden="true">
@@ -337,60 +397,25 @@
             </g>
         </svg>`;
 
-    function createCursor(kind, html) {
-        const el = document.createElement('div');
-        el.className = `me-cursor me-cursor-${kind}`;
-        el.innerHTML = html;
-        document.body.appendChild(el);
-        return el;
-    }
-
     function initCursors(section) {
         section.classList.add('me-cursors-on');
 
-        const bike = createCursor('bike', BIKE_SVG);
-        const brush = createCursor('brush', BRUSH_SVG);
-        const wheels = bike.querySelectorAll('[data-wheel]');
-        const cursors = { bike, brush };
+        const brush = document.createElement('div');
+        brush.className = 'me-cursor me-cursor-brush';
+        brush.innerHTML = BRUSH_SVG;
+        document.body.appendChild(brush);
 
-        let wheelAngle = 0, lastX = null;
+        // The brush paints from its tip, so the tip is the hotspot
+        const place = e => { brush.style.transform = `translate(${e.clientX - 2}px, ${e.clientY - 44}px)`; };
 
-        function place(el, x, y) {
-            // The brush paints from its tip; everything else is centred on the pointer
-            if (el === brush) el.style.transform = `translate(${x - 2}px, ${y - 44}px)`;
-            else el.style.transform = `translate(${x - el.offsetWidth / 2}px, ${y - el.offsetHeight / 2}px)`;
-        }
-
-        section.querySelectorAll('.me-segment[data-cursor]').forEach(segment => {
-            const el = cursors[segment.dataset.cursor];
-            if (!el) return;
-
-            segment.addEventListener('pointerenter', e => {
-                lastX = e.clientX;
-                place(el, e.clientX, e.clientY);
-                el.classList.add('visible');
-            });
-
-            segment.addEventListener('pointerleave', () => {
-                el.classList.remove('visible');
-                lastX = null;
-            });
-
-            segment.addEventListener('pointermove', e => {
-                const dx = lastX == null ? 0 : e.clientX - lastX;
-                lastX = e.clientX;
-                place(el, e.clientX, e.clientY);
-
-                if (el === bike) {
-                    if (Math.abs(dx) > 0.5) bike.classList.toggle('left', dx < 0);
-                    wheelAngle += Math.abs(dx) / 9.5 * (180 / Math.PI);
-                    if (!reduceMotion) wheels.forEach(wh => { wh.style.transform = `rotate(${wheelAngle}deg)`; });
-                }
-            });
+        section.querySelectorAll('[data-cursor="brush"]').forEach(stage => {
+            stage.addEventListener('pointerenter', e => { place(e); brush.classList.add('visible'); });
+            stage.addEventListener('pointerleave', () => brush.classList.remove('visible'));
+            stage.addEventListener('pointermove', place);
         });
 
-        // Hide the cursors whenever the section is left
-        document.addEventListener('sectionchange', () => Object.values(cursors).forEach(c => c.classList.remove('visible')));
+        // Hide the cursor whenever the section is left
+        document.addEventListener('sectionchange', () => brush.classList.remove('visible'));
     }
 
     // Bisz: in English each translated line carries the Polish original beneath it
@@ -431,8 +456,10 @@
         if (!section) return;
         const space = section.querySelector('.me-space');
         if (space) initSpace(space);
-        const philosophy = section.querySelector('.me-philosophy');
-        if (philosophy) initBrush(philosophy);
+        const stage = section.querySelector('.me-stage');
+        if (stage) initBrush(stage);
+        const gravel = section.querySelector('.me-gravel');
+        if (gravel) initTracks(gravel);
         if (finePointer) initCursors(section);
     });
 })();
