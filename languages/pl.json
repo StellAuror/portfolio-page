@@ -36,17 +36,52 @@
             "p2": "Potem był „Interstellar” i „Interstellar i nauka” Kipa Thorne’a — fizyka, który nie tylko doradzał przy filmie, ale policzył, jak naprawdę wyglądałaby Gargantua. Do dziś najbardziej lubię w popularnonaukowych książkach moment, w którym skomplikowane równanie zamienia się w obraz, który da się zrozumieć.",
             "hint": "Poruszaj kursorem — tak czarna dziura zakrzywia światło gwiazd"
         },
-        "philosophy": {
-            "title": "Filozofia w praktycznym wydaniu",
-            "p1": "Lubię filozofię, która schodzi z katedry na ziemię. Nie szukam systemów do wykucia, tylko pytań, które i tak w końcu przychodzą: co zrobić z wolnością, skąd brać sens, kiedy plan się sypie, i jak żyć z wyborami, których nie da się cofnąć.",
-            "p2": "Najczęściej znajduję je tam, gdzie nikt nie każe ich szukać — w powieści, w wykładach spisanych tuż po wojnie, ale równie często w grze, w której decyzje mają konsekwencje. Dobra historia zadaje te pytania ciszej niż podręcznik, za to zostaje ze mną dłużej.",
-            "hint": "Maluj tutaj — światło na chwilę zostaje, potem rozsypuje się w płatki",
-            "shelf": "Bracia Karamazow · Tako rzecze Zaratustra · wykłady Viktora Frankla o sensie życia · Kwantechizm Dragana · Wiedźmin · Cyberpunk 2077 · Clair Obscur: Expedition 33"
+        "stories": {
+            "title": "Historie, czyli rozrywka z drugim dnem",
+            "p1": "Książki i gry to dla mnie przede wszystkim rozrywka — fantastyka, dobra fabuła, światy, do których chce się wracać. Ale te najlepsze mają drugie dno: przy okazji przygody pytają, kim właściwie jest człowiek, co nim kieruje i co sam zrobiłbym na miejscu bohatera.",
+            "p2": "Lubię to, że takie historie nie dają gotowych odpowiedzi. Za to co jakiś czas każą spojrzeć na siebie trochę inaczej — i chyba dlatego zostają ze mną na dłużej niż ostatnia strona czy napisy końcowe.",
+            "items": [
+                {
+                    "id": "karamazov",
+                    "title": "Bracia Karamazow",
+                    "kind": "Fiodor Dostojewski · powieść"
+                },
+                {
+                    "id": "zarathustra",
+                    "title": "Tako rzecze Zaratustra",
+                    "kind": "Friedrich Nietzsche · filozofia"
+                },
+                {
+                    "id": "frankl",
+                    "title": "Wykłady o sensie życia",
+                    "kind": "Viktor Frankl · wykłady"
+                },
+                {
+                    "id": "kwantechizm",
+                    "title": "Kwantechizm",
+                    "kind": "Andrzej Dragan · popularnonaukowa"
+                },
+                {
+                    "id": "witcher",
+                    "title": "Wiedźmin",
+                    "kind": "Saga i gry"
+                },
+                {
+                    "id": "cyberpunk",
+                    "title": "Cyberpunk 2077",
+                    "kind": "Gra"
+                },
+                {
+                    "id": "e33",
+                    "title": "Clair Obscur: Expedition 33",
+                    "kind": "Gra"
+                }
+            ]
         },
         "gravel": {
-            "title": "Gravel, czyli sport bez tabeli wyników",
-            "p1": "Sport to dla mnie przede wszystkim wycieczki rowerowe na gravelu — szutry, leśne dukty i boczne drogi, czyli wszędzie tam, gdzie asfalt się kończy, a zaczyna się właściwa trasa.",
-            "p2": "To najlepszy reset po dniu z modelami i miarami: kilka godzin w ruchu, zero powiadomień, tylko droga, oddech i las. A jeśli coś trzeba jeszcze dokończyć — lepiej przy drewnianym stole na trasie niż przy biurku.",
+            "title": "Gravel, czyli jak się wyciszam",
+            "p1": "Sport to dla mnie przede wszystkim sposób na wyciszenie. Po dniu pełnym spotkań, modeli i miar wsiadam na gravela i jadę przed siebie — szutrami, leśnymi duktami, bocznymi drogami. Po godzinie czy dwóch głowa jest czysta, a energia wraca.",
+            "p2": "Zwykle. Czasem w plecaku jedzie jeszcze laptop, bo ktoś potrzebuje odpowiedzi „tylko na szybko” — wtedy ostatnie maile wysyłam z drewnianego stołu w lesie. Trzeba przyznać, że to i tak najlepsze biuro, jakie miałem.",
             "alt": "Rower gravelowy oparty o ławkę w leśnej wiacie, obok na stole laptop i plecak"
         }
     },

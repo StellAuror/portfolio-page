@@ -36,17 +36,52 @@
             "p2": "Then came “Interstellar” and Kip Thorne’s “The Science of Interstellar” — the physicist who didn't just advise on the film, but actually computed what Gargantua would look like. To this day my favourite moment in a popular-science book is when a complicated equation turns into a picture you can understand.",
             "hint": "Move the cursor — this is how a black hole bends starlight"
         },
-        "philosophy": {
-            "title": "Philosophy, the practical kind",
-            "p1": "I like philosophy that steps down from the lectern. I'm not after systems to memorise, but the questions that arrive sooner or later anyway: what to do with freedom, where to find meaning when the plan falls apart, and how to live with choices that can't be undone.",
-            "p2": "I usually find them where nobody tells me to look — in a novel, in lectures written down right after the war, and just as often in a game where decisions have consequences. A good story asks these questions more quietly than a textbook, but it stays with me longer.",
-            "hint": "Paint here — the light stays for a moment, then scatters into petals",
-            "shelf": "The Brothers Karamazov · Thus Spoke Zarathustra · Viktor Frankl's lectures on the meaning of life · Andrzej Dragan's Kwantechizm · The Witcher · Cyberpunk 2077 · Clair Obscur: Expedition 33"
+        "stories": {
+            "title": "Stories, or entertainment with a second layer",
+            "p1": "Books and games are first of all entertainment for me — fantasy, a good plot, worlds you want to come back to. But the best ones have a second layer: along with the adventure they ask who we actually are, what drives us, and what I would do in the hero's place.",
+            "p2": "I like that these stories don't hand out ready answers. Instead, every now and then they make me look at myself a little differently — which is probably why they stay with me longer than the last page or the end credits.",
+            "items": [
+                {
+                    "id": "karamazov",
+                    "title": "The Brothers Karamazov",
+                    "kind": "Fyodor Dostoevsky · novel"
+                },
+                {
+                    "id": "zarathustra",
+                    "title": "Thus Spoke Zarathustra",
+                    "kind": "Friedrich Nietzsche · philosophy"
+                },
+                {
+                    "id": "frankl",
+                    "title": "Lectures on the meaning of life",
+                    "kind": "Viktor Frankl · lectures"
+                },
+                {
+                    "id": "kwantechizm",
+                    "title": "Kwantechizm",
+                    "kind": "Andrzej Dragan · popular science"
+                },
+                {
+                    "id": "witcher",
+                    "title": "The Witcher",
+                    "kind": "Saga & games"
+                },
+                {
+                    "id": "cyberpunk",
+                    "title": "Cyberpunk 2077",
+                    "kind": "Game"
+                },
+                {
+                    "id": "e33",
+                    "title": "Clair Obscur: Expedition 33",
+                    "kind": "Game"
+                }
+            ]
         },
         "gravel": {
-            "title": "Gravel, or sport without a leaderboard",
-            "p1": "For me, sport mostly means gravel bike trips — dirt roads, forest tracks and back lanes, wherever the tarmac ends and the actual route begins.",
-            "p2": "It's the best reset after a day of models and measures: a few hours on the move, zero notifications, just the road, breathing and the forest. And if something still needs finishing — better at a wooden table along the trail than at a desk.",
+            "title": "Gravel, or how I switch off",
+            "p1": "For me, sport is above all a way to switch off. After a day full of meetings, models and measures I get on the gravel bike and just ride — dirt roads, forest tracks, back lanes. An hour or two later my head is clear and the energy is back.",
+            "p2": "Usually. Sometimes the laptop comes along, because someone needs an answer “just quickly” — and then the last emails of the day go out from a wooden table in the forest. Admittedly, it's still the best office I've ever had.",
             "alt": "A gravel bike leaning on a bench in a forest shelter, with a laptop and a backpack on the table"
         },
         "quoteOriginal": [
