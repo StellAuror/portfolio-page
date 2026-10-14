@@ -1,16 +1,20 @@
-/* Music: a button in the language switch row, styled like PL / EN.
+/* Music: full width under the language switch, styled like PL / EN.
    Playing is its "on" state, shown the same way as the active language. Desktop only. */
 .music-control {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 0.8rem;
+    justify-content: center;
+    gap: 0.6rem;
+    width: calc(100% - 1.4rem);
+    margin: 0 0.7rem 0.5rem;
+    padding: 0.55rem 0.8rem;
     background: transparent;
     border: 1px solid #555;
     border-radius: 5px;
     color: #eee;
     font: inherit;
     font-size: 0.9rem;
+    white-space: nowrap;
     cursor: pointer;
     transition: background 0.3s, color 0.3s, border-color 0.3s;
 }

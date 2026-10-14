@@ -540,27 +540,6 @@
         document.addEventListener('sectionchange', () => brush.classList.remove('visible'));
     }
 
-    // Bisz: in English each translated line carries the Polish original beneath it
-    function renderQuote(me) {
-        const box = document.getElementById('me-quote-lines');
-        if (!box || !me?.quote) return;
-        box.replaceChildren(...me.quote.map((line, i) => {
-            const p = document.createElement('p');
-            p.className = 'me-quote-line';
-            p.textContent = line;
-            const original = me.quoteOriginal?.[i];
-            if (original) {
-                p.lang = 'en';
-                const o = document.createElement('span');
-                o.className = 'me-quote-original';
-                o.lang = 'pl';
-                o.textContent = original;
-                p.appendChild(o);
-            }
-            return p;
-        }));
-    }
-
     function translateAlts(translations) {
         document.querySelectorAll('#me [data-i18n-alt]').forEach(img => {
             const value = img.dataset.i18nAlt.split('.').reduce((o, k) => (o == null ? undefined : o[k]), translations);
@@ -570,7 +549,6 @@
 
     document.addEventListener('langchange', e => {
         translateAlts(e.detail.translations);
-        renderQuote(e.detail.translations.me);
     });
 
     window.sectionsReady?.then(() => {

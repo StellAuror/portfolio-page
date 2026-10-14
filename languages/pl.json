@@ -4,8 +4,9 @@
         "title": "BI, Fabric & Power Platform\nDeveloper & Consultant"
     },
     "music": {
-        "status": "Muzyka",
-        "copied": "Skopiowano"
+        "copied": "Skopiowano",
+        "play": "Może trochę muzyki w tle?",
+        "pause": "Zatrzymaj muzykę"
     },
     "about": {
         "title": "Start",
@@ -18,13 +19,6 @@
     "me": {
         "title": "O mnie",
         "subtitle": "Poza pracą — czyli to, co składa mnie w całość",
-        "craneAlt": "Origami żuraw z białego papieru na myszce komputerowej",
-        "quote": [
-            "Jak origami, co z początku formy nie chce zdradzać",
-            "Życie nas łamie wiele razy, bo nie znamy celu",
-            "Nie chcemy wierzyć sobie samym, że dobrze się składa",
-            "Księga losu w tysiąc żurawi z papieru"
-        ],
         "intro": {
             "p1": "Od zawsze ciągnęło mnie w dwie strony: do przedmiotów ścisłych i do tworzenia. Długo wydawało mi się, że to dwa osobne światy — aż trafiłem na Business Intelligence, gdzie jedno bez drugiego nie działa. Tak praca z danymi stała się dla mnie nie tylko zawodem, ale i pasją.",
             "p2": "Poza pracą też najbardziej lubię to, co łączy ciekawość z wyobraźnią. Oto trzy rzeczy, którym poświęcam najwięcej wolnego czasu."

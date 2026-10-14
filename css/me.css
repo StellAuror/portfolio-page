@@ -141,69 +141,6 @@
     object-fit: cover;
 }
 
-/* ---------- Closing: crane + Bisz ---------- */
-
-.me-closing {
-    display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: 2.5rem;
-    align-items: center;
-    margin-top: 0;
-}
-
-.me-closing-media {
-    margin: 0;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.me-closing-media img {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
-    filter: grayscale(0.15);
-}
-
-.me-quote {
-    margin: 0;
-}
-
-.me-quote-line {
-    font-style: italic;
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: #ffffff;
-}
-
-.me-quote-line + .me-quote-line {
-    margin-top: 0.35rem;
-}
-
-/* EN: the Polish original under each translated line */
-.me-quote-original {
-    display: block;
-    font-style: normal;
-    font-size: 0.85rem;
-    color: #8a8f94;
-    margin-bottom: 0.6rem;
-}
-
-.me-quote cite {
-    display: block;
-    margin-top: 1rem;
-    font-style: normal;
-    font-size: 0.8rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #71767b;
-}
-
-.me-quote cite::before {
-    content: '— ';
-}
-
 /* ---------- Custom cursors (fine pointers only, set by me.js) ---------- */
 
 .me-cursors-on [data-cursor] {
@@ -259,11 +196,6 @@
     .me-stage {
         order: 2;
         min-height: 220px;
-    }
-
-    .me-closing {
-        grid-template-columns: 1fr;
-        gap: 1.75rem;
     }
 
     .me-gravel {

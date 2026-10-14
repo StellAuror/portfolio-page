@@ -4,8 +4,9 @@
         "location": "Poland, Nysa"
     },
     "music": {
-        "status": "Music",
-        "copied": "Copied"
+        "copied": "Copied",
+        "play": "Maybe some ambient music?",
+        "pause": "Pause the music"
     },
     "about": {
         "title": "Home",
@@ -18,13 +19,6 @@
     "me": {
         "title": "About me",
         "subtitle": "Outside of work — the things that fold me into shape",
-        "craneAlt": "A white paper origami crane sitting on a computer mouse",
-        "quote": [
-            "Like origami that won't reveal its shape at first",
-            "Life breaks and folds us many times, since we don't know the aim",
-            "We won't trust ourselves that it's all folding into place",
-            "The book of fate in a thousand paper cranes"
-        ],
         "intro": {
             "p1": "I have always been pulled in two directions: towards science subjects and towards creating things. For a long time they seemed like separate worlds — until I found Business Intelligence, where one doesn't work without the other. That's how working with data became not just my job, but a passion.",
             "p2": "Outside of work, too, I enjoy most what mixes curiosity with imagination. Here are the three things that take up most of my free time."
@@ -45,13 +39,7 @@
             "p1": "For me, sport is above all a way to switch off. After a day full of meetings, models and measures I get on the gravel bike and just ride — dirt roads, forest tracks, back lanes. An hour or two later my head is clear and the energy is back.",
             "p2": "Sometimes the laptop comes along too. Clients like hearing their project is out of the woods — they don't need to know the email was sent from the middle of them.",
             "alt": "A gravel bike leaning on a bench in a forest shelter, with a laptop and a backpack on the table"
-        },
-        "quoteOriginal": [
-            "Jak origami, co z początku formy nie chce zdradzać",
-            "Życie nas łamie wiele razy, bo nie znamy celu",
-            "Nie chcemy wierzyć sobie samym, że dobrze się składa",
-            "Księga losu w tysiąc żurawi z papieru"
-        ]
+        }
     },
     "story": {
         "title": "The Beginning",

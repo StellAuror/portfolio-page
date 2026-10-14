@@ -15,7 +15,20 @@ function toggleMusic() {
     isPlaying = !isPlaying;
     button?.classList.toggle('playing', isPlaying);
     button?.setAttribute('aria-pressed', String(isPlaying));
+    updateMusicLabel();
 }
+
+// The label invites to play, and says how to stop once it plays
+let musicStrings = null;
+function updateMusicLabel() {
+    const label = document.getElementById('musicLabel');
+    if (label && musicStrings) label.textContent = isPlaying ? musicStrings.pause : musicStrings.play;
+}
+
+document.addEventListener('langchange', (e) => {
+    musicStrings = e.detail.translations.music;
+    updateMusicLabel();
+});
 
 
 // Copy contact details with a small inline confirmation instead of alert()
