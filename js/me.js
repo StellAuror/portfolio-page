@@ -61,75 +61,92 @@
         }
 
         // ---------- Accretion disk ----------
-        // The disk is painted face-on once (an annulus of fine orbital streaks), then rotated and
-        // squashed every frame. The far side bent over and under the hole is a second, thinner ring.
+        // The disk is painted face-on once as concentric bands of fine orbital streaks, then each band
+        // is rotated at its own speed (inner ones faster, as in a real orbit) and squashed every frame.
+        // The far side bent over and under the hole is a separate, thinner set of bands.
         const TILT = 0.2;
         let disk = null, halo = null, layer = null, layerCtx = null, texKey = '';
 
-        function ringTexture(rs, rIn, rOut, streaks) {
+        // Angular speed of a band in rad/ms, falling off with radius like a Keplerian orbit
+        const orbit = r => 0.0021 * Math.pow(r, -1.5);
+
+        function ringBands(rs, edges, streaks) {
             const s = rs * dpr;
+            const rIn = edges[0], rOut = edges[edges.length - 1];
             const size = Math.ceil(s * rOut * 2) + 4;
-            const c = document.createElement('canvas');
-            c.width = c.height = size;
-            const g = c.getContext('2d');
-            g.translate(size / 2, size / 2);
+            const bands = edges.slice(0, -1).map((from, i) => {
+                const c = document.createElement('canvas');
+                c.width = c.height = size;
+                const g = c.getContext('2d');
+                g.translate(size / 2, size / 2);
+                const to = edges[i + 1];
 
-            const base = g.createRadialGradient(0, 0, s * rIn, 0, 0, s * rOut);
-            base.addColorStop(0, 'rgba(255,238,210,0.55)');
-            base.addColorStop(0.15, 'rgba(255,198,128,0.32)');
-            base.addColorStop(0.5, 'rgba(225,120,52,0.12)');
-            base.addColorStop(1, 'rgba(120,40,12,0)');
-            g.fillStyle = base;
-            g.beginPath();
-            g.arc(0, 0, s * rOut, 0, Math.PI * 2);
-            g.arc(0, 0, s * rIn, 0, Math.PI * 2, true);
-            g.fill();
+                // One radial gradient across the whole disk, so the bands meet without seams
+                const base = g.createRadialGradient(0, 0, s * rIn, 0, 0, s * rOut);
+                base.addColorStop(0, 'rgba(255,238,210,0.55)');
+                base.addColorStop(0.15, 'rgba(255,198,128,0.32)');
+                base.addColorStop(0.5, 'rgba(225,120,52,0.12)');
+                base.addColorStop(1, 'rgba(120,40,12,0)');
+                g.fillStyle = base;
+                g.beginPath();
+                g.arc(0, 0, s * to, 0, Math.PI * 2);
+                g.arc(0, 0, s * from, 0, Math.PI * 2, true);
+                g.fill();
+                g.globalCompositeOperation = 'lighter';
+                g.lineCap = 'round';
+                return { canvas: c, ctx: g, from, to, speed: orbit((from + to) / 2) };
+            });
 
-            g.globalCompositeOperation = 'lighter';
-            g.lineCap = 'round';
             for (let i = 0; i < streaks; i++) {
                 const f = Math.pow(Math.random(), 1.7);          // denser and hotter towards the inner edge
+                const r = rIn + f * (rOut - rIn);
+                const band = bands.find(b => r < b.to) || bands[bands.length - 1];
+                const g = band.ctx;
                 const heat = 1 - f;
                 const a0 = Math.random() * Math.PI * 2;
                 const color = heat > 0.75 ? '255,245,228' : heat > 0.45 ? '255,206,140' : '238,138,68';
                 g.strokeStyle = `rgba(${color},${0.03 + Math.random() * 0.22 * (0.4 + heat)})`;
                 g.lineWidth = dpr * (0.35 + Math.random() * (0.6 + heat));
                 g.beginPath();
-                g.arc(0, 0, s * (rIn + f * (rOut - rIn)), a0, a0 + 0.8 + Math.random() * 2.4);
+                g.arc(0, 0, s * r, a0, a0 + 0.8 + Math.random() * 2.4);
                 g.stroke();
             }
 
             // Hot, sharp inner edge
+            const g = bands[0].ctx;
             g.strokeStyle = 'rgba(255,250,238,0.7)';
             g.lineWidth = 1.1 * dpr;
             g.beginPath();
             g.arc(0, 0, s * rIn * 1.01, 0, Math.PI * 2);
             g.stroke();
-            return c;
+            return bands;
         }
 
         function ensureTextures(rs) {
             const key = `${Math.round(rs)}:${dpr}`;
             if (key === texKey) return;
             texKey = key;
-            disk = ringTexture(rs, 1.5, 4.4, 420);
-            halo = ringTexture(rs, 1.08, 1.8, 160);
+            disk = ringBands(rs, [1.5, 1.85, 2.3, 2.9, 3.6, 4.4], 420);
+            halo = ringBands(rs, [1.08, 1.4, 1.8], 160);
             layer = document.createElement('canvas');
-            layer.width = disk.width;
-            layer.height = disk.width;
+            layer.width = disk[0].canvas.width;
+            layer.height = layer.width;
             layerCtx = layer.getContext('2d');
         }
 
-        // Paint one ring into the layer, rotated and tilted, brighter on the approaching (left) side
-        function renderRing(tex, spin, tilt) {
+        // Paint a set of bands into the layer, each rotated by its own orbit, tilted,
+        // and brighter on the approaching (left) side
+        function renderRing(bands, t, tilt) {
             const n = layer.width;
             layerCtx.setTransform(1, 0, 0, 1, 0, 0);
             layerCtx.globalCompositeOperation = 'source-over';
             layerCtx.clearRect(0, 0, n, n);
-            layerCtx.translate(n / 2, n / 2);
-            layerCtx.scale(1, tilt);
-            layerCtx.rotate(spin);
-            layerCtx.drawImage(tex, -tex.width / 2, -tex.width / 2);
+            for (const band of bands) {
+                const tex = band.canvas;
+                layerCtx.setTransform(1, 0, 0, tilt, n / 2, n / 2);
+                layerCtx.rotate(reduceMotion ? 0 : -t * band.speed);
+                layerCtx.drawImage(tex, -tex.width / 2, -tex.width / 2);
+            }
             layerCtx.setTransform(1, 0, 0, 1, 0, 0);
             const beam = layerCtx.createLinearGradient(0, 0, n, 0);
             beam.addColorStop(0, 'rgba(0,0,0,1)');
@@ -204,7 +221,6 @@
         }
 
         function drawHole(x, y, rs, t) {
-            const spin = reduceMotion ? 0 : -t * 0.00018;
             ensureTextures(rs);
 
             // Soft glow around the whole system
@@ -218,11 +234,11 @@
             ctx.fill();
 
             // Far side of the disk, lensed into a ring over the top and under the bottom of the shadow
-            renderRing(halo, spin * 1.6, 0.94);
+            renderRing(halo, t, 0.94);
             blitLayer(x, y, 0);
 
             // Back half of the disk, behind the hole
-            renderRing(disk, spin, TILT);
+            renderRing(disk, t, TILT);
             blitLayer(x, y, -1);
 
             // Shadow and the thin photon ring at its edge
