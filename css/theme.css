@@ -133,11 +133,11 @@ body {
     transform: translateX(3px);
 }
 
-/* Pinned copy: top right, next to the music control */
+/* Pinned copy: top right corner */
 .cta-float {
     position: fixed;
     top: 2rem;
-    right: 12rem; /* js/cta.js sets it from the music control's width */
+    right: 2rem;
     z-index: 900;
     height: 44px;
     padding: 0 1rem;
