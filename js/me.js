@@ -44,6 +44,115 @@
             ctx.fill();
         }
 
+        // A lensed image is smeared along the Einstein ring, so draw it as a short arc around the hole
+        function drawLensed(cx, cy, radius, angle, r, alpha, color, tangent, stretch) {
+            if (stretch < 1.3) {
+                drawStar(cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius, r, alpha, color, tangent, 1);
+                return;
+            }
+            if (alpha < 0.02) return;
+            const half = Math.min(r * stretch / radius, 0.5);
+            ctx.strokeStyle = `rgba(${color},${Math.min(alpha * 0.8, 0.9)})`;
+            ctx.lineWidth = r * 1.3;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            ctx.arc(cx, cy, radius, angle - half, angle + half);
+            ctx.stroke();
+        }
+
+        // ---------- Accretion disk ----------
+        // The disk is painted face-on once (an annulus of fine orbital streaks), then rotated and
+        // squashed every frame. The far side bent over and under the hole is a second, thinner ring.
+        const TILT = 0.2;
+        let disk = null, halo = null, layer = null, layerCtx = null, texKey = '';
+
+        function ringTexture(rs, rIn, rOut, streaks) {
+            const s = rs * dpr;
+            const size = Math.ceil(s * rOut * 2) + 4;
+            const c = document.createElement('canvas');
+            c.width = c.height = size;
+            const g = c.getContext('2d');
+            g.translate(size / 2, size / 2);
+
+            const base = g.createRadialGradient(0, 0, s * rIn, 0, 0, s * rOut);
+            base.addColorStop(0, 'rgba(255,238,210,0.55)');
+            base.addColorStop(0.15, 'rgba(255,198,128,0.32)');
+            base.addColorStop(0.5, 'rgba(225,120,52,0.12)');
+            base.addColorStop(1, 'rgba(120,40,12,0)');
+            g.fillStyle = base;
+            g.beginPath();
+            g.arc(0, 0, s * rOut, 0, Math.PI * 2);
+            g.arc(0, 0, s * rIn, 0, Math.PI * 2, true);
+            g.fill();
+
+            g.globalCompositeOperation = 'lighter';
+            g.lineCap = 'round';
+            for (let i = 0; i < streaks; i++) {
+                const f = Math.pow(Math.random(), 1.7);          // denser and hotter towards the inner edge
+                const heat = 1 - f;
+                const a0 = Math.random() * Math.PI * 2;
+                const color = heat > 0.75 ? '255,245,228' : heat > 0.45 ? '255,206,140' : '238,138,68';
+                g.strokeStyle = `rgba(${color},${0.03 + Math.random() * 0.22 * (0.4 + heat)})`;
+                g.lineWidth = dpr * (0.35 + Math.random() * (0.6 + heat));
+                g.beginPath();
+                g.arc(0, 0, s * (rIn + f * (rOut - rIn)), a0, a0 + 0.8 + Math.random() * 2.4);
+                g.stroke();
+            }
+
+            // Hot, sharp inner edge
+            g.strokeStyle = 'rgba(255,250,238,0.7)';
+            g.lineWidth = 1.1 * dpr;
+            g.beginPath();
+            g.arc(0, 0, s * rIn * 1.01, 0, Math.PI * 2);
+            g.stroke();
+            return c;
+        }
+
+        function ensureTextures(rs) {
+            const key = `${Math.round(rs)}:${dpr}`;
+            if (key === texKey) return;
+            texKey = key;
+            disk = ringTexture(rs, 1.5, 4.4, 420);
+            halo = ringTexture(rs, 1.08, 1.8, 160);
+            layer = document.createElement('canvas');
+            layer.width = disk.width;
+            layer.height = disk.width;
+            layerCtx = layer.getContext('2d');
+        }
+
+        // Paint one ring into the layer, rotated and tilted, brighter on the approaching (left) side
+        function renderRing(tex, spin, tilt) {
+            const n = layer.width;
+            layerCtx.setTransform(1, 0, 0, 1, 0, 0);
+            layerCtx.globalCompositeOperation = 'source-over';
+            layerCtx.clearRect(0, 0, n, n);
+            layerCtx.translate(n / 2, n / 2);
+            layerCtx.scale(1, tilt);
+            layerCtx.rotate(spin);
+            layerCtx.drawImage(tex, -tex.width / 2, -tex.width / 2);
+            layerCtx.setTransform(1, 0, 0, 1, 0, 0);
+            const beam = layerCtx.createLinearGradient(0, 0, n, 0);
+            beam.addColorStop(0, 'rgba(0,0,0,1)');
+            beam.addColorStop(0.5, 'rgba(0,0,0,0.75)');
+            beam.addColorStop(1, 'rgba(0,0,0,0.35)');
+            layerCtx.globalCompositeOperation = 'destination-in';
+            layerCtx.fillStyle = beam;
+            layerCtx.fillRect(0, 0, n, n);
+        }
+
+        // Draw the layer centred on the hole, optionally only above (-1) or below (+1) its centre
+        function blitLayer(x, y, side) {
+            const S = layer.width / dpr;
+            ctx.save();
+            if (side) {
+                ctx.beginPath();
+                ctx.rect(x - S / 2, side < 0 ? y - S / 2 : y, S, S / 2);
+                ctx.clip();
+            }
+            ctx.drawImage(layer, x - S / 2, y - S / 2, S, S);
+            ctx.restore();
+        }
+
         function draw(t) {
             const thetaE = Math.max(42, Math.min(w, h) * 0.13);  // Einstein radius
             const shadow = thetaE * 0.42;                        // event-horizon shadow
@@ -75,18 +184,19 @@
                 const ux = dx / beta, uy = dy / beta;
                 const tangent = Math.atan2(uy, ux) + Math.PI / 2;
 
+                const angle = Math.atan2(uy, ux);
                 const outer = (beta + root) / 2;
                 if (outer > shadow) {
                     const m = Math.min((mu + 1) / 2, 6);
-                    drawStar(hole.x + ux * outer, hole.y + uy * outer, s.r * Math.min(Math.sqrt(m), 1.8),
-                        alpha * Math.min(m, 2.2), s.hue, tangent, Math.min(outer / beta, 5));
+                    drawLensed(hole.x, hole.y, outer, angle, s.r * Math.min(Math.sqrt(m), 1.6),
+                        alpha * Math.min(m, 1.5), s.hue, tangent, Math.min(outer / beta, 4));
                 }
 
                 const inner = (root - beta) / 2;   // on the opposite side of the lens
                 if (inner > shadow) {
                     const m = Math.min((mu - 1) / 2, 6);
-                    drawStar(hole.x - ux * inner, hole.y - uy * inner, s.r * Math.min(Math.sqrt(m), 1.8),
-                        alpha * Math.min(m, 2.2), s.hue, tangent, Math.min(inner / beta, 5));
+                    drawLensed(hole.x, hole.y, inner, angle + Math.PI, s.r * Math.min(Math.sqrt(m), 1.6),
+                        alpha * Math.min(m, 1.5), s.hue, tangent, Math.min(inner / beta, 4));
                 }
             }
 
@@ -94,67 +204,40 @@
         }
 
         function drawHole(x, y, rs, t) {
-            const spin = reduceMotion ? 0 : t * 0.0004;
-            const diskRx = rs * 2.9, diskRy = rs * 0.45;
+            const spin = reduceMotion ? 0 : -t * 0.00018;
+            ensureTextures(rs);
 
-            function diskHalf(front) {
-                const g = ctx.createLinearGradient(x - diskRx, y, x + diskRx, y);
-                const shift = (Math.sin(spin) + 1) / 2;
-                g.addColorStop(0, 'rgba(255,140,60,0.15)');
-                g.addColorStop(0.25 + shift * 0.2, 'rgba(255,214,160,0.9)');
-                g.addColorStop(1, 'rgba(255,120,50,0.25)');
-                ctx.strokeStyle = g;
-                ctx.lineWidth = rs * 0.32;
-                ctx.beginPath();
-                ctx.ellipse(x, y, diskRx, diskRy, 0, front ? 0 : Math.PI, front ? Math.PI : Math.PI * 2);
-                ctx.stroke();
-            }
-
-            // Soft halo
-            const halo = ctx.createRadialGradient(x, y, rs * 0.9, x, y, rs * 3.2);
-            halo.addColorStop(0, 'rgba(255,190,120,0.18)');
-            halo.addColorStop(0.5, 'rgba(139,92,246,0.06)');
-            halo.addColorStop(1, 'rgba(0,0,0,0)');
-            ctx.fillStyle = halo;
+            // Soft glow around the whole system
+            const glow = ctx.createRadialGradient(x, y, rs, x, y, rs * 4.5);
+            glow.addColorStop(0, 'rgba(255,180,110,0.16)');
+            glow.addColorStop(0.45, 'rgba(255,140,70,0.05)');
+            glow.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = glow;
             ctx.beginPath();
-            ctx.arc(x, y, rs * 3.2, 0, Math.PI * 2);
+            ctx.arc(x, y, rs * 4.5, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.save();
-            ctx.shadowColor = 'rgba(255,170,90,0.6)';
-            ctx.shadowBlur = 10;
-            diskHalf(false);
+            // Far side of the disk, lensed into a ring over the top and under the bottom of the shadow
+            renderRing(halo, spin * 1.6, 0.94);
+            blitLayer(x, y, 0);
 
-            // Far side of the disk, bent by the hole over the top and under the bottom
-            ctx.strokeStyle = 'rgba(255,205,150,0.75)';
-            ctx.lineWidth = rs * 0.3;
-            ctx.beginPath();
-            ctx.ellipse(x, y, rs * 1.42, rs * 1.38, 0, Math.PI, Math.PI * 2);
-            ctx.stroke();
-            ctx.strokeStyle = 'rgba(255,205,150,0.4)';
-            ctx.lineWidth = rs * 0.1;
-            ctx.beginPath();
-            ctx.ellipse(x, y, rs * 1.2, rs * 1.16, 0, 0, Math.PI);
-            ctx.stroke();
-            ctx.restore();
+            // Back half of the disk, behind the hole
+            renderRing(disk, spin, TILT);
+            blitLayer(x, y, -1);
 
+            // Shadow and the thin photon ring at its edge
             ctx.fillStyle = '#000';
             ctx.beginPath();
             ctx.arc(x, y, rs, 0, Math.PI * 2);
             ctx.fill();
-
-            // Photon ring
-            ctx.strokeStyle = 'rgba(255,236,210,0.85)';
-            ctx.lineWidth = 1.2;
+            ctx.strokeStyle = 'rgba(255,240,220,0.75)';
+            ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.arc(x, y, rs * 1.04, 0, Math.PI * 2);
+            ctx.arc(x, y, rs * 1.03, 0, Math.PI * 2);
             ctx.stroke();
 
-            ctx.save();
-            ctx.shadowColor = 'rgba(255,170,90,0.6)';
-            ctx.shadowBlur = 10;
-            diskHalf(true);
-            ctx.restore();
+            // Front half of the disk, crossing in front of the shadow
+            blitLayer(x, y, 1);
         }
 
         function loop(t) {

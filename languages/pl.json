@@ -37,13 +37,13 @@
         },
         "stories": {
             "title": "Książki i gry",
-            "p1": "Książki i gry to dla mnie przede wszystkim rozrywka — fantastyka, dobra fabuła, światy, do których chce się wracać. Najbardziej lubię te, które obok przygody mają w sobie trochę filozofii i każą się zastanowić, czym właściwie jest człowiek. Dobra historia potrafi to zrobić lżej niż niejeden podręcznik.",
+            "p1": "Książki i gry to dla mnie przede wszystkim rozrywka — fantastyka, dobra fabuła, światy, do których chce się wracać. Najbardziej lubię te, które obok przygody mają w sobie trochę filozofii i każą się zastanowić, czym właściwie jest człowiek.",
             "hint": "Najedź kursorem i maluj"
         },
         "gravel": {
             "title": "Gravel",
             "p1": "Sport to dla mnie przede wszystkim sposób na wyciszenie. Po dniu pełnym spotkań, modeli i miar wsiadam na gravela i jadę przed siebie — szutrami, leśnymi duktami, bocznymi drogami. Po godzinie czy dwóch głowa jest czysta, a energia wraca.",
-            "p2": "Czasem w plecaku jedzie też laptop. Kiedy ktoś na czacie pisze, że z projektem „jesteśmy w lesie”, mogę to uczciwie potwierdzić — i odpisać spod drewnianej wiaty. Status „poza biurem” jeszcze nigdy nie był tak dosłowny.",
+            "p2": "Czasem w plecaku jedzie też laptop. Maila, że projekt jest na dobrej drodze, zdarza mi się wysłać prosto z leśnej — spod drewnianej wiaty, z zasięgiem na jedną kreskę.",
             "alt": "Rower gravelowy oparty o ławkę w leśnej wiacie, obok na stole laptop i plecak"
         }
     },
@@ -813,6 +813,7 @@
     },
     "footer": {
         "cta": "Masz projekt albo pytanie o dane?",
-        "button": "Porozmawiajmy"
+        "authors": "© 2022–2025 Michał Krawczuk · od 2026 Michał Krawczuk × Claude",
+        "gdpr": "Wyrażam zgodę na przetwarzanie moich danych osobowych zawartych na tej stronie i w moim CV przez podmioty prowadzące rekrutację, w celu realizacji obecnych i przyszłych procesów rekrutacyjnych, zgodnie z art. 6 ust. 1 lit. a Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. (RODO). Zgadzam się również na kopiowanie, drukowanie i przechowywanie tych danych na potrzeby rekrutacji."
     }
 }

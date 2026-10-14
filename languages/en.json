@@ -37,13 +37,13 @@
         },
         "stories": {
             "title": "Books & games",
-            "p1": "Books and games are first of all entertainment for me — fantasy, a good plot, worlds you want to come back to. I like the ones that bring a bit of philosophy along with the adventure and leave you wondering what being human actually means. A good story can do that with a lighter touch than many textbooks.",
+            "p1": "Books and games are first of all entertainment for me — fantasy, a good plot, worlds you want to come back to. I like the ones that bring a bit of philosophy along with the adventure and leave you wondering what being human actually means.",
             "hint": "Move the cursor to paint"
         },
         "gravel": {
             "title": "Gravel",
             "p1": "For me, sport is above all a way to switch off. After a day full of meetings, models and measures I get on the gravel bike and just ride — dirt roads, forest tracks, back lanes. An hour or two later my head is clear and the energy is back.",
-            "p2": "Sometimes the laptop comes along too. When someone asks if the project is out of the woods yet, I can honestly say I'm not — and reply from a wooden table in a forest shelter. \"Out of office\" has never been so literal.",
+            "p2": "Sometimes the laptop comes along too. Clients like hearing their project is out of the woods — they don't need to know the email was sent from the middle of them.",
             "alt": "A gravel bike leaning on a bench in a forest shelter, with a laptop and a backpack on the table"
         },
         "quoteOriginal": [
@@ -819,6 +819,7 @@
     },
     "footer": {
         "cta": "Got a project or a question about data?",
-        "button": "Let's talk"
+        "authors": "© 2022–2025 Michał Krawczuk · since 2026 Michał Krawczuk × Claude",
+        "gdpr": "I consent to the processing of my personal data contained on this website and in my CV by organisations conducting recruitment, for the purposes of current and future recruitment processes, in accordance with Article 6(1)(a) of Regulation (EU) 2016/679 of 27 April 2016 (GDPR). I also agree to these data being copied, printed and stored for recruitment purposes."
     }
 }

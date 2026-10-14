@@ -6,20 +6,20 @@
     <title>Michał Krawczuk | BI, Fabric & Power Platform</title>
     <link rel="icon" href="static/cv.webp">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-    <link rel="stylesheet" href="css/theme.css?v=2026-10-14a">
-    <link rel="stylesheet" href="css/languages.css?v=2026-10-14a">
-    <link rel="stylesheet" href="css/mobile-specific.css?v=2026-10-14a">
-    <link rel="stylesheet" href="css/project-modal.css?v=2026-10-14a">
-    <link rel="stylesheet" href="css/project-tiles.css?v=2026-10-14a">
-    <link rel="stylesheet" href="css/navigation.css?v=2026-10-14a">
-    <link rel="stylesheet" href="css/about-me.css?v=2026-10-14a">
-    <link rel="stylesheet" href="css/story.css?v=2026-10-14a">
-    <link rel="stylesheet" href="css/music.css?v=2026-10-14a">
-    <link rel="stylesheet" href="css/timeline.css?v=2026-10-14a">
-    <link rel="stylesheet" href="css/skills.css?v=2026-10-14a">
-    <link rel="stylesheet" href="css/testimonials.css?v=2026-10-14a">
-    <link rel="stylesheet" href="css/me.css?v=2026-10-14a">
-    <link rel="stylesheet" href="css/consent.css?v=2026-10-14a">
+    <link rel="stylesheet" href="css/theme.css?v=2026-10-14b">
+    <link rel="stylesheet" href="css/languages.css?v=2026-10-14b">
+    <link rel="stylesheet" href="css/mobile-specific.css?v=2026-10-14b">
+    <link rel="stylesheet" href="css/project-modal.css?v=2026-10-14b">
+    <link rel="stylesheet" href="css/project-tiles.css?v=2026-10-14b">
+    <link rel="stylesheet" href="css/navigation.css?v=2026-10-14b">
+    <link rel="stylesheet" href="css/about-me.css?v=2026-10-14b">
+    <link rel="stylesheet" href="css/story.css?v=2026-10-14b">
+    <link rel="stylesheet" href="css/music.css?v=2026-10-14b">
+    <link rel="stylesheet" href="css/timeline.css?v=2026-10-14b">
+    <link rel="stylesheet" href="css/skills.css?v=2026-10-14b">
+    <link rel="stylesheet" href="css/testimonials.css?v=2026-10-14b">
+    <link rel="stylesheet" href="css/me.css?v=2026-10-14b">
+    <link rel="stylesheet" href="css/consent.css?v=2026-10-14b">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
@@ -161,8 +161,8 @@
                     <h3 data-i18n="about.greeting"></h3>
                     <p data-i18n="about.p1"></p>
                     <div class="cta-row">
-                        <a class="cta-btn" href="mailto:michalkrawczuk.gen@gmail.com"><span data-i18n="about.cta">Let's talk</span><span class="cta-arrow" aria-hidden="true">→</span></a>
                         <a class="cta-link" href="static/cv.pdf?v=2026-10d" target="_blank" rel="noopener" data-i18n="about.cv">Download CV</a>
+                        <a class="cta-btn" id="ctaInline" href="mailto:michalkrawczuk.gen@gmail.com"><span data-i18n="about.cta">Let's talk</span><span class="cta-arrow" aria-hidden="true">→</span></a>
                     </div>
                 </div>
 
@@ -216,14 +216,17 @@
             <footer class="site-footer">
                 <div class="footer-cta">
                     <p class="footer-cta-label" data-i18n="footer.cta">Got a project or a question about data?</p>
-                    <a class="footer-cta-title" href="mailto:michalkrawczuk.gen@gmail.com"><span data-i18n="footer.button">Let's talk</span><span class="cta-arrow" aria-hidden="true">→</span></a>
                     <div class="footer-cta-links">
                         <a href="mailto:michalkrawczuk.gen@gmail.com">michalkrawczuk.gen@gmail.com</a>
                         <a href="https://www.linkedin.com/in/micha%C5%82-krawczuk-bb8b34245/" target="_blank" rel="noopener">LinkedIn</a>
                         <a href="static/cv.pdf?v=2026-10d" target="_blank" rel="noopener" data-i18n="about.cv">Download CV</a>
                     </div>
                 </div>
-                <p class="music-credit">Music from Bensound | Roman Senyk | License code: TAN91S0GJRSXFPIU</p>
+                <div class="footer-meta">
+                    <p class="footer-authors" data-i18n="footer.authors"></p>
+                    <p class="footer-gdpr" data-i18n="footer.gdpr"></p>
+                    <p class="music-credit">Music from Bensound | Roman Senyk | License code: TAN91S0GJRSXFPIU</p>
+                </div>
             </footer>
 
 
@@ -248,19 +251,23 @@
         </div>
     </div>
 
+    <!-- "Let's talk" pinned to the corner once the inline one on Home is out of view -->
+    <a class="cta-btn cta-float" id="ctaFloat" href="mailto:michalkrawczuk.gen@gmail.com" tabindex="-1" aria-hidden="true"><span data-i18n="about.cta">Let's talk</span><span class="cta-arrow" aria-hidden="true">→</span></a>
+
     <!-- JS Fetching -->
-    <script src = "js/load.js?v=2026-10-14a"></script>
-    <script src = "js/language.js?v=2026-10-14a"></script>
-    <script src = "js/navigation.js?v=2026-10-14a"></script>
-    <script src = "js/projects.js?v=2026-10-14a"></script>
-    <script src = "js/story.js?v=2026-10-14a"></script>
-    <script src = "js/music.js?v=2026-10-14a"></script>
-    <script src = "js/timeline.js?v=2026-10-14a"></script>
-    <script src = "js/skills.js?v=2026-10-14a"></script>
-    <script src = "js/testimonials.js?v=2026-10-14a"></script>
-    <script src = "js/me.js?v=2026-10-14a"></script>
-    <script src = "js/consent.js?v=2026-10-14a"></script>
-    <script src = "js/visits.js?v=2026-10-14a"></script>
+    <script src = "js/load.js?v=2026-10-14b"></script>
+    <script src = "js/language.js?v=2026-10-14b"></script>
+    <script src = "js/navigation.js?v=2026-10-14b"></script>
+    <script src = "js/projects.js?v=2026-10-14b"></script>
+    <script src = "js/story.js?v=2026-10-14b"></script>
+    <script src = "js/music.js?v=2026-10-14b"></script>
+    <script src = "js/timeline.js?v=2026-10-14b"></script>
+    <script src = "js/skills.js?v=2026-10-14b"></script>
+    <script src = "js/testimonials.js?v=2026-10-14b"></script>
+    <script src = "js/me.js?v=2026-10-14b"></script>
+    <script src = "js/consent.js?v=2026-10-14b"></script>
+    <script src = "js/cta.js?v=2026-10-14b"></script>
+    <script src = "js/visits.js?v=2026-10-14b"></script>
 </body>
 </html>
 
