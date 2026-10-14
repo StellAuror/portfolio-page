@@ -6,20 +6,20 @@
     <title>Michał Krawczuk | BI, Fabric & Power Platform</title>
     <link rel="icon" href="static/cv.webp">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
-    <link rel="stylesheet" href="css/theme.css?v=2026-10-13o">
-    <link rel="stylesheet" href="css/languages.css?v=2026-10-13o">
-    <link rel="stylesheet" href="css/mobile-specific.css?v=2026-10-13o">
-    <link rel="stylesheet" href="css/project-modal.css?v=2026-10-13o">
-    <link rel="stylesheet" href="css/project-tiles.css?v=2026-10-13o">
-    <link rel="stylesheet" href="css/navigation.css?v=2026-10-13o">
-    <link rel="stylesheet" href="css/about-me.css?v=2026-10-13o">
-    <link rel="stylesheet" href="css/story.css?v=2026-10-13o">
-    <link rel="stylesheet" href="css/music.css?v=2026-10-13o">
-    <link rel="stylesheet" href="css/timeline.css?v=2026-10-13o">
-    <link rel="stylesheet" href="css/skills.css?v=2026-10-13o">
-    <link rel="stylesheet" href="css/testimonials.css?v=2026-10-13o">
-    <link rel="stylesheet" href="css/me.css?v=2026-10-13o">
-    <link rel="stylesheet" href="css/consent.css?v=2026-10-13o">
+    <link rel="stylesheet" href="css/theme.css?v=2026-10-13s">
+    <link rel="stylesheet" href="css/languages.css?v=2026-10-13s">
+    <link rel="stylesheet" href="css/mobile-specific.css?v=2026-10-13s">
+    <link rel="stylesheet" href="css/project-modal.css?v=2026-10-13s">
+    <link rel="stylesheet" href="css/project-tiles.css?v=2026-10-13s">
+    <link rel="stylesheet" href="css/navigation.css?v=2026-10-13s">
+    <link rel="stylesheet" href="css/about-me.css?v=2026-10-13s">
+    <link rel="stylesheet" href="css/story.css?v=2026-10-13s">
+    <link rel="stylesheet" href="css/music.css?v=2026-10-13s">
+    <link rel="stylesheet" href="css/timeline.css?v=2026-10-13s">
+    <link rel="stylesheet" href="css/skills.css?v=2026-10-13s">
+    <link rel="stylesheet" href="css/testimonials.css?v=2026-10-13s">
+    <link rel="stylesheet" href="css/me.css?v=2026-10-13s">
+    <link rel="stylesheet" href="css/consent.css?v=2026-10-13s">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
@@ -46,7 +46,7 @@
       </a>
     </li>
     <li class="mobile-nav-item">
-      <a href="#skills" aria-label="Skills" class="mobile-nav-link" onclick="showSection('skills', this)">
+      <a href="#skills" aria-label="Stack" class="mobile-nav-link" onclick="showSection('skills', this)">
         <i class="fa fa-cogs"></i>
       </a>
     </li>
@@ -132,7 +132,7 @@
                         <a href="#projects" class="nav-link" onclick="showSection('projects', this)" data-i18n="nav.projects">Projects</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#skills" class="nav-link" onclick="showSection('skills', this)" data-i18n="nav.skills">Skills</a>
+                        <a href="#skills" class="nav-link" onclick="showSection('skills', this)" data-i18n="nav.skills">Stack</a>
                     </li>
                     <li class="nav-item">
                         <a href="#testimonials" class="nav-link" onclick="showSection('testimonials', this)" data-i18n="nav.testimonials">Testimonials</a>
@@ -160,11 +160,10 @@
                 <div class="text-wraper">
                     <h3 data-i18n="about.greeting"></h3>
                     <p data-i18n="about.p1"></p>
-                    <br>
-                    <p data-i18n="about.p2"></p>
-                    <br>
-                    <p data-i18n="about.p3"></p>
-                    
+                    <div class="cta-row">
+                        <a class="cta-btn" href="mailto:michalkrawczuk.gen@gmail.com" data-i18n="about.cta">Let's talk</a>
+                        <a class="cta-link" href="static/cv.pdf?v=2026-10d" target="_blank" rel="noopener" data-i18n="about.cv">Download CV</a>
+                    </div>
                 </div>
 
                 <div class="story-container">
@@ -214,26 +213,24 @@
             <section id="fetch-projects"></section>
             <section id="fetch-testimonials"></section>
 
+            <footer class="site-footer">
+                <div class="footer-cta">
+                    <p data-i18n="footer.cta">Got a project or a question about data?</p>
+                    <a class="cta-btn" href="mailto:michalkrawczuk.gen@gmail.com" data-i18n="footer.button">Let's talk</a>
+                </div>
+                <p class="music-credit">Music from Bensound | Roman Senyk | License code: TAN91S0GJRSXFPIU</p>
+            </footer>
+
 
     <!-- Music Feature -->
-    <div class="music-credit">
-        Music from Bensound | Roman Senyk | License code: TAN91S0GJRSXFPIU
-    </div>
-
-    <div class="music-control" onclick="toggleMusic()">
-        <button class="music-toggle" id="musicToggle" aria-label="Play / pause music">▶</button>
-        <div class="music-info">
-            <span id="musicStatus" data-i18n="music.status">Music</span>
-        </div>
-        <div class="music-visualizer" id="musicVisualizer" style="display: none;">
-            <div class="music-bar"></div>
-            <div class="music-bar"></div> 
-            <div class="music-bar"></div>
-            <div class="music-bar"></div>
-        </div>
-    </div>
-
-    <div id="ambient-popup" class="ambient-popup" data-i18n="music.popup">Click the button above to play ambient music!</div>
+    <button type="button" class="music-control" id="musicToggle" onclick="toggleMusic()" aria-label="Play / pause music" aria-pressed="false">
+        <span class="music-icon music-icon-play" aria-hidden="true"></span>
+        <span class="music-visualizer" aria-hidden="true">
+            <span class="music-bar"></span>
+            <span class="music-bar"></span>
+            <span class="music-bar"></span>
+        </span>
+    </button>
 
 
     <!-- Cookie consent -->
@@ -247,18 +244,18 @@
     </div>
 
     <!-- JS Fetching -->
-    <script src = "js/load.js?v=2026-10-13o"></script>
-    <script src = "js/language.js?v=2026-10-13o"></script>
-    <script src = "js/navigation.js?v=2026-10-13o"></script>
-    <script src = "js/projects.js?v=2026-10-13o"></script>
-    <script src = "js/story.js?v=2026-10-13o"></script>
-    <script src = "js/music.js?v=2026-10-13o"></script>
-    <script src = "js/timeline.js?v=2026-10-13o"></script>
-    <script src = "js/skills.js?v=2026-10-13o"></script>
-    <script src = "js/testimonials.js?v=2026-10-13o"></script>
-    <script src = "js/me.js?v=2026-10-13o"></script>
-    <script src = "js/consent.js?v=2026-10-13o"></script>
-    <script src = "js/visits.js?v=2026-10-13o"></script>
+    <script src = "js/load.js?v=2026-10-13s"></script>
+    <script src = "js/language.js?v=2026-10-13s"></script>
+    <script src = "js/navigation.js?v=2026-10-13s"></script>
+    <script src = "js/projects.js?v=2026-10-13s"></script>
+    <script src = "js/story.js?v=2026-10-13s"></script>
+    <script src = "js/music.js?v=2026-10-13s"></script>
+    <script src = "js/timeline.js?v=2026-10-13s"></script>
+    <script src = "js/skills.js?v=2026-10-13s"></script>
+    <script src = "js/testimonials.js?v=2026-10-13s"></script>
+    <script src = "js/me.js?v=2026-10-13s"></script>
+    <script src = "js/consent.js?v=2026-10-13s"></script>
+    <script src = "js/visits.js?v=2026-10-13s"></script>
 </body>
 </html>
 

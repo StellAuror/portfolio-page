@@ -302,6 +302,29 @@
             if (!rafId) rafId = requestAnimationFrame(draw);
         }
 
+        // A short demo stroke each time the canvas scrolls into view, so it never sits empty
+        let demoDone = false;
+        function demo() {
+            if (reduceMotion || demoDone || !w || !h) return;
+            demoDone = true;
+            const start = performance.now(), DURATION = 1400;
+            last = null;
+            (function step(now) {
+                const k = Math.min((now - start) / DURATION, 1);
+                const x = w * (0.18 + 0.64 * k);
+                const y = h * (0.5 + Math.sin(k * Math.PI * 2) * 0.16 - k * 0.06);
+                const rect = canvas.getBoundingClientRect();
+                paint({ clientX: rect.left + x, clientY: rect.top + y });
+                if (k < 1) requestAnimationFrame(step);
+                else last = null;
+            })(start);
+        }
+
+        new IntersectionObserver(entries => {
+            if (entries.some(e => e.isIntersecting)) setTimeout(demo, 400);
+        }, { threshold: 0.6 }).observe(segment);
+        document.addEventListener('sectionchange', () => { demoDone = false; });
+
         new ResizeObserver(resize).observe(segment);
         segment.addEventListener('pointermove', paint);
         segment.addEventListener('pointerleave', () => { last = null; });

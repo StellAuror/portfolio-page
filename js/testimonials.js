@@ -25,6 +25,7 @@ function clientCard(item, translated) {
             img.loading = 'lazy';
             logos.appendChild(img);
         });
+        if (item.myRole) logos.appendChild(testimonialEl('span', 'testimonial-myrole', item.myRole));
         card.appendChild(logos);
     }
 

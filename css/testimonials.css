@@ -170,3 +170,21 @@
         font-size: 0.85rem;
     }
 }
+
+/* My role on the project, beside the client logos */
+.testimonial-myrole {
+    margin-left: auto;
+    padding: 0.2rem 0.7rem;
+    border: 1px solid #1d9bf0;
+    border-radius: 999px;
+    color: #1d9bf0;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+    .testimonial-myrole {
+        margin-left: 0;
+    }
+}

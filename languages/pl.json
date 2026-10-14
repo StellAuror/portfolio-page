@@ -5,16 +5,15 @@
     },
     "music": {
         "status": "Muzyka",
-        "popup": "Kliknij, aby włączyć muzykę w tle!",
         "copied": "Skopiowano"
     },
     "about": {
         "title": "Start",
         "subtitle": "Developer i konsultant BI, Fabric & Power Platform z 4-letnim doświadczeniem w danych",
         "greeting": "Cześć, jestem Michał — zamieniam dane w decyzje.",
-        "p1": "Moja przygoda z danymi zaczęła się wcześnie — już w gimnazjum projektowałem arkusze kalkulacyjne dla nauczycieli. Z czasem ta ciekawość przerodziła się w pasję, a potem w świadomy wybór ścieżki: od studiów z zastosowania informatyki w biznesie, przez analitykę w międzynarodowym zespole Novartis, po prowadzenie własnych wdrożeń.",
-        "p2": "Dziś realizuję kompleksowe projekty Business Intelligence dla klientów B2B — także dla największych firm na rynku. Pracuję w całym ekosystemie danych Microsoft: Microsoft Fabric jako fundament danych, Power BI na poziomie eksperckim oraz Power Apps (canvas i model-driven) na Dataverse z Power Automate — tak, aby użytkownicy mogli od razu działać na tym, co pokazują raporty. Odpowiadam za cały cykl: od warsztatów z biznesem i architektury danych, przez model semantyczny i raporty, po wdrożenie i przekazanie rozwiązania zespołowi klienta. Kieruję też małym zespołem wdrożeniowym — planuję prace, dzielę zadania i pilnuję jakości tego, co dostarczamy.",
-        "p3": "Po godzinach dzielę się wiedzą jako mentor 1:1 z Power BI, SQL i modelowania danych. Wierzę, że liczby mają sens dopiero wtedy, gdy stają się częścią rozmowy — a droga od surowych danych do świadomej decyzji to dla mnie sedno pracy z danymi."
+        "p1": "Projektuję i wdrażam rozwiązania danych w ekosystemie Microsoft: od architektury w Microsoft Fabric, przez modele semantyczne i raporty Power BI, po aplikacje Power Apps z Power Automate. Pracuję z klientami B2B — od dużych korporacji po małe firmy — i odpowiadam za cały cykl projektu: warsztaty z biznesem, wdrożenie i przekazanie rozwiązania zespołowi klienta. Kieruję małym zespołem wdrożeniowym: planuję prace, dzielę zadania i pilnuję jakości. Wcześniej byłem analitykiem danych w międzynarodowym zespole Novartis. Po godzinach prowadzę mentoring 1:1 z Power BI, SQL i modelowania danych.",
+        "cta": "Porozmawiajmy",
+        "cv": "Pobierz CV"
     },
     "me": {
         "title": "O mnie",
@@ -39,12 +38,12 @@
         "stories": {
             "title": "Książki i gry",
             "p1": "Książki i gry to dla mnie przede wszystkim rozrywka — fantastyka, dobra fabuła, światy, do których chce się wracać. Najbardziej lubię te, które obok przygody mają w sobie trochę filozofii i każą się zastanowić, czym właściwie jest człowiek. Dobra historia potrafi to zrobić lżej niż niejeden podręcznik.",
-            "hint": "Maluj tutaj"
+            "hint": "Najedź kursorem i maluj"
         },
         "gravel": {
             "title": "Gravel",
             "p1": "Sport to dla mnie przede wszystkim sposób na wyciszenie. Po dniu pełnym spotkań, modeli i miar wsiadam na gravela i jadę przed siebie — szutrami, leśnymi duktami, bocznymi drogami. Po godzinie czy dwóch głowa jest czysta, a energia wraca.",
-            "p2": "Zwykle. Czasem w plecaku jedzie jeszcze laptop, bo ktoś potrzebuje odpowiedzi „tylko na szybko” — wtedy ostatnie maile wysyłam z drewnianego stołu w lesie. Trzeba przyznać, że to i tak najlepsze biuro, jakie miałem.",
+            "p2": "Czasem w plecaku jedzie też laptop, bo ktoś potrzebuje odpowiedzi „tylko na szybko” — wtedy ostatnie maile wysyłam z drewnianego stołu w lesie. Przyznaję, że to i tak najlepsze biuro, jakie miałem.",
             "alt": "Rower gravelowy oparty o ławkę w leśnej wiacie, obok na stole laptop i plecak"
         }
     },
@@ -250,7 +249,7 @@
     ],
     "projects": {
         "title": "Projekty",
-        "subtitle": "Pierwsze dwa projekty to wybrane, zanonimizowane realizacje z mojej pracy w Clickless — zaprezentowane na danych demonstracyjnych, bez informacji o klientach. Trzeci to wewnętrzne narzędzie firmy, pokazane na danych demonstracyjnych. Pozostałe to projekty własne. W niektórych przypadkach sztuczna inteligencja została użyta wyłącznie do przygotowania grafik poglądowych; obrazy wygenerowane w Adobe Firefly zawierają metadane zapewniające przejrzystość.",
+        "subtitle": "Wybrane realizacje z Clickless — zanonimizowane i pokazane na danych demonstracyjnych — oraz projekty własne.",
         "items": {
             "clickless-warehouse": {
                 "title": "Cyfrowy magazyn — od kartek do tabletów | Power Platform",
@@ -348,7 +347,8 @@
                     }
                 ],
                 "image": "static/projects/hotels.webp",
-                "preview": "static/projects/hotels.webp"
+                "preview": "static/projects/hotels.webp",
+                "archive": true
             },
             "project2": {
                 "title": "InfoFlare | Konto X",
@@ -367,7 +367,8 @@
                     }
                 ],
                 "image": "static/projects/FlightsEU.webp",
-                "preview": "static/projects/info-flare.webp"
+                "preview": "static/projects/info-flare.webp",
+                "archive": true
             },
             "project3": {
                 "title": "Lucent | Aplikacja Shiny",
@@ -386,7 +387,8 @@
                     }
                 ],
                 "image": "static/projects/lucent.webp",
-                "preview": "static/projects/lucent.webp"
+                "preview": "static/projects/lucent.webp",
+                "archive": true
             },
             "project4": {
                 "title": "Asteria | Aplikacja Shiny",
@@ -405,7 +407,8 @@
                     }
                 ],
                 "image": "static/projects/asteria.webp",
-                "preview": "static/projects/ai-asteria.webp"
+                "preview": "static/projects/ai-asteria.webp",
+                "archive": true
             },
             "project5": {
                 "title": "Time40 | Aplikacja Shiny do scrapingu",
@@ -424,7 +427,8 @@
                     }
                 ],
                 "image": "static/projects/time40.webp",
-                "preview": "static/projects/ai-time40.webp"
+                "preview": "static/projects/ai-time40.webp",
+                "archive": true
             },
             "project6": {
                 "title": "Trading Analysis | Aplikacja Shiny",
@@ -443,7 +447,8 @@
                     }
                 ],
                 "image": "static/projects/mc-transactions.webp",
-                "preview": "static/projects/ai-mc-transactions.webp"
+                "preview": "static/projects/ai-mc-transactions.webp",
+                "archive": true
             },
             "project7": {
                 "title": "Data Wrangling Titans | Artykuł",
@@ -462,7 +467,8 @@
                     }
                 ],
                 "image": "static/projects/py-vs-r.webp",
-                "preview": "static/projects/wrangling.webp"
+                "preview": "static/projects/wrangling.webp",
+                "archive": true
             },
             "project8": {
                 "title": "Polska oczami danych Eurostatu — analiza energetyczna",
@@ -481,7 +487,8 @@
                     }
                 ],
                 "image": "static/projects/emergu-waste.webp",
-                "preview": "static/projects/energy.webp"
+                "preview": "static/projects/energy.webp",
+                "archive": true
             },
             "project9": {
                 "title": "Polska — fakty i ciekawostki z Wikipedii",
@@ -500,7 +507,8 @@
                     }
                 ],
                 "image": "static/projects/age-pyramid.webp",
-                "preview": "static/projects/football-team.webp"
+                "preview": "static/projects/football-team.webp",
+                "archive": true
             },
             "project10": {
                 "title": "Analiza farmy fotowoltaicznej",
@@ -519,7 +527,8 @@
                     }
                 ],
                 "image": "static/projects/solar-path.webp",
-                "preview": "static/projects/energy.webp"
+                "preview": "static/projects/energy.webp",
+                "archive": true
             },
             "project11": {
                 "title": "Airlines | Aplikacja Shiny",
@@ -538,348 +547,177 @@
                     }
                 ],
                 "image": "static/projects/airlines.webp",
-                "preview": "static/projects/ai-airlines.webp"
+                "preview": "static/projects/ai-airlines.webp",
+                "archive": true
             }
         },
-        "featuresLabel": "Kluczowe funkcje"
+        "featuresLabel": "Kluczowe funkcje",
+        "archiveTitle": "Archiwum",
+        "archiveNote": "Wcześniejsze projekty własne: aplikacje R Shiny, scraping i analizy danych publicznych.",
+        "aiNote": "Część grafik poglądowych wygenerowano w Adobe Firefly; zawierają metadane zapewniające przejrzystość."
     },
     "skills": {
-        "title": "Umiejętności",
-        "subtitle": "Analityczne, techniczne i interpersonalne kompetencje rozwinięte poprzez projekty komercyjne i osobiste.",
-        "analytics-title": "Analiza Umiejętności",
-        "mastery-distribution": "Rozkład Biegłości",
-        "category-distribution": "Rozkład Kategorii",
-        "categories": [
+        "title": "Stack",
+        "subtitle": "Platformy, na których buduję rozwiązania, i narzędzia, których w nich używam.",
+        "platforms": [
             {
-                "name": "Power BI i Microsoft Fabric",
-                "skills": [
+                "id": "fabric",
+                "name": "Microsoft Fabric",
+                "tagline": "Fundament danych: od surowych źródeł do warstwy Gold",
+                "tools": [
                     {
-                        "name": "Power BI",
-                        "mastery": 5
+                        "name": "Lakehouse i Warehouse",
+                        "note": "Konsolidacja wielu źródeł w jednym miejscu"
+                    },
+                    {
+                        "name": "Architektura medalionowa",
+                        "note": "Warstwy Bronze / Silver / Gold z kontrolą jakości"
+                    },
+                    {
+                        "name": "Pipelines i Dataflows Gen2",
+                        "note": "Orkiestracja i transformacje ETL / ELT"
+                    },
+                    {
+                        "name": "Notebooki",
+                        "note": "Python i modele ML na danych z Lakehouse"
+                    },
+                    {
+                        "name": "T-SQL",
+                        "note": "Zapytania analityczne i widoki w Warehouse"
+                    }
+                ]
+            },
+            {
+                "id": "powerbi",
+                "name": "Power BI",
+                "tagline": "Model semantyczny i raporty, z których korzysta biznes",
+                "tools": [
+                    {
+                        "name": "Modelowanie danych",
+                        "note": "Schemat gwiazdy, relacje, jedna wersja prawdy"
                     },
                     {
                         "name": "DAX",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Modelowanie danych",
-                        "mastery": 5
+                        "note": "Miary, analiza czasowa i logika biznesowa"
                     },
                     {
                         "name": "Power Query (M)",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Optymalizacja wydajności",
-                        "mastery": 5
+                        "note": "Pobieranie i czyszczenie danych"
                     },
                     {
                         "name": "Power BI Service",
-                        "mastery": 5
+                        "note": "Obszary robocze, pipeline'y wdrożeń, bramy, odświeżanie"
+                    },
+                    {
+                        "name": "Optymalizacja wydajności",
+                        "note": "DAX Studio, VertiPaq Analyzer, Performance Analyzer"
                     },
                     {
                         "name": "PBIP / TMDL i Git",
-                        "mastery": 4
+                        "note": "Kontrola wersji i code review raportów"
                     },
                     {
-                        "name": "Deneb / wizualizacje SVG",
-                        "mastery": 4
-                    },
-                    {
-                        "name": "Microsoft Fabric",
-                        "mastery": 5
+                        "name": "Deneb / SVG",
+                        "note": "Wizualizacje szyte na miarę"
                     }
                 ]
             },
             {
+                "id": "powerplatform",
                 "name": "Power Platform",
-                "skills": [
+                "tagline": "Aplikacje i automatyzacje, które domykają proces",
+                "tools": [
                     {
-                        "name": "Power Apps Canvas",
-                        "mastery": 5
+                        "name": "Power Apps (canvas)",
+                        "note": "Aplikacje na tablety i telefony, np. dla magazynu"
                     },
                     {
-                        "name": "Power Apps Model-driven",
-                        "mastery": 4
+                        "name": "Power Apps (model-driven)",
+                        "note": "Aplikacje do zarządzania danymi i procesami"
                     },
                     {
                         "name": "Dataverse",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Power Fx",
-                        "mastery": 5
+                        "note": "Tabele, relacje, reguły biznesowe, role zabezpieczeń"
                     },
                     {
                         "name": "Power Automate",
-                        "mastery": 5
+                        "note": "Akceptacje, powiadomienia, integracje, odświeżanie Power BI"
                     },
                     {
-                        "name": "Power Platform ALM",
-                        "mastery": 4
-                    }
-                ]
-            },
-            {
-                "name": "Programowanie i inne narzędzia",
-                "skills": [
-                    {
-                        "name": "T-SQL (analityczny)",
-                        "mastery": 4
+                        "name": "Power Fx",
+                        "note": "Logika aplikacji canvas"
                     },
                     {
-                        "name": "R",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Python",
-                        "mastery": 3
-                    },
-                    {
-                        "name": "Excel",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "QlikSense",
-                        "mastery": 3
-                    },
-                    {
-                        "name": "Tableau",
-                        "mastery": 2
-                    },
-                    {
-                        "name": "HTML / CSS / JS",
-                        "mastery": 3
-                    },
-                    {
-                        "name": "Git / GitHub",
-                        "mastery": 3
-                    }
-                ]
-            },
-            {
-                "name": "Umiejętności analityczne i biznesowe",
-                "skills": [
-                    {
-                        "name": "Prowadzenie projektów",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Zbieranie wymagań",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Praca z klientem B2B",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Analiza danych",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Wizualizacja danych",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Tworzenie raportów",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Projekty E2E",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Tworzenie dashboardów",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "ETL / ELT",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Architektura Medalionowa",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Integracja źródeł danych",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Konsolidacja danych",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Wdrożenie ML",
-                        "mastery": 3
-                    },
-                    {
-                        "name": "BPMN / UML / ARIS",
-                        "mastery": 4
-                    },
-                    {
-                        "name": "Optymalizacja procesów",
-                        "mastery": 3
-                    },
-                    {
-                        "name": "Uczenie maszynowe",
-                        "mastery": 3
-                    },
-                    {
-                        "name": "AI i LLM w pracy BI",
-                        "mastery": 4
-                    },
-                    {
-                        "name": "Agentowe workflow AI",
-                        "mastery": 4
-                    },
-                    {
-                        "name": "Praca z API",
-                        "mastery": 4
-                    },
-                    {
-                        "name": "Automatyzacja procesów",
-                        "mastery": 4
-                    },
-                    {
-                        "name": "Projektowanie UI/UX",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Projektowanie KPI",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Znajomość środowiska SAP",
-                        "mastery": 4
-                    },
-                    {
-                        "name": "Opowiadanie historii za pomocą danych",
-                        "mastery": 5
-                    }
-                ]
-            },
-            {
-                "name": "Umiejętności miękkie",
-                "skills": [
-                    {
-                        "name": "Mentoring",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Myślenie analityczne",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Komunikacja",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Samodzielność",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Dbałość o szczegóły",
-                        "mastery": 4
-                    },
-                    {
-                        "name": "Elastyczność",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Zarządzanie wiedzą (Zettelkasten)",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Rozwiązywanie problemów",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Prezentacja wyników",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Praca w zespole",
-                        "mastery": 4
-                    }
-                ]
-            },
-            {
-                "name": "Języki",
-                "skills": [
-                    {
-                        "name": "Polski",
-                        "mastery": 5
-                    },
-                    {
-                        "name": "Angielski",
-                        "mastery": 4
+                        "name": "ALM",
+                        "note": "Rozwiązania, zmienne środowiskowe, DEV / TEST / PROD"
                     }
                 ]
             }
-        ]
-    },
-    "skillDescriptions": {
-        "projekty e2e": "Bardzo dobra znajomość projektowania i wdrażania kompleksowych rozwiązań danych, obejmująca pozyskiwanie, przetwarzanie, przechowywanie i wizualizację danych. Doświadczenie w wielu projektach E2E B2B.",
-        "r": "Bardzo dobra znajomość R, obejmująca tworzenie złożonych dashboardów, modelowanie i wizualizowanie danych w projektach komercyjnych.",
-        "python": "Średniozaawansowana znajomość, obejmująca analizę danych, projektowanie aplikacji GUI i automatyzację",
-        "t-sql (analityczny)": "Bardzo dobra znajomość tworzenia złożonych zapytań, agregacji i optymalizacji kodu pod kątem analiz biznesowych.",
-        "power bi": "Ekspercka znajomość Power BI end-to-end: projektowanie modeli semantycznych, zaawansowany DAX, optymalizacja wydajności, RLS/OLS, calculation groups, field parameters i projektowanie raportów dla dużych klientów B2B.",
-        "power bi service": "Ekspercka znajomość administracji Power BI Service: zarządzanie obszarami roboczymi, pipeline'y wdrożeń, przepływy danych, zaplanowane odświeżanie, zarządzanie bramką oraz udostępnianie i osadzanie raportów w skali korporacyjnej.",
-        "microsoft fabric": "Ekspercka znajomość ekosystemu Microsoft Fabric dla analityków danych: budowanie środowisk w architekturze medalionowej (Bronze/Silver/Gold), łączenie i konsolidacja heterogenicznych źródeł danych przez Lakehouse i Warehouse, implementacja modeli ML w Notebookach oraz orkiestracja kompleksowych potoków analitycznych.",
-        "qliksense": "Średniozaawansowana znajomość w zakresie tworzenia wizualizacji i analizy danych w QlikSense na podstawie wewnętrznych szkoleń i certyfikacji oraz współpracy z profesjonalnymi developerami QlikSense.",
-        "tableau": "Podstawowa znajomość narzędzia, umożliwiająca tworzenie prostych dashboardów i wizualizacji.",
-        "alteryx": "Znajomość podstawowych narzędzi ETL, wymagająca dalszej praktyki w samodzielnych projektach.",
-        "excel": "Bardzo dobra znajomość zaawansowanych formuł, wykorzystanie VBA, tabel przestawnych, Power Query oraz modelowania danych w Power Pivot.",
-        "power automate": "Przepływy chmurowe automatyzujące procesy biznesowe: akceptacje, powiadomienia, integracje z Dataverse / SharePoint / SQL oraz orkiestracja odświeżeń Power BI.",
-        "html / css / js": "Średniozaawansowana znajomość technologii webowych, umożliwiająca tworzenie i modyfikowanie stron.",
-        "git / github": "Średniozaawansowana znajomość pracy z repozytoriami, rozwiązywania konfliktów i podstaw współpracy zespołowej.",
-        "n8n": "Znajomość podstawowych funkcji platformy i doświadczenie budowy prostych workflow.",
-        "analiza danych": "Zaawansowane umiejętności badania, czyszczenia, przekształcania i modelowania danych w projektach biznesowych.",
-        "wizualizacja danych": "Zaawansowane projektowanie i optymalizacja wizualizacji ułatwiających interpretację złożonych danych.",
-        "tworzenie raportów": "Zaawansowane tworzenie raportów łączących dane, wnioski i elementy graficzne, dostosowanych do odbiorcy.",
-        "tworzenie dashboardów": "Zaawansowane projektowanie interaktywnych paneli do monitorowania wskaźników i procesów.",
-        "etl / elt": "Bardzo dobra znajomość projektowania i optymalizacji procesów pobierania, transformacji i ładowania danych.",
-        "architektura medalionowa": "Ekspercka znajomość projektowania warstwowych architektur danych Bronze/Silver/Gold w środowiskach Microsoft Fabric i Lakehouse, zapewniając jakość i governance danych na każdym poziomie.",
-        "integracja źródeł danych": "Ekspercka znajomość łączenia i orkiestracji heterogenicznych źródeł danych (bazy danych, API, pliki płaskie, usługi chmurowe) w ujednoliconych środowiskach analitycznych.",
-        "konsolidacja danych": "Ekspercka znajomość łączenia i harmonizowania danych z wielu systemów w spójne, gotowe do analizy zbiory danych, w tym wyrównywanie schematów i deduplikacja.",
-        "wdrożenie ml": "Zaawansowane umiejętności implementacji i wdrażania modeli uczenia maszynowego w platformach danych (Fabric Notebooks, Python), w tym inżynieria cech, ocena modeli i integracja z warstwami BI.",
-        "bpmn / uml / aris": "Bardzo dobra znajomość modelowania procesów biznesowych i systemów informatycznych.",
-        "optymalizacja procesów": "Średniozaawansowana znajomość metod usprawniania procesów w typowych zastosowaniach.",
-        "uczenie maszynowe": "Zaawansowane tworzenie i optymalizacja modeli, przygotowanie danych oraz ocena jakości predykcji.",
-        "praca z api": "Bardzo dobra znajomość integracji systemów poprzez API, w tym uwierzytelniania i obsługi danych.",
-        "automatyzacja procesów": "Bardzo dobra znajomość projektowania automatyzacji redukujących pracę manualną.",
-        "projektowanie ui/ux": "Zaawansowana znajomość projektowania interfejsów i doświadczeń użytkownika zgodnych z zasadami użyteczności.",
-        "projektowanie kpi": "Zaawansowane definiowanie i wdrażanie mierzalnych wskaźników efektywności biznesowej poparte wieloma latami doświadczenia współpracy z Process Ownerami",
-        "znajomość środowiska sap": "Średniozaawansowana znajomość obsługi modułów SAP i wykorzystania w projektach analitycznych.",
-        "opowiadanie historii za pomocą danych": "Zaawansowane łączenie narracji i wizualizacji w celu skutecznego przekazywania wniosków.",
-        "myślenie analityczne": "Zaawansowana umiejętność analizowania informacji i formułowania wniosków w złożonych sytuacjach.",
-        "komunikacja": "Zaawansowana umiejętność jasnego i precyzyjnego przekazywania informacji w mowie i piśmie.",
-        "samodzielność": "Zaawansowana umiejętność organizowania pracy i podejmowania decyzji bez nadzoru.",
-        "dbałość o szczegóły": "Bardzo dobra dbałość o detale mające wpływ na jakość pracy.",
-        "elastyczność": "Zaawansowana zdolność adaptowania się do zmieniających się warunków i priorytetów.",
-        "zarządzanie wiedzą (zettelkasten)": "Zaawansowane wykorzystanie systemu Zettelkasten do długofalowego gromadzenia i łączenia wiedzy.",
-        "rozwiązywanie problemów": "Zaawansowana umiejętność diagnozowania przyczyn problemów i znajdowania skutecznych rozwiązań.",
-        "prezentacja wyników": "Zaawansowana umiejętność prezentowania wyników w sposób jasny i dopasowany do odbiorcy.",
-        "praca w zespole": "Bardzo dobra umiejętność współpracy i dzielenia się wiedzą w zespole.",
-        "polski": "Biegła znajomość języka polskiego w mowie i piśmie.",
-        "angielski": "Bardzo dobra znajomość języka angielskiego w mowie i piśmie, pozwalająca na swobodną komunikację biznesową.",
-        "dax": "Zaawansowany DAX: przejście kontekstu, calculation groups, analiza czasowa, tabele wirtualne i optymalizacja w oparciu o plany zapytań (DAX Studio, VertiPaq Analyzer).",
-        "modelowanie danych": "Projektowanie modeli gwiazdy i modeli złożonych, które pozostają szybkie i łatwe w utrzymaniu wraz z rozwojem firmy — relacje, ziarnistość, agregacje i incremental refresh.",
-        "power query (m)": "Tworzenie solidnych transformacji w Power Query M z dbałością o query folding, w tym funkcje własne i parametryzowane źródła.",
-        "optymalizacja wydajności": "Diagnoza wolnych raportów i modeli: VertiPaq Analyzer, server timings w DAX Studio, Performance Analyzer, redukcja rozmiaru modelu i refaktoryzacja DAX.",
-        "pbip / tmdl i git": "Projekty Power BI pod kontrolą wersji (PBIP, TMDL, PBIR) z Git, code review i deployment pipelines.",
-        "deneb / wizualizacje svg": "Wizualizacje wykraczające poza standard: Deneb (Vega / Vega-Lite) oraz miary SVG w DAX dla zwartych, spójnych z marką wizualizacji.",
-        "power apps canvas": "Aplikacje canvas domykające pętlę z raportowaniem — wprowadzanie danych, akceptacje i writeback, responsywne układy, komponenty i logika w Power Fx.",
-        "power apps model-driven": "Aplikacje model-driven na Dataverse: formularze, widoki, business process flows, reguły biznesowe i doświadczenie zależne od ról zabezpieczeń.",
-        "dataverse": "Projektowanie modeli danych w Dataverse — tabele, relacje, wybory, reguły biznesowe, role zabezpieczeń i zespoły — jako fundament rozwiązań Power Platform.",
-        "power fx": "Czysty, świadomy delegacji kod Power Fx w aplikacjach canvas, w tym kolekcje, named formulas i komponenty wielokrotnego użytku.",
-        "power platform alm": "ALM oparte na rozwiązaniach: środowiska, rozwiązania zarządzane i niezarządzane, zmienne środowiskowe, odwołania do połączeń i promocja DEV/TEST/PROD.",
-        "prowadzenie projektów": "Prowadzenie projektów BI i Power Platform end-to-end dla klientów B2B — zakres, planowanie, komunikacja z interesariuszami, dostarczenie i przekazanie.",
-        "zbieranie wymagań": "Warsztaty z właścicielami biznesowymi, na których decyzje i procesy zamieniamy w wymagania, KPI i model danych.",
-        "praca z klientem b2b": "Projekty dla klientów B2B, od największych korporacji po małe firmy — z dopasowaniem zakresu, języka i tempa do organizacji.",
-        "ai i llm w pracy bi": "Wykorzystanie LLM-ów i agentów (w tym serwerów MCP dla Power BI i Fabric) do przyspieszenia modelowania, refaktoryzacji DAX i dokumentacji — przy zachowaniu kontroli nad decyzjami projektowymi i jakością.",
-        "mentoring": "Mentoring 1:1 z Power BI, SQL i modelowania danych — indywidualne tempo, realne przypadki i przygotowanie do rozmów rekrutacyjnych.",
-        "agentowe workflow ai": "Projektowanie i budowa agentowych workflow AI — wieloetapowych procesów, w których agenci LLM korzystają z narzędzi (serwery MCP, API, źródła danych), aby planować i wykonywać zadania, np. dokumentację modeli, kontrolę jakości danych czy generowanie raportów, z weryfikacją człowieka w kluczowych krokach."
+        ],
+        "more": [
+            {
+                "name": "AI w pracy",
+                "tools": [
+                    "LLM w modelowaniu, DAX i dokumentacji",
+                    "Serwery MCP dla Power BI i Fabric",
+                    "Agentowe workflow AI",
+                    "Integracje przez API"
+                ]
+            },
+            {
+                "name": "Kod",
+                "tools": [
+                    "Python",
+                    "R i Shiny",
+                    "HTML / CSS / JS",
+                    "Git / GitHub"
+                ]
+            },
+            {
+                "name": "Inne narzędzia",
+                "tools": [
+                    "Excel",
+                    "SAP (dane do analiz)",
+                    "QlikSense",
+                    "Tableau"
+                ]
+            }
+        ],
+        "competencies": {
+            "title": "Jak pracuję",
+            "groups": [
+                {
+                    "name": "Projekt i biznes",
+                    "items": [
+                        "Projekty end-to-end",
+                        "Zbieranie wymagań",
+                        "Praca z klientem B2B",
+                        "Projektowanie KPI",
+                        "UX raportów i aplikacji",
+                        "Opowiadanie danymi",
+                        "BPMN / UML / ARIS"
+                    ]
+                },
+                {
+                    "name": "Zespół i ludzie",
+                    "items": [
+                        "Kierowanie zespołem wdrożeniowym",
+                        "Mentoring 1:1",
+                        "Prezentacja wyników",
+                        "Komunikacja z biznesem"
+                    ]
+                },
+                {
+                    "name": "Języki",
+                    "items": [
+                        "Polski — ojczysty",
+                        "Angielski — w codziennej pracy"
+                    ]
+                }
+            ]
+        },
+        "toolsCount": "{count} narzędzi",
+        "moreTitle": "Uzupełniająco"
     },
     "popup": {
         "loading": "Ładuję umiejętności.",
@@ -887,25 +725,12 @@
         "descriptionError": "Opis {skillName} nie został załadowany z przyczyn technicznych.",
         "loadError": "Błąd łądowania {skillName}."
     },
-    "analytics": {
-        "masteryLevel": "Poziom {level}",
-        "categoryCount": "{count} ({percentage}%)",
-        "summary": "Łącznie {totalSkills} umiejętności w {totalCategories} kategoriach",
-        "totalSkills": "Wszystkich Umiejętności",
-        "categories": "Kategorie",
-        "avgMastery": "Średni poziom",
-        "expertLevel": "Bardzo dobrze opanowanych"
-    },
-    "card": {
-        "itemsCount": "{count} przedmiotów",
-        "metrics": "{current}/{total}"
-    },
     "nav": {
         "about": "Start",
         "me": "O mnie",
         "journey": "Droga",
         "projects": "Projekty",
-        "skills": "Umiejętności",
+        "skills": "Stack",
         "testimonials": "Opinie"
     },
     "testimonials": {
@@ -935,7 +760,8 @@
                 "author": "Joanna Lech",
                 "role": "Kierownik Działu ds. Planowania i Analiz",
                 "company": "Diverse / Etos SA",
-                "context": "opinia o współpracy z zespołem Clickless"
+                "context": "opinia o współpracy z zespołem Clickless",
+                "myRole": "Moja rola: główny deweloper"
             },
             {
                 "highlights": [
@@ -986,5 +812,9 @@
         "accept": "Zgoda, śmiało",
         "decline": "Nie, dziękuję",
         "settings": "Ustawienia cookies"
+    },
+    "footer": {
+        "cta": "Masz projekt albo pytanie o dane?",
+        "button": "Porozmawiajmy"
     }
 }

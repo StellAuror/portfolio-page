@@ -1,34 +1,20 @@
-// Music button feature
+// Music button: a quiet play / pause toggle
 let isPlaying = false;
 let audio = null;
 
 function toggleMusic() {
-    const elements = document.querySelectorAll('.music-toggle');
-    const txt = document.querySelectorAll('#musicVisualizer');
+    const button = document.getElementById('musicToggle');
     if (!audio) {
-        audio = new Audio("static/dawnofchange.mp3"); 
+        audio = new Audio("static/dawnofchange.mp3");
         audio.loop = true;
     }
 
-    if (isPlaying) {
-        audio.pause();
-        elements.forEach(el => {
-            el.textContent = "▶";
-        }); 
-        txt.forEach(el => {
-            el.style.display = 'none';
-        });
-    } else {
-        audio.play().catch(() => {});
-        elements.forEach(el => {
-            el.textContent = "⏸";
-        }); 
-        txt.forEach(el => {
-            el.style.display = '';
-        });
-    }
+    if (isPlaying) audio.pause();
+    else audio.play().catch(() => {});
 
     isPlaying = !isPlaying;
+    button?.classList.toggle('playing', isPlaying);
+    button?.setAttribute('aria-pressed', String(isPlaying));
 }
 
 
@@ -54,19 +40,4 @@ document.querySelectorAll('.copy-text').forEach(el => {
             copyContact(el);
         }
     });
-});
-
-// Ambient music hint — shown once per visit
-const popup = document.getElementById("ambient-popup");
-let popupSeen = false;
-try { popupSeen = sessionStorage.getItem('ambientPopupSeen') === '1'; } catch (e) { /* ignore */ }
-
-if (popup && !popupSeen) {
-    setTimeout(() => { if (!isPlaying) popup.style.display = "flex"; }, 1500);
-    setTimeout(() => { popup.style.display = "none"; }, 9000);
-    try { sessionStorage.setItem('ambientPopupSeen', '1'); } catch (e) { /* ignore */ }
-}
-
-document.querySelector('.music-control')?.addEventListener('click', () => {
-    if (popup) popup.style.display = 'none';
 });

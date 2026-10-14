@@ -85,6 +85,8 @@
     position: relative;
     min-height: 300px;
     touch-action: pan-y;
+    /* a faint warm glow so the canvas reads as a surface, not an empty gap */
+    background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(241, 231, 208, 0.06), rgba(200, 60, 78, 0.025) 55%, transparent 80%);
     -webkit-mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 70%, transparent 100%);
     mask-image: radial-gradient(ellipse 50% 50% at 50% 50%, #000 70%, transparent 100%);
 }

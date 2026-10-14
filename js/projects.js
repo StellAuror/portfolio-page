@@ -49,11 +49,16 @@ function renderProjectsGrid() {
     const projectsGrid = document.getElementById('projectsGrid');
     if (!projectsGrid || !currentLanguageData.projects?.items) return;
 
-    const projectsHTML = Object.entries(currentLanguageData.projects.items)
-        .map(([projectId, project]) => createProjectTile(projectId, project))
-        .join('');
+    const entries = Object.entries(currentLanguageData.projects.items);
+    const tiles = list => list.map(([projectId, project]) => createProjectTile(projectId, project)).join('');
+    const archived = entries.filter(([, project]) => project.archive);
 
-    projectsGrid.innerHTML = projectsHTML;
+    projectsGrid.innerHTML = tiles(entries.filter(([, project]) => !project.archive));
+
+    const archiveGrid = document.getElementById('projectsArchiveGrid');
+    if (archiveGrid) archiveGrid.innerHTML = tiles(archived);
+    const archiveCount = document.getElementById('projectsArchiveCount');
+    if (archiveCount) archiveCount.textContent = archived.length;
 
     // Add touch event listeners for mobile
     document.querySelectorAll('.project-tile').forEach(tile => {
