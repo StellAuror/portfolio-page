@@ -57,8 +57,6 @@ function renderProjectsGrid() {
 
     const archiveGrid = document.getElementById('projectsArchiveGrid');
     if (archiveGrid) archiveGrid.innerHTML = tiles(archived);
-    const archiveCount = document.getElementById('projectsArchiveCount');
-    if (archiveCount) archiveCount.textContent = archived.length;
 
     // Add touch event listeners for mobile
     document.querySelectorAll('.project-tile').forEach(tile => {

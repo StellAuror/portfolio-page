@@ -43,7 +43,7 @@
         "gravel": {
             "title": "Gravel",
             "p1": "Sport to dla mnie przede wszystkim sposób na wyciszenie. Po dniu pełnym spotkań, modeli i miar wsiadam na gravela i jadę przed siebie — szutrami, leśnymi duktami, bocznymi drogami. Po godzinie czy dwóch głowa jest czysta, a energia wraca.",
-            "p2": "Czasem w plecaku jedzie też laptop, bo ktoś potrzebuje odpowiedzi „tylko na szybko” — wtedy ostatnie maile wysyłam z drewnianego stołu w lesie. Przyznaję, że to i tak najlepsze biuro, jakie miałem.",
+            "p2": "Czasem w plecaku jedzie też laptop. Kiedy ktoś na czacie pisze, że z projektem „jesteśmy w lesie”, mogę to uczciwie potwierdzić — i odpisać spod drewnianej wiaty. Status „poza biurem” jeszcze nigdy nie był tak dosłowny.",
             "alt": "Rower gravelowy oparty o ławkę w leśnej wiacie, obok na stole laptop i plecak"
         }
     },
@@ -347,8 +347,7 @@
                     }
                 ],
                 "image": "static/projects/hotels.webp",
-                "preview": "static/projects/hotels.webp",
-                "archive": true
+                "preview": "static/projects/hotels.webp"
             },
             "project2": {
                 "title": "InfoFlare | Konto X",
@@ -716,7 +715,6 @@
                 }
             ]
         },
-        "toolsCount": "{count} narzędzi",
         "moreTitle": "Uzupełniająco"
     },
     "popup": {

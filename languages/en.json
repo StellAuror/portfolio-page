@@ -43,7 +43,7 @@
         "gravel": {
             "title": "Gravel",
             "p1": "For me, sport is above all a way to switch off. After a day full of meetings, models and measures I get on the gravel bike and just ride — dirt roads, forest tracks, back lanes. An hour or two later my head is clear and the energy is back.",
-            "p2": "Sometimes the laptop comes along too, because someone needs an answer “just quickly” — and then the last emails of the day go out from a wooden table in the forest. Admittedly, it's still the best office I've ever had.",
+            "p2": "Sometimes the laptop comes along too. When someone asks if the project is out of the woods yet, I can honestly say I'm not — and reply from a wooden table in a forest shelter. \"Out of office\" has never been so literal.",
             "alt": "A gravel bike leaning on a bench in a forest shelter, with a laptop and a backpack on the table"
         },
         "quoteOriginal": [
@@ -353,8 +353,7 @@
                     }
                 ],
                 "image": "static/projects/hotels.webp",
-                "preview": "static/projects/hotels.webp",
-                "archive": true
+                "preview": "static/projects/hotels.webp"
             },
             "project2": {
                 "title": "InfoFlare | X Account",
@@ -722,7 +721,6 @@
                 }
             ]
         },
-        "toolsCount": "{count} tools",
         "moreTitle": "Alongside"
     },
     "popup": {

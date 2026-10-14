@@ -37,15 +37,6 @@
     color: #8b8f94;
 }
 
-.stack-count {
-    display: block;
-    margin-top: 1.25rem;
-    font-size: 0.75rem;
-    color: #555;
-    letter-spacing: 0.05em;
-    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
-}
-
 .stack-tools {
     list-style: none;
 }

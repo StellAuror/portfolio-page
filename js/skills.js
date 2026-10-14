@@ -6,14 +6,12 @@ const el = (tag, className, text) => {
   return node;
 };
 
-function platformBlock(platform, countLabel) {
+function platformBlock(platform) {
   const block = el('article', 'stack-platform');
 
   const label = el('header', 'stack-label');
   label.appendChild(el('h3', 'stack-name', platform.name));
   label.appendChild(el('p', 'stack-tagline', platform.tagline));
-  const count = String(platform.tools?.length || 0).padStart(2, '0');
-  label.appendChild(el('span', 'stack-count', countLabel.replace('{count}', count)));
   block.appendChild(label);
 
   const list = el('ul', 'stack-tools');
@@ -43,10 +41,7 @@ function renderStack(skills) {
   section.querySelector('.section-header').textContent = skills.title || '';
   section.querySelector('.section-subtitle').textContent = skills.subtitle || '';
 
-  const countLabel = skills.toolsCount || '{count}';
-  document.getElementById('stack-platforms').replaceChildren(
-    ...skills.platforms.map((p) => platformBlock(p, countLabel))
-  );
+  document.getElementById('stack-platforms').replaceChildren(...skills.platforms.map(platformBlock));
 
   document.getElementById('stack-more-title').textContent = skills.moreTitle || '';
   document.getElementById('stack-more').replaceChildren(
