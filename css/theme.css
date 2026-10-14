@@ -136,10 +136,10 @@ body {
 /* Pinned copy: top right, next to the music control */
 .cta-float {
     position: fixed;
-    top: 1.5rem;
-    right: calc(1.5rem + 36px + 0.75rem);
+    top: 2rem;
+    right: 12rem; /* js/cta.js sets it from the music control's width */
     z-index: 900;
-    height: 36px;
+    height: 44px;
     padding: 0 1rem;
     font-size: 0.875rem;
     opacity: 0;
