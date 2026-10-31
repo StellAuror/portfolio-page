@@ -224,7 +224,7 @@
         {
             "id": 8,
             "date": 2020.4,
-            "date_full": "Oct 2016 – May 2020",
+            "date_full": "Sep 2017 – May 2020",
             "title": "High School — Carolinum in Nysa",
             "description": "I completed an advanced high-school curriculum focused on Mathematics, Physics, Computer Science, and English, which helped me develop strong analytical and problem-solving skills.",
             "tags": [
@@ -235,7 +235,7 @@
             "label": "Carolinum High School",
             "periods": [
                 {
-                    "start": "2016-10",
+                    "start": "2017-09",
                     "end": "2020-05"
                 }
             ]

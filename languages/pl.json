@@ -224,7 +224,7 @@
         {
             "id": 8,
             "date": 2020.4,
-            "date_full": "Paź 2016 – Maj 2020",
+            "date_full": "Wrz 2017 – Maj 2020",
             "title": "Liceum Ogólnokształcące — Carolinum w Nysie",
             "description": "Ukończyłem rozszerzony program nauczania w Liceum Ogólnokształcącym Carolinum w Nysie ze szczególnym naciskiem na matematykę, fizykę, informatykę i język angielski. Rozwinąłem wówczas zdolności analityczne oraz umiejętność rozwiązywania problemów.",
             "tags": [
@@ -235,7 +235,7 @@
             "label": "LO Carolinum",
             "periods": [
                 {
-                    "start": "2016-10",
+                    "start": "2017-09",
                     "end": "2020-05"
                 }
             ]
