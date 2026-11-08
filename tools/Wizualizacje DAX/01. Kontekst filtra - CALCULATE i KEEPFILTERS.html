@@ -1,250 +1,405 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CALCULATE kontra KEEPFILTERS</title>
-    <link rel="stylesheet" href="../viz/kit.css">
-    <style>
-        .combine { display: flex; flex-direction: column; gap: 8px; }
-        .combine-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
-        .combine-row .field {
-            min-width: 82px;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-3);
-            text-transform: uppercase;
-            letter-spacing: .04em;
-        }
-        .step-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; }
-        .step-head .vz-label { margin: 0; }
-        #stepNav { display: none; }
-        .manual #stepNav { display: flex; }
-        .manual #playBtn { display: none; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KEEPFILTERS</title>
+<style>
+    :root {
+        --bg: #0c0c0f;
+        --panel: #15151a;
+        --panel-2: #1c1c23;
+        --line: #2a2a33;
+        --text: #ececf1;
+        --text-2: #a3a3b0;
+        --text-3: #6b6b78;
+        --blue: #4f8cff;
+        --orange: #ff9f43;
+        --dot: #3a3a46;
+        --mono: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+        --ease: cubic-bezier(.2, .8, .2, 1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        background: var(--bg);
+        color: var(--text);
+        font: 15px/1.5 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+        min-height: 100vh;
+    }
+    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+    .app { max-width: 1040px; margin: 0 auto; padding: 32px 28px 40px; }
+
+    h1 { font-size: 24px; font-weight: 650; letter-spacing: -.01em; }
+    .lead { color: var(--text-2); margin-top: 4px; }
+
+    /* ---------- Formuła z przełącznikiem ---------- */
+    .formula {
+        margin: 24px 0 22px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 14px 22px;
+    }
+    .code {
+        font-family: var(--mono);
+        font-size: 17px;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px 18px;
+        white-space: nowrap;
+        overflow-x: auto;
+        max-width: 100%;
+    }
+    .code .fn { color: #c792ea; }
+    .code .ms { color: var(--text-2); }
+    .code .flt { color: var(--orange); }
+    .code .kf {
+        display: inline-block;
+        color: var(--blue);
+        max-width: 0;
+        overflow: hidden;
+        vertical-align: bottom;
+        opacity: 0;
+        transition: max-width .45s var(--ease), opacity .3s;
+    }
+    .keep .code .kf { max-width: 160px; opacity: 1; }
+
+    .switch {
+        display: inline-flex;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px;
+    }
+    .switch button {
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-2);
+        transition: background .2s, color .2s;
+    }
+    .switch button[aria-pressed="true"] { background: var(--text); color: var(--bg); }
+
+    /* ---------- Dwa panele ---------- */
+    .stage {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 18px;
+    }
+    .panel {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 18px;
+    }
+    .panel-title {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: var(--text-3);
+        margin-bottom: 14px;
+    }
+    .panel-title b { color: var(--text-2); font-weight: 600; }
+
+    /* Raport: macierz */
+    table { width: 100%; border-collapse: separate; border-spacing: 4px; font-variant-numeric: tabular-nums; }
+    th { font-size: 13px; font-weight: 600; color: var(--text-2); text-align: right; padding: 4px 8px; }
+    th.rh { text-align: left; }
+    td {
+        position: relative;
+        text-align: right;
+        padding: 10px 10px;
+        border-radius: 8px;
+        background: var(--panel-2);
+        cursor: pointer;
+        transition: background .2s, box-shadow .2s;
+    }
+    td:hover { background: #24242d; }
+    td.sel { box-shadow: inset 0 0 0 2px var(--blue); background: rgba(79, 140, 255, .1); }
+    td .v { font-size: 16px; font-weight: 600; }
+    td .v.blank { color: var(--text-3); font-weight: 400; }
+    td .v.wrong { color: var(--orange); }
+    td .b { display: block; font-size: 11.5px; color: var(--text-3); }
+    .legend { margin-top: 10px; font-size: 12.5px; color: var(--text-3); }
+    tr.sum td, td.sum { background: transparent; }
+    tr.sum td.sel, td.sum.sel { background: rgba(79, 140, 255, .1); }
+
+    /* Dane: plansza z transakcjami */
+    .board { display: grid; grid-template-columns: 64px repeat(3, 1fr); grid-template-rows: 24px repeat(3, 1fr); gap: 0; position: relative; }
+    .board .ax { font-size: 12.5px; color: var(--text-2); font-weight: 600; display: flex; align-items: center; transition: color .3s; }
+    .board .ax.top { justify-content: center; }
+    .board .ax.on-blue { color: var(--blue); }
+    .board .ax.on-orange { color: var(--orange); }
+    .block {
+        position: relative;
+        z-index: 2;
+        min-height: 88px;
+        border: 1px solid var(--line);
+        margin: -.5px;
+        display: flex;
+        flex-wrap: wrap;
+        align-content: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 10px 8px;
+    }
+    .dot {
+        border-radius: 50%;
+        background: var(--dot);
+        transition: background .35s, transform .35s var(--ease), box-shadow .35s;
+    }
+    .dot.lit { background: #fff; box-shadow: 0 0 10px rgba(255, 255, 255, .55); transform: scale(1.12); }
+
+    /* Pasy filtrów nakładane na planszę */
+    .band {
+        position: absolute;
+        z-index: 1;
+        border-radius: 6px;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity .4s, top .45s var(--ease), left .45s var(--ease), width .45s var(--ease), height .45s var(--ease);
+    }
+    .band.blue { background: rgba(79, 140, 255, .16); border: 1.5px solid rgba(79, 140, 255, .7); }
+    .band.orange { background: rgba(255, 159, 67, .16); border: 1.5px solid rgba(255, 159, 67, .8); }
+    .band.gone { background: transparent; border: 1.5px dashed rgba(160, 160, 176, .5); }
+    .band.on { opacity: 1; }
+    .band .tag {
+        position: absolute;
+        right: 6px;
+        bottom: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: .03em;
+        white-space: nowrap;
+    }
+    .band.blue .tag { color: var(--blue); }
+    .band.orange .tag { color: var(--orange); }
+    .band.gone .tag { color: var(--text-3); text-decoration: line-through; }
+
+    /* Zdanie wyniku pod spodem */
+    .verdict {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px 14px;
+        font-size: 16px;
+    }
+    .pill {
+        border-radius: 999px;
+        padding: 4px 12px;
+        font-weight: 600;
+        font-size: 14.5px;
+        transition: opacity .3s;
+    }
+    .pill.blue { background: rgba(79, 140, 255, .15); color: var(--blue); }
+    .pill.orange { background: rgba(255, 159, 67, .15); color: var(--orange); }
+    .pill.gone { color: var(--text-3); text-decoration: line-through; border: 1px dashed var(--line); }
+    .amp { font-weight: 800; font-size: 20px; color: var(--text); }
+    .eq { color: var(--text-3); }
+    .res { font-size: 22px; font-weight: 700; }
+    .res.blank { color: var(--text-3); font-weight: 500; font-size: 18px; }
+
+    .note { margin-top: 10px; color: var(--text-2); font-size: 14.5px; max-width: 75ch; }
+    .note b { color: var(--text); }
+
+    @media (max-width: 820px) {
+        .app { padding: 20px 14px 32px; }
+        h1 { font-size: 20px; }
+        .stage { grid-template-columns: minmax(0, 1fr); }
+        .code { font-size: 14px; white-space: normal; }
+        td { padding: 8px 6px; }
+        .board { grid-template-columns: 54px repeat(3, 1fr); }
+        .block { min-height: 70px; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
 </head>
 <body>
-<div class="vz-app">
-    <header class="vz-head">
-        <div class="vz-kicker">DAX · Kontekst filtra</div>
-        <h1 class="vz-title">CALCULATE kontra KEEPFILTERS</h1>
-        <p class="vz-lead">Kliknij komórkę macierzy, a potem przełączaj formuły. Po prawej widać, z jakim kontekstem filtra liczy się miara i które wiersze tabeli faktycznie sumuje.</p>
-    </header>
+<div class="app" id="app">
+    <h1>KEEPFILTERS: zastąpić filtr czy dołożyć?</h1>
+    <p class="lead">Najedź na komórkę raportu (albo ją kliknij) i przełącz tryb. Po prawej widać, które transakcje trafiają do wyniku.</p>
 
-    <div id="tabs"></div>
-    <div class="vz-code" id="code"></div>
-
-    <div class="vz-grid">
-        <div>
-        <section class="vz-card">
-            <div class="vz-label">Wizualizacja · macierz</div>
-            <div id="matrix"></div>
-            <div class="vz-legend">
-                <span style="color: var(--ctx-visual)"><i style="background: var(--ctx-visual-soft)"></i>wybrana komórka = kontekst z wizualizacji</span>
-                <span id="legendChanged" style="color: var(--ctx-calc)"><i style="background: var(--ctx-calc-soft)"></i>wynik inny niż samej miary (przekreślony)</span>
-            </div>
-        </section>
-        <div class="vz-takeaway" id="takeaway"></div>
+    <div class="formula">
+        <div class="code"><span class="ms">Sprzedaż Online =</span> <span class="fn">CALCULATE</span>( [Sprzedaż], <span class="kf"><span class="fn">KEEPFILTERS</span>(</span><span class="flt">Kanał = "Online"</span><span class="kf">)</span> )</div>
+        <div class="switch" role="group" aria-label="Tryb">
+            <button type="button" data-mode="calc" aria-pressed="true">Bez KEEPFILTERS</button>
+            <button type="button" data-mode="keep" aria-pressed="false">Z KEEPFILTERS</button>
         </div>
+    </div>
 
-        <section class="vz-card" id="explain">
-            <div class="step-head">
-                <div class="vz-label">Co się dzieje w komórce</div>
-                <div class="vz-bar">
-                    <button type="button" class="vz-btn" id="playBtn">▶ Krok po kroku</button>
-                    <div class="vz-bar" id="stepNav">
-                        <button type="button" class="vz-btn" id="prevBtn">←</button>
-                        <span class="vz-hint" id="stepInfo"></span>
-                        <button type="button" class="vz-btn primary" id="nextBtn">Dalej →</button>
-                    </div>
-                </div>
-            </div>
-            <div class="vz-steps" id="steps"></div>
+    <div class="stage">
+        <section class="panel">
+            <div class="panel-title">Raport · <b>Sprzedaż Online</b> wg regionu i kanału</div>
+            <table id="matrix"></table>
+            <p class="legend">Duża liczba: wynik miary. Mała: cała sprzedaż w tej komórce.</p>
+        </section>
+        <section class="panel">
+            <div class="panel-title">Dane · każda kropka to jedna transakcja</div>
+            <div class="board" id="board"></div>
         </section>
     </div>
+
+    <div class="verdict" id="verdict"></div>
+    <p class="note" id="note"></p>
 </div>
 
-<script src="../viz/kit.js"></script>
 <script>
-    const ROWS = VZ.sales;
-    const CATS = ['Rowery', 'Kaski', 'Odzież'];
-    const COLS = ['Czerwony', 'Niebieski', 'Czarny'];
-    const TARGET = 'Czerwony';
+    const REGIONS = ['Północ', 'Centrum', 'Południe'];
+    const CHANNELS = ['Sklep', 'Online', 'Hurt'];
 
-    // Każda formuła: jak zmienia kontekst z wizualizacji
-    const FORMULAS = {
-        base: {
-            label: 'Sama miara',
-            code: 'Sprzedaż = SUM(Sprzedaz[Kwota])',
-            apply: ctx => ({ ...ctx }),
-            takeaway: 'Miara nie ma własnych filtrów, więc liczy się dokładnie w kontekście komórki: wiersz macierzy filtruje Kategorię, kolumna filtruje Kolor. Wiersz „Suma” nie filtruje koloru, kolumna „Suma” nie filtruje kategorii.',
-        },
-        calc: {
-            label: 'CALCULATE',
-            code: 'Czerwone = CALCULATE([Sprzedaż], {{calc|Sprzedaz[Kolor] = "Czerwony"}})',
-            apply: ctx => ({ ...ctx, Kolor: [TARGET] }),
-            takeaway: 'CALCULATE <b>nadpisuje</b> filtr na kolumnie Kolor. Kolor z kolumny macierzy zostaje wyrzucony i zastąpiony „Czerwony” — dlatego każda kolumna pokazuje sprzedaż czerwonych. Filtr na Kategorii zostaje, bo CALCULATE go nie dotyka.',
-        },
-        keep: {
-            label: 'KEEPFILTERS',
-            code: 'Czerwone (KF) = CALCULATE([Sprzedaż], {{and|KEEPFILTERS(Sprzedaz[Kolor] = "Czerwony")}})',
-            apply: ctx => ({ ...ctx, Kolor: ctx.Kolor ? VZ.intersect(ctx.Kolor, [TARGET]) : [TARGET] }),
-            takeaway: 'KEEPFILTERS niczego nie wyrzuca — <b>dokłada</b> warunek do istniejącego: Kolor = Niebieski <b>&amp;</b> Kolor = Czerwony. Żaden wiersz nie spełnia obu naraz, więc poza kolumną „Czerwony” wynik jest pusty. W kolumnie „Suma” nie było filtra koloru, więc zostaje sam „Czerwony”.',
-        },
-        remove: {
-            label: 'REMOVEFILTERS',
-            code: 'Wszystkie kolory = CALCULATE([Sprzedaż], {{off|REMOVEFILTERS(Sprzedaz[Kolor])}})',
-            apply: ctx => { const c = { ...ctx }; delete c.Kolor; return c; },
-            takeaway: 'REMOVEFILTERS <b>zdejmuje</b> filtr z kolumny Kolor. Komórka wie tylko o Kategorii, więc w całym wierszu macierzy widać tę samą liczbę — sumę kategorii. To podstawa udziałów %: [Sprzedaż] / [Wszystkie kolory].',
-        },
-    };
+    // Transakcje: [region, kanał, kwota w tys. zł]
+    const TX = [
+        ['Północ', 'Sklep', 12], ['Północ', 'Sklep', 8], ['Północ', 'Sklep', 15], ['Północ', 'Online', 6], ['Północ', 'Online', 9],
+        ['Północ', 'Hurt', 30], ['Północ', 'Hurt', 22],
+        ['Centrum', 'Sklep', 18], ['Centrum', 'Sklep', 10], ['Centrum', 'Sklep', 14], ['Centrum', 'Sklep', 7],
+        ['Centrum', 'Online', 11], ['Centrum', 'Online', 16], ['Centrum', 'Online', 5], ['Centrum', 'Online', 9],
+        ['Centrum', 'Hurt', 40], ['Centrum', 'Hurt', 25],
+        ['Południe', 'Sklep', 9], ['Południe', 'Sklep', 13], ['Południe', 'Online', 4], ['Południe', 'Online', 7], ['Południe', 'Online', 12],
+        ['Południe', 'Hurt', 28], ['Południe', 'Hurt', 18], ['Południe', 'Hurt', 21],
+    ].map(([region, channel, amount], i) => ({ i, region, channel, amount }));
 
-    const state = { formula: 'base', sel: { r: 'Rowery', c: 'Niebieski' }, manual: false };
-    let stepper = null;
+    const TARGET = 'Online';
+    const state = { mode: 'calc', r: 'Centrum', c: 'Sklep' }; // r / c = null oznacza wiersz/kolumnę „Suma”
 
-    const visualCtx = sel => {
-        const ctx = {};
-        if (sel.r) ctx.Kategoria = [sel.r];
-        if (sel.c) ctx.Kolor = [sel.c];
-        return ctx;
-    };
+    // Kontekst filtra -> które transakcje przechodzą
+    function visible(mode, r, c) {
+        return TX.filter(t => {
+            if (r && t.region !== r) return false;
+            if (mode === 'base') return !c || t.channel === c;
+            if (mode === 'calc') return t.channel === TARGET;                  // filtr kanału zastąpiony
+            return (!c || t.channel === c) && t.channel === TARGET;            // filtr kanału & Online
+        });
+    }
+    const total = rows => (rows.length ? rows.reduce((s, t) => s + t.amount, 0) : null);
+    const fmt = v => (v === null ? '(puste)' : v + ' tys.');
 
-    const ctxValue = (formulaId, ctx) => VZ.sumIn(ROWS, FORMULAS[formulaId].apply(ctx), 'Kwota');
-
+    // ---------- Raport ----------
     function renderMatrix() {
-        const f = state.formula;
-        VZ.matrix(document.getElementById('matrix'), {
-            rowField: 'Kategoria', colField: 'Kolor', rowValues: CATS, colValues: COLS,
-            value: ctx => ctxValue(f, ctx),
-            base: f === 'base' ? null : ctx => ctxValue('base', ctx),
-            selected: state.sel,
-            onSelect: sel => { state.sel = sel; render(true); },
-        });
-        document.getElementById('legendChanged').style.visibility = f === 'base' ? 'hidden' : 'visible';
-    }
-
-    // Krok 3: jak powstaje nowy kontekst, kolumna po kolumnie
-    function combineHtml(f, vis) {
-        const lines = [];
-        const kat = vis.Kategoria
-            ? VZ.chip('Kategoria', vis.Kategoria, 'visual', f === 'base' ? '' : 'bez zmian')
-            : VZ.chip('Kategoria', 'wszystkie', 'none', 'brak filtra');
-        lines.push(['Kategoria', kat]);
-
-        let kolor;
-        const visChip = vis.Kolor ? VZ.chip('Kolor', vis.Kolor, 'visual') : VZ.chip('Kolor', 'wszystkie', 'none', 'brak filtra');
-        if (f === 'base') {
-            kolor = visChip;
-        } else if (f === 'calc') {
-            kolor = (vis.Kolor ? VZ.chip('Kolor', vis.Kolor, 'off', 'nadpisany') : visChip) +
-                VZ.op('→', 'arrow') + VZ.chip('Kolor', TARGET, 'calc');
-        } else if (f === 'keep') {
-            if (vis.Kolor) {
-                const both = VZ.intersect(vis.Kolor, [TARGET]);
-                kolor = VZ.chip('Kolor', vis.Kolor, 'visual') + VZ.op('&') + VZ.chip('Kolor', TARGET, 'calc') + VZ.op('=', 'arrow') +
-                    (both.length ? VZ.chip('Kolor', both, 'and') : VZ.chip('Kolor', [], 'empty', 'nic nie spełnia obu'));
-            } else {
-                kolor = visChip + VZ.op('&') + VZ.chip('Kolor', TARGET, 'calc') + VZ.op('=', 'arrow') + VZ.chip('Kolor', TARGET, 'and');
-            }
-        } else if (f === 'remove') {
-            kolor = vis.Kolor ? VZ.chip('Kolor', vis.Kolor, 'off', 'usunięty') : VZ.chip('Kolor', 'wszystkie', 'none', 'i tak nie było');
-        }
-        lines.push(['Kolor', kolor]);
-        return '<div class="combine">' + lines.map(([n, h]) => `<div class="combine-row"><span class="field">${n}</span>${h}</div>`).join('') + '</div>';
-    }
-
-    function renderSteps() {
-        const f = state.formula;
-        const vis = visualCtx(state.sel);
-        const fin = FORMULAS[f].apply(vis);
-        const result = VZ.sumIn(ROWS, fin, 'Kwota');
-        const where = [state.sel.r || 'Suma (wszystkie kategorie)', state.sel.c || 'Suma (wszystkie kolory)'].join(' × ');
-
-        const visChips = Object.keys(vis).length
-            ? Object.entries(vis).map(([c, v]) => VZ.chip(c, v, 'visual')).join('')
-            : VZ.chip('', 'brak filtrów — komórka sumy całkowitej', 'none');
-
-        const argChip = {
-            base: VZ.chip('', 'brak — miara nie zmienia kontekstu', 'none'),
-            calc: VZ.chip('Kolor', TARGET, 'calc', 'zastąp'),
-            keep: VZ.chip('Kolor', TARGET, 'calc', 'dołóż (&)'),
-            remove: VZ.chip('Kolor', 'dowolny', 'off', 'zdejmij'),
-        }[f];
-
-        const kind = { base: 'in', calc: 'in calc', keep: 'in and', remove: 'in' }[f];
-
-        document.getElementById('steps').innerHTML = `
-            <div class="vz-step">
-                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-visual)">1</span>Kontekst z wizualizacji · ${VZ.esc(where)}</div>
-                <div class="vz-chips">${visChips}</div>
-            </div>
-            <div class="vz-step">
-                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-calc)">2</span>Co robi formuła z filtrem</div>
-                <div class="vz-chips">${argChip}</div>
-            </div>
-            <div class="vz-step">
-                <div class="vz-step-title"><span class="vz-num" style="background:var(--ctx-and)">3</span>Nowy kontekst filtra</div>
-                ${combineHtml(f, vis)}
-            </div>
-            <div class="vz-step">
-                <div class="vz-step-title"><span class="vz-num" style="background:var(--text)">4</span>Wiersze Sprzedaz, które przechodzą przez filtr</div>
-                <div id="facts"></div>
-                <div class="vz-result">
-                    <span class="lbl">Wynik w komórce</span>
-                    <span class="val ${result === null ? 'blank' : ''}">${result === null ? '(puste)' : VZ.fmt(result)}</span>
-                </div>
-            </div>`;
-
-        VZ.table(document.getElementById('facts'), {
-            columns: [{ key: 'Kategoria' }, { key: 'Kolor' }, { key: 'Kwota', num: true }],
-            rows: ROWS,
-            state: r => (VZ.rowPasses(r, fin) ? kind : 'out'),
+        const cols = [...CHANNELS, null];
+        const head = '<tr><th></th>' + cols.map(c => `<th>${c || 'Suma'}</th>`).join('') + '</tr>';
+        const body = [...REGIONS, null].map(r => {
+            const cells = cols.map(c => {
+                const v = total(visible(state.mode, r, c));
+                const base = total(visible('base', r, c));
+                const wrong = state.mode === 'calc' && c && c !== TARGET;
+                const sel = state.r === r && state.c === c;
+                return `<td class="${sel ? 'sel' : ''} ${!r || !c ? 'sum' : ''}" data-r="${r || ''}" data-c="${c || ''}">` +
+                    `<span class="v ${v === null ? 'blank' : ''} ${wrong ? 'wrong' : ''}">${v === null ? '—' : v}</span>` +
+                    `<span class="b">${base}</span></td>`;
+            }).join('');
+            return `<tr class="${r ? '' : 'sum'}"><th class="rh">${r || 'Suma'}</th>${cells}</tr>`;
+        }).join('');
+        const m = document.getElementById('matrix');
+        m.innerHTML = head + body;
+        m.querySelectorAll('td').forEach(td => {
+            const pick = () => {
+                const r = td.dataset.r || null, c = td.dataset.c || null;
+                if (r === state.r && c === state.c) return;
+                state.r = r; state.c = c;
+                m.querySelectorAll('td').forEach(x => x.classList.toggle('sel', x === td));
+                renderBoard();
+            };
+            td.addEventListener('mouseenter', pick);
+            td.addEventListener('click', pick);
         });
     }
 
-    function render(animate) {
-        const f = FORMULAS[state.formula];
-        document.getElementById('code').innerHTML = VZ.code(f.code);
-        document.getElementById('takeaway').innerHTML = f.takeaway;
+    // ---------- Plansza ----------
+    const board = document.getElementById('board');
+    function buildBoard() {
+        let html = '<div></div>' + CHANNELS.map(c => `<div class="ax top" data-ax-c="${c}">${c}</div>`).join('');
+        REGIONS.forEach(r => {
+            html += `<div class="ax" data-ax-r="${r}">${r}</div>`;
+            CHANNELS.forEach(c => {
+                const dots = TX.filter(t => t.region === r && t.channel === c)
+                    .map(t => { const s = Math.round(8 + Math.sqrt(t.amount) * 3.2); return `<span class="dot" data-i="${t.i}" style="width:${s}px;height:${s}px" title="${t.amount} tys."></span>`; }).join('');
+                html += `<div class="block" data-r="${r}" data-c="${c}">${dots}</div>`;
+            });
+        });
+        html += '<div class="band blue" id="bandRow"><span class="tag"></span></div>' +
+                '<div class="band blue" id="bandCol"><span class="tag"></span></div>' +
+                '<div class="band orange" id="bandCalc"><span class="tag">Kanał = Online</span></div>';
+        board.innerHTML = html;
+    }
+
+    // Prostokąt obejmujący bloki (wiersz/kolumnę) w układzie planszy
+    function rectOf(r, c) {
+        const blocks = [...board.querySelectorAll('.block')].filter(b => (!r || b.dataset.r === r) && (!c || b.dataset.c === c));
+        const box = board.getBoundingClientRect();
+        const rs = blocks.map(b => b.getBoundingClientRect());
+        const left = Math.min(...rs.map(x => x.left)) - box.left, top = Math.min(...rs.map(x => x.top)) - box.top;
+        const right = Math.max(...rs.map(x => x.right)) - box.left, bottom = Math.max(...rs.map(x => x.bottom)) - box.top;
+        return { left: left + 3, top: top + 3, width: right - left - 6, height: bottom - top - 6 };
+    }
+    function place(band, rect, on, cls, tag) {
+        Object.assign(band.style, { left: rect.left + 'px', top: rect.top + 'px', width: rect.width + 'px', height: rect.height + 'px' });
+        band.classList.toggle('on', on);
+        if (cls !== undefined) band.classList.toggle('gone', cls === 'gone');
+        if (tag !== undefined) band.querySelector('.tag').textContent = tag;
+    }
+
+    function renderBoard() {
+        const { mode, r, c } = state;
+        const keep = mode === 'keep';
+
+        place(document.getElementById('bandRow'), rectOf(r, null), !!r, 'blue', r ? `Region = ${r}` : '');
+        // Filtr kanału z raportu: przy CALCULATE zostaje wyrzucony, przy KEEPFILTERS zostaje
+        place(document.getElementById('bandCol'), rectOf(null, c), !!c, keep ? 'blue' : 'gone', c ? `Kanał = ${c}` : '');
+        place(document.getElementById('bandCalc'), rectOf(null, TARGET), true);
+
+        const lit = new Set(visible(mode, r, c).map(t => t.i));
+        board.querySelectorAll('.dot').forEach(d => d.classList.toggle('lit', lit.has(+d.dataset.i)));
+        board.querySelectorAll('[data-ax-r]').forEach(a => a.classList.toggle('on-blue', a.dataset.axR === r));
+        board.querySelectorAll('[data-ax-c]').forEach(a => {
+            a.classList.toggle('on-orange', a.dataset.axC === TARGET);
+            a.classList.toggle('on-blue', keep && a.dataset.axC === c && c !== TARGET);
+        });
+
+        renderVerdict(lit.size);
+    }
+
+    function renderVerdict(count) {
+        const { mode, r, c } = state;
+        const v = total(visible(mode, r, c));
+        const parts = [];
+        if (r) parts.push(`<span class="pill blue">Region = ${r}</span>`);
+        if (c) parts.push(mode === 'keep'
+            ? `<span class="pill blue">Kanał = ${c}</span>`
+            : `<span class="pill gone">Kanał = ${c}</span>`);
+        parts.push(`<span class="pill orange">Kanał = Online</span>`);
+        const joined = parts.filter(p => !p.includes('gone')).join('<span class="amp">&amp;</span>');
+        const gone = parts.find(p => p.includes('gone')) || '';
+        document.getElementById('verdict').innerHTML =
+            (gone ? gone + ' ' : '') + joined +
+            `<span class="eq">→ ${count} ${count === 1 ? 'transakcja' : count >= 2 && count <= 4 ? 'transakcje' : 'transakcji'} →</span>` +
+            `<span class="res ${v === null ? 'blank' : ''}">${fmt(v)}</span>`;
+
+        let note;
+        const where = `${r || 'wszystkie regiony'} × ${c || 'wszystkie kanały'}`;
+        if (!c) note = `Komórka <b>${where}</b> nie filtruje kanału, więc oba tryby dają to samo: liczy się tylko Online.`;
+        else if (c === TARGET) note = `W kolumnie Online oba tryby dają to samo: filtr z raportu i z formuły wskazują ten sam kanał.`;
+        else if (mode === 'calc') note = `CALCULATE <b>wyrzucił</b> filtr „Kanał = ${c}” z raportu i wstawił Online. Komórka w kolumnie <b>${c}</b> pokazuje sprzedaż internetową, co w raporcie wprowadza w błąd (pomarańczowe liczby).`;
+        else note = `KEEPFILTERS <b>dokłada</b> warunek do filtra z raportu: transakcja musi być jednocześnie z kanału ${c} <b>i</b> Online. Takich nie ma, więc komórka jest pusta, i tak powinno być.`;
+        document.getElementById('note').innerHTML = note;
+    }
+
+    function setMode(mode) {
+        state.mode = mode;
+        document.getElementById('app').classList.toggle('keep', mode === 'keep');
+        document.querySelectorAll('.switch button').forEach(b => b.setAttribute('aria-pressed', b.dataset.mode === mode));
         renderMatrix();
-        renderSteps();
-        const steps = document.getElementById('steps');
-        if (state.manual) {
-            stepper = VZ.stepper(steps, updateStepNav);
-            stepper.start();
-        } else if (animate) {
-            VZ.reveal(steps);
-        }
+        renderBoard();
     }
 
-    function updateStepNav(i, n) {
-        document.getElementById('stepInfo').textContent = `Krok ${i + 1} z ${n}`;
-        document.getElementById('prevBtn').disabled = i <= 0;
-        const next = document.getElementById('nextBtn');
-        next.textContent = i >= n - 1 ? 'Pokaż wszystko' : 'Dalej →';
-    }
+    document.querySelectorAll('.switch button').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+    window.addEventListener('resize', () => renderBoard());
 
-    document.getElementById('playBtn').addEventListener('click', () => {
-        state.manual = true;
-        document.getElementById('explain').classList.add('manual');
-        render(false);
-    });
-    document.getElementById('prevBtn').addEventListener('click', () => stepper.prev());
-    document.getElementById('nextBtn').addEventListener('click', () => {
-        if (stepper.index >= stepper.count - 1) {
-            state.manual = false;
-            document.getElementById('explain').classList.remove('manual');
-            stepper.showAll();
-        } else {
-            stepper.next();
-        }
-    });
-
-    VZ.tabs(document.getElementById('tabs'),
-        Object.entries(FORMULAS).map(([id, f]) => ({ id, label: f.label })),
-        id => { state.formula = id; render(true); }, state.formula);
-
-    render(true);
+    buildBoard();
+    setMode('calc');
 </script>
 </body>
 </html>
